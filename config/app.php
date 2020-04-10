@@ -17,4 +17,16 @@
  * your config/ folder, alongside this one.
  */
 
-return [];
+return [
+    'components' => [
+        'redis' => [
+            'class' => yii\redis\Connection::class,
+            'hostname' => getenv('REDIS_HOSTNAME'),
+            'port' => getenv('REDIS_PORT'),
+        ],
+        'cache' => [
+            'class' => yii\redis\Cache::class,
+            'defaultDuration' => 86400,
+        ],
+    ],
+];

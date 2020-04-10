@@ -3,10 +3,10 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta charset="utf-8"/>
-    <title>Welcome to Craft CMS</title>
+    <title>Welcome to {{ siteName }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
     <meta name="referrer" content="origin-when-cross-origin"/>
-    <style>
+    <style type="text/css">
         html,
         body {
             font-size: 16px;
@@ -174,36 +174,21 @@
     <div id="modal">
         <div id="main">
             <div class="content">
-                <h1>Welcome</h1>
-                <p>Thanks for installing Craft CMS!</p>
-                <p>You’re looking at the <code>index.html</code> template file located in your
-                    <code>templates/</code> folder. Once you’re ready to start building out your site’s
-                    front end, you can replace this with something custom.</p>
-                <p>If you’re new to Craft CMS, take some time to check out the resources on the right
-                    when you get a chance&mdash;especially
-                    <a href="https://craftcms.com/discord" target="_blank">Discord</a>
-                    and <a href="http://craftcms.stackexchange.com/" target="_blank">Stack Exchange</a>.
-                    The Craft community is full of smart, friendly, and helpful people!</p>
-                <p><span class="go"><a href="{{ cpUrl('') }}">Go to your Control Panel</a></span></p>
+                <h1>{{ 'Welcome to {siteName}'|t(params = {siteName:siteName}) }}!</h1>
+                <h2>{{ siteName }} {{ 'coming soon'|t }}!</h2>
+                <small>&copy; {{ siteName }} {{ date('now')|date('Y') }}</small>
             </div>
         </div>
         <div id="aside">
             <div class="content">
-                <h2>Popular Resources</h2>
+                <h2>{{ 'Social Media'|t }}</h2>
                 <ul>
-                    <li><a href="http://docs.craftcms.com/v3/" target="_blank">Documentation</a><br><small>Read the official docs.</small></li>
-                    <li><a href="https://craftcms.com/guides" target="_blank">Guides</a><br><small>Follow along with the official guides.</small></li>
-                    <li><a href="https://twitter.com/hashtag/craftcms" target="_blank">#craftcms</a><br><small>See the latest tweets about Craft.</small></li>
-                    <li><a href="https://craftcms.com/discord" target="_blank">Discord</a><br><small>Meet the community.</small></li>
-                    <li><a href="http://craftcms.stackexchange.com/" target="_blank">Stack Exchange</a><br><small>Get help and help others.</small></li>
-                    <li><a href="https://craftquest.io/" target="_blank">CraftQuest</a><br><small>Watch unlimited video lessons and courses.</small></li>
-                    <li><a href="http://craftlinklist.com/" target="_blank">Craft Link List</a><br><small>Stay in-the-know.</small></li>
-                    <li><a href="https://nystudio107.com/blog" target="_blank">nystudio107 Blog</a><br><small>Learn Craft and modern web development.</small>
-                    </li>
+                    <li><a href="https://twitter.com/itguys_ro" target="_blank">Twitter</a></li>
+                    <li><a href="https://www.linkedin.com/company/itguys/" target="_blank">LinkedIn</a></li>
+                    <li><a href="https://www.facebook.com/itguys.ro" target="_blank">Facebook</a></li>
                 </ul>
             </div>
         </div>
     </div>
-</div>
 </body>
 </html>

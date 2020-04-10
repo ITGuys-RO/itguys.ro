@@ -2,4 +2,3 @@
 /.idea
 /vendor
 .DS_Store
-/config/license.key
