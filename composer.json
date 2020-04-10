@@ -8,6 +8,7 @@
     "putyourlightson/craft-sendgrid": "1.2.0",
     "topshelfcraft/wordsmith": "3.1.2",
     "vlucas/phpdotenv": "^3.4.0",
+    "workingconcept/craft-cloudflare": "0.5.0",
     "yiisoft/yii2-redis": "~2.0.0"
   },
   "autoload": {
