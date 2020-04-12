@@ -1,0 +1,6 @@
+{# Craft flash notices #}
+{% for type, flashes in craft.app.session.allFlashes %}
+    {% for flash in flashes %}
+        <div class="alert alert-{{ type }}" role="alert">{{ flash }}</div>
+    {% endfor %}
+{% endfor %}

@@ -18,6 +18,10 @@
  */
 
 return [
+    'modules' => [
+        'Newsletter' => \modules\Newsletter\Newsletter::class,
+    ],
+    'bootstrap' => ['Newsletter'],
     'components' => [
         'redis' => [
             'class' => yii\redis\Connection::class,

@@ -1,194 +1,95 @@
-<!DOCTYPE html>
-<html lang="en-US">
+<!DOCTYPE html><!--[if lt IE 7 ]>
+<html class="ie ie6" lang="{{ currentSite.language }}"><![endif]-->
+<!--[if IE 7 ]>
+<html class="ie ie7" lang="{{ currentSite.language }}"><![endif]-->
+<!--[if IE 8 ]>
+<html class="ie ie8" lang="{{ currentSite.language }}"><![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html lang="{{ currentSite.language }}"><!--<![endif]-->
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta charset="utf-8"/>
-    <title>Welcome to {{ siteName }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
-    <meta name="referrer" content="origin-when-cross-origin"/>
-    <style type="text/css">
-        html,
-        body {
-            font-size: 16px;
-            -webkit-text-size-adjust: 100%;
-            height: 100%;
-            font-family: system-ui, BlinkMacSystemFont, -apple-system, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: hsl(212, 10%, 93%);
-            color: hsl(212, 20%, 20%);
-            display: flex;
-        }
-
-        h1 {
-            margin-top: 0;
-        }
-
-        h2 {
-            margin-top: 24px;
-            font-size: 1em;
-        }
-
-        h2:first-child {
-            margin-top: 0;
-        }
-
-        p {
-            line-height: 1.4em;
-            margin-bottom: 1.4em;
-        }
-
-        ul {
-            line-height: 1.3em;
-            padding-left: 20px;
-            margin-bottom: 0;
-        }
-
-        ul li {
-            margin-bottom: 0.35em;
-        }
-
-        a {
-            color: #0d78f2;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        .go {
-            color: #0d78f2;
-        }
-
-        .go:after {
-            padding-left: 4px;
-            content: '→';
-            text-decoration: none !important;
-        }
-
-        small {
-            color: #777;
-        }
-
-        code {
-            display: inline-block;
-            color: #da513d;
-            padding: 0 2px;
-            background: hsl(212, 10%, 96%);
-            border-radius: 3px;
-            line-height: 1.3;
-            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-            font-size: 0.9em;
-        }
-
-        #container {
-            flex-grow: 1;
-        }
-
-        #modal {
-            background: #fff;
-        }
-
-        #aside {
-            background: hsl(212, 10%, 93%);
-        }
-
-        .content {
-            padding: 35px;
-            padding-left: calc(35px + env(safe-area-inset-left));
-            padding-right: calc(35px + env(safe-area-inset-right));
-        }
-
-        @media (min-width: 480px) {
-            body {
-                background-image: url("{{ view.getAssetManager().getPublishedUrl('@app/web/assets/installer/dist', true, 'images/install-bg-1920.png') }}");
-                background-repeat: no-repeat;
-                background-size: cover;
-                background-position: center center;
-            }
-
-            #container {
-                display: flex;
-                align-items: normal;
-                justify-content: normal;
-            }
-        }
-
-        @media (min-width: 480px) and (min-height: 376px) {
-            #container {
-                padding: 24px;
-                align-items: center;
-                justify-content: center;
-            }
-
-            #modal {
-                height: 100%;
-                max-width: 770px;
-                max-height: 510px;
-                border-radius: 4px;
-                overflow: auto;
-                box-shadow: 0 25px 100px rgba(0, 0, 0, 0.5);
-            }
-
-            #aside {
-                background: #f9f9f9;
-                overflow: auto;
-            }
-        }
-
-        @media (min-width: 768px) {
-            #modal {
-                display: flex;
-            }
-
-            #main {
-                width: 50%;
-                overflow: auto;
-            }
-
-            #aside {
-                width: 50%;
-                overflow: auto;
-            }
-        }
-
-        @media only screen and (min-width: 1921px) {
-            body {
-                background-image: url("{{ view.getAssetManager().getPublishedUrl('@app/web/assets/installer/dist', true, 'images/install-bg-5120.png') }}");
-            }
-        }
-
-        @media only screen and (-webkit-min-device-pixel-ratio: 1.5) and (min-width: 961px), only screen and (-moz-min-device-pixel-ratio: 1.5) and (min-width: 961px), only screen and (-o-min-device-pixel-ratio: 3/2) and (min-width: 961px), only screen and (min-device-pixel-ratio: 1.5) and (min-width: 961px), only screen and (min-resolution: 1.5dppx) and (min-width: 961px) {
-            body {
-                background-image: url("{{ view.getAssetManager().getPublishedUrl('@app/web/assets/installer/dist', true, 'images/install-bg-5120.png') }}");
-            }
-        }
-    </style>
+    <meta charset="UTF-8">
+    <title>{{ siteName }}</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link rel="apple-touch-icon" sizes="57x57" href="/assets/images/ico/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/assets/images/ico/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/assets/images/ico/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/assets/images/ico/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/assets/images/ico/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/assets/images/ico/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/assets/images/ico/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/images/ico/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/ico/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/ico/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/ico/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/ico/favicon-16x16.png">
+    <link rel="manifest" href="/assets/images/ico/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/assets/images/ico/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <!--[if IE]><![endif]-->
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <script src="/assets/js/jquery.js"></script>
+    <script src="/assets/js/countdown.js"></script>
+    <script src="/assets/js/owlcarousel.js"></script>
+    <script src="/assets/js/uikit.scrollspy.js"></script>
+    <script src="/assets/js/scripts.js"></script>
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 </head>
-<body class="ltr">
-<div id="container">
-    <div id="modal">
-        <div id="main">
-            <div class="content">
-                <h1>{{ 'Welcome to {siteName}'|t(params = {siteName:siteName}) }}!</h1>
-                <h2>{{ siteName }} {{ 'coming soon'|t }}!</h2>
-                <small>&copy; {{ siteName }} {{ date('now')|date('Y') }}</small>
-            </div>
-        </div>
-        <div id="aside">
-            <div class="content">
-                <h2>{{ 'Social Media'|t }}</h2>
-                <ul>
-                    <li><a href="https://twitter.com/itguys_ro" target="_blank">Twitter</a></li>
-                    <li><a href="https://www.linkedin.com/company/itguys/" target="_blank">LinkedIn</a></li>
-                    <li><a href="https://www.facebook.com/itguys.ro" target="_blank">Facebook</a></li>
-                </ul>
-            </div>
+<body>
+<div class="fullwidth clearfix">
+    <div id="topcontainer" class="bodycontainer clearfix" data-uk-scrollspy="{cls:'uk-animation-fade', delay: 300, repeat: true}">
+        {{ include('_components/flash') }}
+        <p><img src="/assets/images/ico/favicon-96x96.png" alt="logo"></p>
+        <h1><span>{{ siteName }}</span><br/>is coming soon</h1>
+        <p>It's almost ready ... honest</p>
+    </div>
+</div>
+<div class="arrow-separator arrow-white"></div>
+<div class="fullwidth colour1 clearfix">
+    <div id="countdown" class="bodycontainer clearfix" data-uk-scrollspy="{cls:'uk-animation-fade', delay: 300, repeat: true}">
+        <div id="countdowncont" class="clearfix">
+            <ul id="countscript">
+                <li>
+                    <span class="days">00</span>
+                    <p>Days</p>
+                </li>
+                <li>
+                    <span class="hours">00</span>
+                    <p>Hours</p>
+                </li>
+                <li class="clearbox">
+                    <span class="minutes">00</span>
+                    <p>Minutes</p>
+                </li>
+                <li>
+                    <span class="seconds">00</span>
+                    <p>Seconds</p>
+                </li>
+            </ul>
         </div>
     </div>
+</div>
+<div class="arrow-separator arrow-theme"></div>
+<div class="fullwidth colour2 clearfix">
+    <div id="maincont" class="bodycontainer clearfix" data-uk-scrollspy="{cls:'uk-animation-fade', delay: 300, repeat: true}">
+        {#        <p><strong>Lorem ipsum dolor</strong> sit amet, consectetur adipiscing elit.
+                    <a title="" href="#">Donec quis enim nulla</a>. Suspendisse posuere arcu ac eros iaculis egestas commodo risus tempus. Fusce placerat nulla nisi. Proin congue erat non orci adipiscing nec porttitor lacus egestas.
+                    <em>Donec venenatis</em>, risus et hendrerit ultrices, libero sem lacinia risus, ut convallis massa sapien nec libero. Suspendisse arcu orci, gravida nec aliquet ut, lacinia non nisl.
+                </p>#}
+        <h2>Sign up and we'll let you know when we launch</h2>
+        <p>If you would like to receive <strong>news and special offers</strong> please send us your email address below:</p>
+        <div id="signupform" class="sb-search clearfix">
+            <form id="contact" class="clearfix" action="/newsletter/subscribe" method="post">
+                {{ csrfInput() }}
+                <input class="sb-search-input" name="email" placeholder="Enter email ..." type="email" value="">
+                <input class="sb-search-submit" value="" type="submit">
+                <button class="formbutton" type="submit"><span class="fa fa-paper-plane-o"></span></button>
+            </form>
+        </div>
+    </div>
+</div>
 </body>
 </html>

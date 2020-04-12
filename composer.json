@@ -4,12 +4,17 @@
     "hashtagerrors/craft-pagination": "^1.0",
     "lukeyouell/craft-sentry": "1.5.1",
     "mccallister/healthz": "^1.0",
-    "nystudio107/craft-twigprofiler": "1.0.1",
     "putyourlightson/craft-sendgrid": "1.2.0",
     "topshelfcraft/wordsmith": "3.1.2",
     "vlucas/phpdotenv": "^3.4.0",
     "workingconcept/craft-cloudflare": "0.5.0",
     "yiisoft/yii2-redis": "~2.0.0"
+  },
+  "require-dev": {
+    "symfony/var-dumper": "^4.4",
+    "nystudio107/craft-twigprofiler": "v1.x-dev",
+    "putyourlightson/craft-cp-style-guide": "v1.x-dev",
+    "yiisoft/yii2-shell": "^2.0.3"
   },
   "autoload": {
     "psr-4": {
