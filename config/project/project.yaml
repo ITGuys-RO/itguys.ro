@@ -1,8 +1,67 @@
-dateModified: 1611989310
+dateModified: 1611990183
 email:
   fromEmail: contact@itguys.ro
-  fromName: itguys.ro
-  transportType: craft\mail\transportadapters\Sendmail
+  fromName: $EMAIL_SENDER_NAME
+  replyToEmail: contact@itguys.ro
+  template: null
+  transportSettings:
+    apiKey: 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
+  transportType: putyourlightson\sendgrid\mail\SendgridAdapter
+plugins:
+  bootstrap:
+    edition: standard
+    enabled: true
+    schemaVersion: 0.0.0
+  cloudflare:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.1
+    settings:
+      apiKey: f39dc10b14190953b5f73dcce5980e8752c99
+      apiToken: null
+      authType: key
+      email: admin@itguys.ro
+      fetchZonesActionUri: cloudflare/default/fetch-zones
+      purgeAllActionUri: cloudflare/default/purge-all
+      purgeElements:
+        - craft\elements\Asset
+        - craft\elements\Category
+        - craft\elements\Entry
+        - craft\elements\Tag
+      purgeUrlsActionUri: cloudflare/default/purge-urls
+      saveRulesActionUri: cloudflare/default/save-rules
+      userServiceKey: ''
+      verifyCredentialsUri: cloudflare/default/verify-connection
+      zone: e8837d8069c26c5c950034ed5ee36799
+      zoneName: null
+  cp-css:
+    edition: standard
+    enabled: true
+    schemaVersion: 2.0.0
+  cp-js:
+    edition: standard
+    enabled: true
+    schemaVersion: 2.0.0
+  dospaces:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
+  mix:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
+  path-tools:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
+  sendgrid:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
+  user-initials-photo:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
 system:
   edition: solo
   live: true
