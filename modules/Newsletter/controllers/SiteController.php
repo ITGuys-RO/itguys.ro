@@ -48,7 +48,7 @@ class SiteController extends Controller
             }
             if ($entry->validate(['email'])) {
                 $entry->title = $email;
-                $entry->slug = ElementHelper::createSlug($email);
+                $entry->slug = ElementHelper::normalizeSlug($email);
                 $elements = new Elements();
                 $elements->saveElement($entry);
             }

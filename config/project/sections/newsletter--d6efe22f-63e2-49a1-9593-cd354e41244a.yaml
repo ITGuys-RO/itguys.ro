@@ -1,0 +1,11 @@
+enableVersioning: false
+handle: newsletter
+name: Newsletter
+propagationMethod: all
+siteSettings:
+  5fe65ee3-4444-45e9-94df-2ef860349a8d:
+    enabledByDefault: true
+    hasUrls: true
+    template: newsletter/_entry
+    uriFormat: 'newsletter/{slug}'
+type: channel
