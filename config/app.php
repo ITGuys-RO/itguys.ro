@@ -23,14 +23,18 @@ return [
     ],
     'bootstrap' => ['Newsletter'],
     'components' => [
-        'redis' => [
-            'class' => yii\redis\Connection::class,
-            'hostname' => getenv('REDIS_HOSTNAME'),
-            'port' => getenv('REDIS_PORT'),
-        ],
-        'cache' => [
-            'class' => yii\redis\Cache::class,
-            'defaultDuration' => 86400,
-        ],
+        'cache' => craft\cache\DbCache::class,
+        'mutex' => function () {
+            $config = craft\helpers\App::mutexConfig();
+            $config['isWindows'] = true;
+
+            return Craft::createObject($config);
+        },
+    ],
+    'aliases' => [
+        '@web' => getenv('DEFAULT_SITE_URL'),
+        '@webroot' => dirname(__DIR__).DIRECTORY_SEPARATOR.'web',
+        '@assetBaseUrl' => '@web/assets',
+        '@assetBasePath' => '@webroot/assets',
     ],
 ];

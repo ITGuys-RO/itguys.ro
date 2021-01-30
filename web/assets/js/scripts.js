@@ -143,7 +143,7 @@ $(document).ready(function () {
 $(document).ready(function () {
     "use strict";
     $("#countdown").countdown({
-            date: "6 june 2020 10:00:00", /** Enter new date here **/
+            date: "01 January 2022 10:00:00", /** Enter new date here **/
             format: "on"
         },
         function () {

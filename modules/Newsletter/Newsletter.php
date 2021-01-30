@@ -34,7 +34,6 @@ class Newsletter extends \yii\base\Module
      */
     public $controllerMap = [
         'site' => SiteController::class,
-        'admin' => AdminController::class,
     ];
 
     /**

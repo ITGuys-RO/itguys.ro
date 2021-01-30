@@ -1,0 +1,9 @@
+baseUrl: '@web'
+enabled: true
+handle: default
+hasUrls: true
+language: en-US
+name: itguys.ro
+primary: true
+siteGroup: 4223b94d-0cb9-4394-9312-6556a801a896
+sortOrder: 1

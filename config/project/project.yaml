@@ -1,0 +1,18 @@
+dateModified: 1611989075
+email:
+  fromEmail: contact@itguys.ro
+  fromName: itguys.ro
+  transportType: craft\mail\transportadapters\Sendmail
+system:
+  edition: solo
+  live: true
+  name: itguys.ro
+  retryDuration: null
+  schemaVersion: 3.6.1
+  timeZone: Europe/Bucharest
+users:
+  allowPublicRegistration: false
+  defaultGroup: null
+  photoSubpath: null
+  photoVolumeUid: null
+  requireEmailVerification: true

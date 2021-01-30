@@ -1,20 +1,20 @@
 {
   "require": {
-    "craftcms/cms": "^3.4.0",
-    "hashtagerrors/craft-pagination": "^1.0",
-    "lukeyouell/craft-sentry": "1.5.1",
-    "mccallister/healthz": "^1.0",
+    "ext-curl": "*",
+    "craftcms/cms": "3.6.2",
+    "doublesecretagency/craft-bootstrap": "v4.x-dev",
+    "doublesecretagency/craft-cpcss": "v2.x-dev",
+    "doublesecretagency/craft-cpjs": "v2.x-dev",
+    "hashtagerrors/user-initials-photo": "dev-master",
+    "misterbk/mix": "dev-master",
+    "nystudio107/craft-pathtools": "v1.x-dev",
     "putyourlightson/craft-sendgrid": "1.2.0",
-    "topshelfcraft/wordsmith": "3.1.2",
+    "vaersaagod/dospaces": "dev-master",
     "vlucas/phpdotenv": "^3.4.0",
-    "workingconcept/craft-cloudflare": "0.5.0",
-    "yiisoft/yii2-redis": "~2.0.0"
+    "workingconcept/craft-cloudflare": "0.5.0"
   },
   "require-dev": {
-    "symfony/var-dumper": "^4.4",
-    "nystudio107/craft-twigprofiler": "v1.x-dev",
-    "putyourlightson/craft-cp-style-guide": "v1.x-dev",
-    "yiisoft/yii2-shell": "^2.0.3"
+    "symfony/var-dumper": "^4.4"
   },
   "autoload": {
     "psr-4": {
@@ -26,12 +26,18 @@
     "sort-packages": true,
     "optimize-autoloader": true,
     "platform": {
-      "php": "7.3"
+      "php": "7.4"
     }
   },
   "scripts": {
     "post-root-package-install": [
       "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
     ]
+  },
+  "repositories": {
+    "blasvicco.consoletoolkit": {
+      "type": "vcs",
+      "url": "https://github.com/blasvicco/consoletoolkit.git"
+    }
   }
 }
