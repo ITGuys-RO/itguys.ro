@@ -1,12 +1,18 @@
-dateModified: 1611992697
+dateModified: 1611992873
 email:
-  fromEmail: contact@itguys.ro
+  fromEmail: $EMAIL_SYSTEM_ADDRESS
   fromName: $EMAIL_SENDER_NAME
-  replyToEmail: contact@itguys.ro
+  replyToEmail: $EMAIL_SYSTEM_ADDRESS
   template: null
   transportSettings:
-    apiKey: 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
-  transportType: putyourlightson\sendgrid\mail\SendgridAdapter
+    encryptionMethod: tls
+    host: $EMAIL_HOST
+    password: $EMAIL_PASSWORD
+    port: $EMAIL_PORT
+    timeout: '10'
+    useAuthentication: '1'
+    username: $EMAIL_USERNAME
+  transportType: craft\mail\transportadapters\Smtp
 system:
   edition: solo
   live: true
