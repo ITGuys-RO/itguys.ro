@@ -1,17 +1,7 @@
 {
   "require": {
-    "ext-curl": "*",
     "craftcms/cms": "3.6.2",
-    "doublesecretagency/craft-bootstrap": "v4.x-dev",
-    "doublesecretagency/craft-cpcss": "v2.x-dev",
-    "doublesecretagency/craft-cpjs": "v2.x-dev",
-    "hashtagerrors/user-initials-photo": "dev-master",
-    "misterbk/mix": "dev-master",
-    "nystudio107/craft-pathtools": "v1.x-dev",
-    "putyourlightson/craft-sendgrid": "1.2.0",
-    "vaersaagod/dospaces": "dev-master",
-    "vlucas/phpdotenv": "^3.4.0",
-    "workingconcept/craft-cloudflare": "0.5.0"
+    "vlucas/phpdotenv": "^3.4.0"
   },
   "require-dev": {
     "symfony/var-dumper": "^4.4"
