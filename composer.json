@@ -2,7 +2,7 @@
   "name": "itguys/website",
   "description": "ITGuys main website",
   "require": {
-    "craftcms/cms": "3.6.2",
+    "craftcms/cms": "3.7.14",
     "vlucas/phpdotenv": "^3.4.0"
   },
   "require-dev": {
