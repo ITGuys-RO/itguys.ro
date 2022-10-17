@@ -23,7 +23,7 @@ return [
     ],
     'bootstrap' => ['Newsletter'],
     'components' => [
-        'cache' => craft\cache\DbCache::class,
+        'cache' => craft\cache\FileCache::class,
     ],
     'aliases' => [
         '@web' => getenv('DEFAULT_SITE_URL'),

@@ -4,3 +4,4 @@
 vendor
 .DS_Store
 docker/mysql-data
+docker/redis-ui-settings

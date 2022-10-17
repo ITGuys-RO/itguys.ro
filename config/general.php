@@ -29,7 +29,7 @@ return [
         'rememberedUserSessionDuration' => 31536000,
         'userSessionDuration' => 31536000,
         'timezone' => 'Europe/Bucharest',
-        'enableTemplateCaching' => true,
+        'enableTemplateCaching' => getenv('ENABLE_TEMPLATE_CACHING'),
         'runQueueAutomatically' => true,
     ],
 
