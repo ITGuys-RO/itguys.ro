@@ -1,4 +1,4 @@
-dateModified: 1611992873
+dateModified: 1666031550
 email:
   fromEmail: $EMAIL_SYSTEM_ADDRESS
   fromName: $EMAIL_SENDER_NAME
@@ -13,15 +13,25 @@ email:
     useAuthentication: '1'
     username: $EMAIL_USERNAME
   transportType: craft\mail\transportadapters\Smtp
+meta:
+  __names__:
+    5fe65ee3-4444-45e9-94df-2ef860349a8d: itguys.ro # itguys.ro
+    6d6d2f9d-c137-45cc-a7e4-b6d0856208ac: Common # Common
+    96e5006e-ee98-41cc-b029-1ba6e9e06085: Email # Email
+    4223b94d-0cb9-4394-9312-6556a801a896: itguys.ro # itguys.ro
+    44382280-d0dd-40f9-9998-666777d7c7d4: Newsletter # Newsletter
+    d6efe22f-63e2-49a1-9593-cd354e41244a: Newsletter # Newsletter
+    e94dc18b-61d4-4a0b-975a-850aecb8df6b: 'Public Schema' # Public Schema
 system:
   edition: solo
   live: true
   name: itguys.ro
   retryDuration: null
-  schemaVersion: 3.6.1
+  schemaVersion: 4.0.0.9
   timeZone: Europe/Bucharest
 users:
   allowPublicRegistration: false
+  deactivateByDefault: false
   defaultGroup: null
   photoSubpath: null
   photoVolumeUid: null

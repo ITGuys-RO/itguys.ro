@@ -1,9 +1,10 @@
-FROM php:7.4-fpm
+FROM php:8.1-fpm
 WORKDIR "/var/www"
 
 # Fix debconf warnings upon build
 ARG DEBIAN_FRONTEND=noninteractive
 ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV CRAFT_ALLOW_SUPERUSER=1
 
 RUN apt-get update \
     && apt-get -y --no-install-recommends install \
@@ -24,7 +25,8 @@ RUN apt-get update \
         supervisor \
         nano \
         sudo \
-        exiftool
+        exiftool \
+        default-mysql-client
 
 RUN pecl install \
         imagick \
@@ -43,14 +45,16 @@ RUN docker-php-ext-install \
         pdo \
         pdo_mysql \
         zip \
-        exif
+        exif \
+        intl
 
 RUN docker-php-ext-enable \
         imagick \
         mcrypt \
         uuid \
         xdebug \
-        exif
+        exif \
+        intl
 
 RUN apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 

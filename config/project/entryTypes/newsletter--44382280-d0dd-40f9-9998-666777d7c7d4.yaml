@@ -23,11 +23,11 @@ fieldLayouts:
             step: null
             tip: null
             title: null
-            type: craft\fieldlayoutelements\EntryTitleField
+            type: craft\fieldlayoutelements\entries\EntryTitleField
             warning: null
             width: 100
           -
-            fieldUid: 96e5006e-ee98-41cc-b029-1ba6e9e06085
+            fieldUid: 96e5006e-ee98-41cc-b029-1ba6e9e06085 # Email
             instructions: ''
             label: ''
             required: '1'
@@ -40,7 +40,7 @@ fieldLayouts:
 handle: newsletter
 hasTitleField: true
 name: Newsletter
-section: d6efe22f-63e2-49a1-9593-cd354e41244a
+section: d6efe22f-63e2-49a1-9593-cd354e41244a # Newsletter
 sortOrder: 1
 titleFormat: null
 titleTranslationKeyFormat: null

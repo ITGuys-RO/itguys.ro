@@ -1,5 +1,6 @@
+columnSuffix: null
 contentColumnType: string
-fieldGroup: 6d6d2f9d-c137-45cc-a7e4-b6d0856208ac
+fieldGroup: 6d6d2f9d-c137-45cc-a7e4-b6d0856208ac # Common
 handle: email
 instructions: ''
 name: Email

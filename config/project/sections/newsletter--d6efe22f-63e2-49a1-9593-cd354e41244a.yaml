@@ -1,9 +1,10 @@
+defaultPlacement: end
 enableVersioning: false
 handle: newsletter
 name: Newsletter
 propagationMethod: all
 siteSettings:
-  5fe65ee3-4444-45e9-94df-2ef860349a8d:
+  5fe65ee3-4444-45e9-94df-2ef860349a8d: # itguys.ro
     enabledByDefault: true
     hasUrls: true
     template: newsletter/_entry
