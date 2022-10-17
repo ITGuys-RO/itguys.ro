@@ -1,5 +1,6 @@
-/.env
-/.idea
-/vendor
+.env
+.env.prod
+.idea
+vendor
 .DS_Store
-/docker/mysql-data
+docker/mysql-data

@@ -19,7 +19,7 @@ class SiteController extends Controller
     /**
      * @inheritdoc
      */
-    protected $allowAnonymous = true;
+    protected int|bool|array $allowAnonymous = true;
 
     /**
      * @return \yii\web\Response

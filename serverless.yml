@@ -1,0 +1,31 @@
+service: app
+
+provider:
+    name: aws
+    region: eu-central-1
+    runtime: provided.al2
+    environment:
+      DEBIAN_FRONTEND: noninteractive
+      COMPOSER_ALLOW_SUPERUSER: 1
+      CRAFT_ALLOW_SUPERUSER: 1
+
+plugins:
+    - ./vendor/bref/bref
+
+functions:
+    app:
+        handler: web/index.php
+        description: ''
+        timeout: 28 # in seconds (API Gateway has a timeout of 29 seconds)
+        layers:
+            - ${bref:layer.php-81-fpm}
+        events:
+            -   httpApi: '*'
+
+# Exclude files from deployment
+package:
+    patterns:
+        - '!node_modules/**'
+        - '!tests/**'
+        - '.github'
+        - 'docker'
