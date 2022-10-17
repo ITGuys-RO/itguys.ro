@@ -3,7 +3,7 @@
   "description": "ITGuys main website",
   "require": {
     "craftcms/cms": "3.7.55.2",
-    "vlucas/phpdotenv": "^3.4.0"
+    "vlucas/phpdotenv": "^5.5.0"
   },
   "require-dev": {
     "symfony/var-dumper": "^4.4"
