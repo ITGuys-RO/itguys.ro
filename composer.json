@@ -6,6 +6,7 @@
     "vlucas/phpdotenv": "^5.5.0"
   },
   "require-dev": {
+    "roave/security-advisories": "dev-latest",
     "symfony/var-dumper": "^5.4"
   },
   "autoload": {
@@ -19,6 +20,10 @@
     "optimize-autoloader": true,
     "platform": {
       "php": "7.4"
+    },
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true
     }
   },
   "scripts": {

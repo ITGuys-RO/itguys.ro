@@ -1,8 +1,9 @@
-FROM php:8.1-fpm
+FROM php:7.4-fpm
 WORKDIR "/var/www"
 
 # Fix debconf warnings upon build
 ARG DEBIAN_FRONTEND=noninteractive
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 RUN apt-get update \
     && apt-get -y --no-install-recommends install \

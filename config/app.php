@@ -24,12 +24,6 @@ return [
     'bootstrap' => ['Newsletter'],
     'components' => [
         'cache' => craft\cache\DbCache::class,
-        'mutex' => function () {
-            $config = craft\helpers\App::mutexConfig();
-            $config['isWindows'] = true;
-
-            return Craft::createObject($config);
-        },
     ],
     'aliases' => [
         '@web' => getenv('DEFAULT_SITE_URL'),
