@@ -3,8 +3,7 @@
   "description": "ITGuys main website",
   "require": {
     "craftcms/cms": "^4.0.0",
-    "vlucas/phpdotenv": "^5.5.0",
-    "yiisoft/yii2-redis": "^2.0"
+    "vlucas/phpdotenv": "^5.5.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
