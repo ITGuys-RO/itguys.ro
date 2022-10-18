@@ -7,8 +7,6 @@ on:
 jobs:
   deploy:
     runs-on: self-hosted
-    concurrency:
-      cancel-in-progress: true
     steps:
       - run: cd /var/www/itguys.ro
       - run: git checkout .
