@@ -8,8 +8,6 @@ jobs:
   deploy:
     runs-on: self-hosted
     steps:
-      - run: cd /var/www/itguys.ro
-      - run: pwd
       - run: git checkout .
       - run: git pull --rebase
       - run: composer install --no-dev --no-interaction --prefer-dist
