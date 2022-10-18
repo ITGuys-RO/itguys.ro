@@ -6,28 +6,17 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    concurrency:
+      cancel-in-progress: true
     steps:
-      - name: SSH Remote Commands
-        # You may pin to the exact commit or the version.
-        # uses: appleboy/ssh-action@f9010ff7f1bbd7db1a0b4bab661437550cea20c0
-        uses: appleboy/ssh-action@v0.1.5
-        env:
-          COMPOSER_ALLOW_SUPERUSER: 1
-          CRAFT_ALLOW_SUPERUSER: 1
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          port: 22
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd /var/www/itguys.ro
-            git checkout .
-            git pull --rebase
-            composer install --no-interaction --no-progress --prefer-dist --no-dev
-            php craft migrate/all --interactive=0
-            php craft project-config/apply --interactive=0
-            php craft clear-caches/all --interactive=0
-            php craft gc --delete-all-trashed=1 --interactive=0
-            chmod 777 . -R
-            chown www-data:www-data . -R
+      - run: cd /var/www/itguys.ro
+      - run: git checkout .
+      - run: git pull --rebase
+      - run: composer install --no-dev --no-interaction --prefer-dist
+      - run: php craft migrate/all --interactive=0
+      - run: php craft project-config/apply --interactive=0
+      - run: php craft clear-caches/all --interactive=0
+      - run: php craft gc --delete-all-trashed=1 --interactive=0
+      - run: chmod 777 . -R
+      - run: chown www-data:www-data . -R
