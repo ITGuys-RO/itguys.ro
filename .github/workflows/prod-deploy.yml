@@ -8,6 +8,7 @@ jobs:
   deploy:
     runs-on: self-hosted
     steps:
+      - run: git config --global --add safe.directory /var/www/itguys.ro
       - run: git checkout .
       - run: git pull --rebase
       - run: composer install --no-dev --no-interaction --prefer-dist
