@@ -5,7 +5,7 @@ on:
     branches: [ "master","main" ]
 
 jobs:
-  laravel-tests:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: SSH Remote Commands
