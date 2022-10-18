@@ -2,6 +2,7 @@ fieldLayouts:
   cfaa6dcb-2520-4c67-95a3-74274f1897f8:
     tabs:
       -
+        elementCondition: null
         elements:
           -
             autocapitalize: true
@@ -9,6 +10,7 @@ fieldLayouts:
             autocorrect: true
             class: null
             disabled: false
+            elementCondition: null
             id: null
             instructions: null
             label: null
@@ -24,19 +26,25 @@ fieldLayouts:
             tip: null
             title: null
             type: craft\fieldlayoutelements\entries\EntryTitleField
+            uid: 8169d8e9-e456-48c6-9c67-ea5928bffdf3
+            userCondition: null
             warning: null
             width: 100
           -
+            elementCondition: null
             fieldUid: 96e5006e-ee98-41cc-b029-1ba6e9e06085 # Email
-            instructions: ''
-            label: ''
-            required: '1'
+            instructions: null
+            label: null
+            required: true
             tip: null
             type: craft\fieldlayoutelements\CustomField
+            uid: 782b20e6-5557-4b19-b45f-6af61ed9eef4
+            userCondition: null
             warning: null
             width: 100
         name: Content
-        sortOrder: 1
+        uid: 5e99bfd6-d3a5-44eb-bf57-096b6d498640
+        userCondition: null
 handle: newsletter
 hasTitleField: true
 name: Newsletter
