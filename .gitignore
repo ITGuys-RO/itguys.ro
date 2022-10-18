@@ -1,7 +1,11 @@
 .env
-.env.prod
 .idea
 vendor
 .DS_Store
-docker/mysql-data
-docker/redis-ui-settings
+/docker/mysql-data
+
+#github actions runner
+/itguys.ro
+/_PipelineMapping
+/_temp
+/_tool
