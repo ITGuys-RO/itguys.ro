@@ -8,5 +8,4 @@ jobs:
   deploy:
     runs-on: self-hosted
     steps:
-      - run: pwd
       - run: cd /var/www/itguys.ro && ./deploy.sh > /dev/null
