@@ -8,14 +8,5 @@ jobs:
   deploy:
     runs-on: self-hosted
     steps:
-      - run: git config --global --add safe.directory /var/www/itguys.ro
       - run: pwd
-      - run: git checkout .
-      - run: git pull --rebase
-      - run: composer install --no-dev --no-interaction --prefer-dist
-      - run: php craft migrate/all --interactive=0
-      - run: php craft project-config/apply --interactive=0
-      - run: php craft clear-caches/all --interactive=0
-      - run: php craft gc --delete-all-trashed=1 --interactive=0
-      - run: chmod 777 . -R
-      - run: chown www-data:www-data . -R
+      - run: cd /var/www/itguys.ro && ./deploy.sh > /dev/null
