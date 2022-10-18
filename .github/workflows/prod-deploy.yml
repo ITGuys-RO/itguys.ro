@@ -11,4 +11,4 @@ jobs:
       COMPOSER_ALLOW_SUPERUSER: 1
       CRAFT_ALLOW_SUPERUSER: 1
     steps:
-      - run: cd /var/www/itguys.ro && ./deploy.sh > /dev/null
+      - run: cd /var/www/itguys.ro && ./deploy.sh
