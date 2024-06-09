@@ -143,12 +143,9 @@ $(document).ready(function () {
 $(document).ready(function () {
     "use strict";
     $("#countdown").countdown({
-            date: "01 January 2023 10:00:00", /** Enter new date here **/
-            format: "on"
-        },
-        function () {
-            // callback function
-        });
+        date: "01 January 2026 10:00:00", /** Enter new date here **/
+        format: "on"
+    });
 });
 
 /** Owl Carousel **/
@@ -156,7 +153,8 @@ $(document).ready(function () {
 $(window).load(function () {
     "use strict";
     $("#commentslider").owlCarousel({
-        autoPlay: false, /** for autoplay - change false to 4000 to auto change every 4 seconds (for example) **/
+        autoPlay: false,
+        /** for autoplay - change false to 4000 to auto change every 4 seconds (for example) **/
         autoHeight: true,
         stopOnHover: true,
         navigation: false,
