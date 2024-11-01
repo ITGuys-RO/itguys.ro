@@ -1,8 +1,4 @@
-.env
 .idea
-vendor
-.DS_Store
-/docker/mysql-data
 
 #github actions runner
 /itguys.ro
