@@ -2,9 +2,11 @@
 
 ## Project Description
 
-This project is the main page for itguys.ro. It includes a countdown timer, smooth scrolling,
-and an image carousel. The page is built using HTML, CSS, and JavaScript, and it utilizes several
-libraries and plugins for enhanced functionality.
+This project is the main page for itguys.ro.
+
+It includes a countdown timer, smooth scrolling, and an image carousel.
+
+The page is built using HTML, CSS, and JavaScript, and it utilizes several libraries and plugins for enhanced functionality.
 
 ## Features
 
@@ -31,10 +33,8 @@ libraries and plugins for enhanced functionality.
 
 ## Usage
 
-- **Smooth Scrolling**: Click on the "Back to Top" link to smoothly scroll to the top of the page.
 - **Countdown Timer**: The countdown timer is set to a specific date and time. You can change the
   date in the `scripts.js` file.
-- **Owl Carousel**: The carousel can be customized in the `scripts.js` file.
 
 ## Customization
 
@@ -43,18 +43,5 @@ libraries and plugins for enhanced functionality.
     $("#countdown").countdown({
         date: "01 January 2026 10:00:00",
         format: "on"
-    });
-    ```
-- **Owl Carousel**: Customize the carousel settings in the `scripts.js` file:
-    ```javascript
-    $("#commentslider").owlCarousel({
-        autoPlay: false,
-        autoHeight: true,
-        stopOnHover: true,
-        navigation: false,
-        pagination: true,
-        slideSpeed: 500,
-        singleItem: true,
-        transitionStyle: "backSlide"
     });
     ```
