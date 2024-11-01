@@ -2,16 +2,13 @@
 
 ## Project Description
 
-This project is a coming soon page for itguys.ro. It includes a countdown timer, smooth scrolling,
+This project is the main page for itguys.ro. It includes a countdown timer, smooth scrolling,
 and an image carousel. The page is built using HTML, CSS, and JavaScript, and it utilizes several
 libraries and plugins for enhanced functionality.
 
 ## Features
 
-- **Smooth Scrolling**: Smooth scrolling effect for navigation links.
 - **Countdown Timer**: A countdown timer to a specified date.
-- **Owl Carousel**: An image carousel for displaying comments or other content.
-- **Scrollspy**: Animations triggered on scroll.
 
 ## Technologies Used
 
@@ -19,8 +16,6 @@ libraries and plugins for enhanced functionality.
 - CSS
 - JavaScript
 - jQuery
-- Owl Carousel
-- UIkit Scrollspy
 
 ## Setup and Installation
 
