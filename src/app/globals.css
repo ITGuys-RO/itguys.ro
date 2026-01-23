@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
+/* Dark mode is the default */
 :root {
-  --background: #f8fafc;
-  --foreground: #1f2735;
+  --background: #0a0f14;
+  --foreground: #fafafa;
+}
+
+/* Light mode only for explicit preference */
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: #f8fafc;
+    --foreground: #1a2636;
+  }
 }
 
 @theme inline {
@@ -10,34 +19,62 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter), system-ui, sans-serif;
 
-  /* Brand colors from logo (#6B8DB9) */
-  --color-brand-50: #f0f5fa;
-  --color-brand-100: #dce7f3;
-  --color-brand-200: #bdd2e8;
-  --color-brand-300: #93b6d8;
-  --color-brand-400: #6b8db9;
-  --color-brand-500: #5a7ca6;
-  --color-brand-600: #4a6589;
-  --color-brand-700: #3d5370;
-  --color-brand-800: #35465d;
-  --color-brand-900: #2f3c4f;
-  --color-brand-950: #1f2735;
-}
+  /* Brand colors centered on #5174A1 / #7092BE */
+  --color-brand-50:  #e8eef5;
+  --color-brand-100: #c5d4e8;
+  --color-brand-200: #9eb8d6;
+  --color-brand-300: #7092be;
+  --color-brand-400: #5174a1;
+  --color-brand-500: #3d5a82;
+  --color-brand-600: #2e4563;
+  --color-brand-700: #233549;
+  --color-brand-800: #1a2636;
+  --color-brand-900: #111921;
+  --color-brand-950: #0a0f14;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #1f2735;
-    --foreground: #fafafa;
-  }
+  /* Neon accent colors */
+  --color-neon: #00d4ff;
+  --color-neon-dim: #0099bb;
+  --color-neon-pink: #ff0080;
 }
 
 html {
   scroll-behavior: smooth;
+  /* Force dark class for dark-first approach */
+  color-scheme: dark;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* Glow effect utilities */
+.glow-brand {
+  box-shadow: 0 0 20px rgba(81, 116, 161, 0.5);
+}
+
+.glow-neon {
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+}
+
+.glow-brand-sm {
+  box-shadow: 0 0 10px rgba(81, 116, 161, 0.3);
+}
+
+.glow-neon-sm {
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.25);
+}
+
+/* Glass morphism utility */
+.glass {
+  background: rgba(17, 25, 33, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-border {
+  border: 1px solid rgba(112, 146, 190, 0.2);
 }
 
 /* Blob animation for background effects */
@@ -66,6 +103,86 @@ body {
 
 .animation-delay-4000 {
   animation-delay: 4s;
+}
+
+/* Cyberpunk animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(0, 212, 255, 0.3),
+                0 0 10px rgba(81, 116, 161, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.5),
+                0 0 25px rgba(81, 116, 161, 0.3);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes scan-line {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.animate-scan-line {
+  animation: scan-line 8s linear infinite;
+}
+
+@keyframes data-stream {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100%;
+  }
+}
+
+.animate-data-stream {
+  animation: data-stream 20s linear infinite;
+}
+
+@keyframes grid-pulse {
+  0%, 100% {
+    opacity: 0.03;
+  }
+  50% {
+    opacity: 0.08;
+  }
+}
+
+.animate-grid-pulse {
+  animation: grid-pulse 4s ease-in-out infinite;
+}
+
+@keyframes neon-flicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.8;
+  }
+  94% {
+    opacity: 1;
+  }
+  96% {
+    opacity: 0.9;
+  }
+  97% {
+    opacity: 1;
+  }
+}
+
+.animate-neon-flicker {
+  animation: neon-flicker 5s ease-in-out infinite;
 }
 
 /* Page load and scroll animations */

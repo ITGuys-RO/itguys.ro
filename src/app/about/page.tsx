@@ -46,24 +46,24 @@ export default function AboutPage() {
       />
 
       <Section>
-        <h2 className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white">
+        <h2 className="text-2xl md:text-3xl font-bold text-white">
           {ourStory.title}
         </h2>
         <div className="mt-6 space-y-4">
           {ourStory.body.map((paragraph, i) => (
-            <p key={i} className="text-lg text-zinc-600 dark:text-zinc-400">
+            <p key={i} className="text-lg text-brand-200">
               {paragraph}
             </p>
           ))}
         </div>
       </Section>
 
-      <Section className="bg-brand-50 dark:bg-brand-900">
+      <Section className="bg-brand-900/50">
         <div className="flex items-center gap-3 mb-8">
-          <div className="p-2 rounded-lg bg-brand-100 dark:bg-brand-800">
-            <BuildingOffice2Icon className="w-6 h-6 text-brand-600 dark:text-brand-400" />
+          <div className="p-2 rounded-lg bg-brand-800/50 border border-brand-700/30">
+            <BuildingOffice2Icon className="w-6 h-6 text-neon" />
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white">
+          <h2 className="text-2xl md:text-3xl font-bold text-white">
             {experience.title}
           </h2>
         </div>
@@ -71,7 +71,7 @@ export default function AboutPage() {
           {experience.companies.map((company) => (
             <div
               key={company.name}
-              className="p-6 rounded-xl bg-white dark:bg-brand-800 border border-brand-200 dark:border-brand-700 flex flex-col"
+              className="p-6 rounded-xl bg-brand-900/60 backdrop-blur-sm border border-brand-700/30 flex flex-col hover:border-brand-400/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(81,116,161,0.1)]"
             >
               <div className="h-12 mb-4 flex items-center">
                 <Image
@@ -79,29 +79,29 @@ export default function AboutPage() {
                   alt={`${company.name} logo`}
                   width={120}
                   height={48}
-                  className="object-contain max-h-12"
+                  className="object-contain max-h-12 brightness-0 invert opacity-70"
                 />
               </div>
-              <h3 className="text-lg font-bold text-brand-600 dark:text-brand-400 mb-2">
+              <h3 className="text-lg font-bold text-brand-300 mb-2">
                 {company.name}
               </h3>
-              <p className="text-sm text-zinc-600 dark:text-zinc-400">{company.description}</p>
+              <p className="text-sm text-brand-200">{company.description}</p>
             </div>
           ))}
         </div>
       </Section>
 
       <Section>
-        <h2 className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white">
+        <h2 className="text-2xl md:text-3xl font-bold text-white">
           {whatWeBelieve.title}
         </h2>
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
           {whatWeBelieve.values.map((value, index) => {
             const Icon = valueIcons[index] || LightBulbIcon;
             return (
-              <Card key={value.title}>
-                <div className="p-2 rounded-lg bg-brand-100 dark:bg-brand-700 w-fit mb-4">
-                  <Icon className="w-6 h-6 text-brand-600 dark:text-brand-400" />
+              <Card key={value.title} cornerAccents>
+                <div className="p-2 rounded-lg bg-brand-800/50 border border-brand-700/30 w-fit mb-4">
+                  <Icon className="w-6 h-6 text-brand-300" />
                 </div>
                 <CardTitle>{value.title}</CardTitle>
                 <CardDescription>{value.description}</CardDescription>
@@ -111,12 +111,12 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      <Section className="bg-brand-50 dark:bg-brand-900">
+      <Section className="bg-brand-900/50">
         <div className="flex items-center gap-3 mb-8">
-          <div className="p-2 rounded-lg bg-brand-100 dark:bg-brand-800">
-            <AcademicCapIcon className="w-6 h-6 text-brand-600 dark:text-brand-400" />
+          <div className="p-2 rounded-lg bg-brand-800/50 border border-brand-700/30">
+            <AcademicCapIcon className="w-6 h-6 text-neon" />
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white">
+          <h2 className="text-2xl md:text-3xl font-bold text-white">
             {certifications.title}
           </h2>
         </div>
@@ -124,7 +124,7 @@ export default function AboutPage() {
           {certifications.items.map((cert) => (
             <span
               key={cert}
-              className="px-4 py-2 rounded-full bg-white dark:bg-brand-800 text-brand-700 dark:text-brand-300 font-medium border border-brand-200 dark:border-brand-700"
+              className="px-4 py-2 rounded-full bg-brand-800/50 border border-brand-700/30 text-brand-200 font-medium hover:border-neon/30 hover:text-neon transition-colors"
             >
               {cert}
             </span>
@@ -135,10 +135,10 @@ export default function AboutPage() {
       {team.members.length > 0 && (
         <Section>
           <div className="flex items-center gap-3 mb-8">
-            <div className="p-2 rounded-lg bg-brand-100 dark:bg-brand-800">
-              <UserCircleIcon className="w-6 h-6 text-brand-600 dark:text-brand-400" />
+            <div className="p-2 rounded-lg bg-brand-800/50 border border-brand-700/30">
+              <UserCircleIcon className="w-6 h-6 text-neon" />
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white">
+            <h2 className="text-2xl md:text-3xl font-bold text-white">
               {team.title}
             </h2>
           </div>
@@ -146,7 +146,7 @@ export default function AboutPage() {
             {team.members.map((member) => (
               <Card key={member.name} className="p-8">
                 <CardTitle className="text-xl">{member.name}</CardTitle>
-                <p className="text-brand-600 dark:text-brand-400 font-medium mb-3">
+                <p className="text-brand-300 font-medium mb-3">
                   {member.role}
                 </p>
                 <CardDescription>{member.bio}</CardDescription>

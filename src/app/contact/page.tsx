@@ -38,13 +38,13 @@ export default function ContactPage() {
           <div className="lg:col-span-2">
             <div className="sticky top-24">
               <div className="space-y-3 mb-6">
-                <p className="text-zinc-600 dark:text-zinc-400">
+                <p className="text-brand-200">
                   Or reach out directly:
                 </p>
                 <p>
                   <a
                     href={`mailto:${directEmail}`}
-                    className="text-brand-600 dark:text-brand-400 font-medium hover:underline"
+                    className="text-neon font-medium hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.5)] transition-all duration-300"
                   >
                     {directEmail}
                   </a>
@@ -52,22 +52,28 @@ export default function ContactPage() {
                 <p>
                   <a
                     href={`tel:${phone.replace(/\s/g, "")}`}
-                    className="text-brand-600 dark:text-brand-400 font-medium hover:underline"
+                    className="text-neon font-medium hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.5)] transition-all duration-300"
                   >
                     {phone}
                   </a>
                 </p>
               </div>
 
-              <div className="p-6 rounded-xl bg-brand-50 dark:bg-brand-900 border border-brand-200 dark:border-brand-800">
-                <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
+              <div className="relative p-6 rounded-xl bg-brand-900/60 backdrop-blur-sm border border-brand-700/30">
+                {/* Corner accents */}
+                <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-neon/40 rounded-tl-lg" />
+                <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-neon/40 rounded-tr-lg" />
+                <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-neon/40 rounded-bl-lg" />
+                <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-neon/40 rounded-br-lg" />
+
+                <h3 className="text-lg font-semibold text-white mb-4">
                   {whatHappensNext.title}
                 </h3>
                 <div className="space-y-3">
                   {whatHappensNext.body.map((paragraph, i) => (
                     <p
                       key={i}
-                      className="text-sm text-zinc-600 dark:text-zinc-400"
+                      className="text-sm text-brand-200"
                     >
                       {paragraph}
                     </p>

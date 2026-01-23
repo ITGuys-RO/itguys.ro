@@ -21,10 +21,10 @@ export function Input({
     <div className={clsx("flex flex-col gap-2", className)}>
       <label
         htmlFor={name}
-        className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+        className="text-sm font-medium text-brand-200"
       >
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-neon-pink ml-1">*</span>}
       </label>
       <input
         type={type}
@@ -32,7 +32,7 @@ export function Input({
         name={name}
         placeholder={placeholder}
         required={required}
-        className="px-4 py-3 rounded-lg border border-brand-300 dark:border-brand-700 bg-white dark:bg-brand-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:focus:ring-brand-400 focus:border-brand-500 dark:focus:border-brand-400 transition-colors"
+        className="px-4 py-3 rounded-lg border border-brand-700/50 bg-brand-900/60 backdrop-blur-sm text-white placeholder:text-brand-400 focus:outline-none focus:ring-2 focus:ring-neon/30 focus:border-neon/50 focus:shadow-[0_0_15px_rgba(0,212,255,0.15)] transition-all duration-300"
       />
     </div>
   );
@@ -59,10 +59,10 @@ export function Textarea({
     <div className={clsx("flex flex-col gap-2", className)}>
       <label
         htmlFor={name}
-        className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+        className="text-sm font-medium text-brand-200"
       >
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-neon-pink ml-1">*</span>}
       </label>
       <textarea
         id={name}
@@ -70,7 +70,7 @@ export function Textarea({
         placeholder={placeholder}
         required={required}
         rows={rows}
-        className="px-4 py-3 rounded-lg border border-brand-300 dark:border-brand-700 bg-white dark:bg-brand-800 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:focus:ring-brand-400 focus:border-brand-500 dark:focus:border-brand-400 transition-colors resize-none"
+        className="px-4 py-3 rounded-lg border border-brand-700/50 bg-brand-900/60 backdrop-blur-sm text-white placeholder:text-brand-400 focus:outline-none focus:ring-2 focus:ring-neon/30 focus:border-neon/50 focus:shadow-[0_0_15px_rgba(0,212,255,0.15)] transition-all duration-300 resize-none"
       />
     </div>
   );
@@ -95,20 +95,20 @@ export function Select({
     <div className={clsx("flex flex-col gap-2", className)}>
       <label
         htmlFor={name}
-        className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+        className="text-sm font-medium text-brand-200"
       >
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
+        {required && <span className="text-neon-pink ml-1">*</span>}
       </label>
       <select
         id={name}
         name={name}
         required={required}
-        className="px-4 py-3 rounded-lg border border-brand-300 dark:border-brand-700 bg-white dark:bg-brand-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 dark:focus:ring-brand-400 focus:border-brand-500 dark:focus:border-brand-400 transition-colors"
+        className="px-4 py-3 rounded-lg border border-brand-700/50 bg-brand-900/60 backdrop-blur-sm text-white focus:outline-none focus:ring-2 focus:ring-neon/30 focus:border-neon/50 focus:shadow-[0_0_15px_rgba(0,212,255,0.15)] transition-all duration-300"
       >
-        <option value="">Select an option</option>
+        <option value="" className="bg-brand-900">Select an option</option>
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
+          <option key={option.value} value={option.value} className="bg-brand-900">
             {option.label}
           </option>
         ))}

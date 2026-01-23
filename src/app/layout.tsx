@@ -82,14 +82,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${inter.variable} dark`}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#6b8db9" media="(prefers-color-scheme: light)" />
-        <meta name="theme-color" content="#1f2735" media="(prefers-color-scheme: dark)" />
+        {/* Dark-first: default to dark theme color */}
+        <meta name="theme-color" content="#0a0f14" />
+        <meta name="theme-color" content="#0a0f14" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#5174a1" media="(prefers-color-scheme: light)" />
+        <meta name="color-scheme" content="dark light" />
         <link rel="icon" href="/itguys_logo.png" />
       </head>
-      <body className="font-sans antialiased bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white">
+      <body className="font-sans antialiased bg-brand-950 text-white">
         <WebsiteSchema />
         <OrganizationSchema />
         <LocalBusinessSchema />

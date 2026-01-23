@@ -39,16 +39,16 @@ export function Carousel({ children, className }: CarouselProps) {
   return (
     <div className={clsx("relative", className)}>
       <div
-        className="overflow-hidden"
+        className="overflow-hidden py-2 -my-2"
         ref={emblaRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="flex gap-6">
+        <div className="flex ml-[-1.5rem]">
           {children.map((child, index) => (
             <div
               key={index}
-              className="flex-[0_0_85%] min-w-0 md:flex-[0_0_calc(50%-12px)]"
+              className="flex-[0_0_85%] min-w-0 md:flex-[0_0_calc(50%-12px)] pl-6"
             >
               {child}
             </div>

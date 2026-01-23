@@ -16,23 +16,47 @@ type HeroProps = {
 export function Hero({ headline, subheadline, cta, illustration, showBadge = true }: HeroProps) {
   return (
     <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 px-6 md:px-8 overflow-hidden">
-      {/* Background gradient accent */}
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-brand-400/20 dark:bg-brand-400/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-64 h-64 bg-brand-300/20 dark:bg-brand-500/10 rounded-full blur-3xl" />
+      {/* Cyberpunk background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Perspective grid floor */}
+        <div className="absolute inset-x-0 bottom-0 h-[50%] overflow-hidden opacity-30">
+          <div
+            className="absolute inset-0 animate-grid-pulse"
+            style={{
+              backgroundImage: `
+                linear-gradient(rgba(81, 116, 161, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(81, 116, 161, 0.3) 1px, transparent 1px)
+              `,
+              backgroundSize: '80px 80px',
+              transform: 'perspective(500px) rotateX(60deg)',
+              transformOrigin: 'center top',
+            }}
+          />
+        </div>
+
+        {/* Neon accent blobs */}
+        <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-[500px] h-[500px] bg-brand-400/20 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-[400px] h-[400px] bg-neon/10 rounded-full blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-brand-500/10 rounded-full blur-[120px]" />
+
+        {/* Horizontal accent lines */}
+        <div className="absolute top-1/3 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-400/20 to-transparent" />
+        <div className="absolute top-2/3 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neon/10 to-transparent" />
+      </div>
 
       <div className="relative max-w-6xl mx-auto">
         <div className={`grid ${illustration ? "lg:grid-cols-2 gap-12 items-center" : ""}`}>
           <div className="max-w-2xl">
             {showBadge && (
-              <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 text-sm font-medium text-brand-700 dark:text-brand-300 bg-brand-100 dark:bg-brand-900/50 rounded-full animate-fade-in-down">
-                <span className="w-2 h-2 bg-brand-500 rounded-full animate-pulse" />
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 text-sm font-medium text-neon bg-neon/10 border border-neon/30 rounded-full animate-fade-in-down animate-pulse-glow">
+                <span className="w-2 h-2 bg-neon rounded-full animate-pulse" />
                 Available for new projects
               </div>
             )}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-zinc-900 dark:text-white leading-tight animate-fade-in-up">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight animate-fade-in-up">
               {headline}
             </h1>
-            <p className="mt-6 text-lg md:text-xl text-zinc-600 dark:text-zinc-400 animate-fade-in-up stagger-1">
+            <p className="mt-6 text-lg md:text-xl text-brand-200 animate-fade-in-up stagger-1">
               {subheadline}
             </p>
             {cta && (
@@ -55,6 +79,9 @@ export function Hero({ headline, subheadline, cta, illustration, showBadge = tru
           )}
         </div>
       </div>
+
+      {/* Bottom fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-brand-950 to-transparent pointer-events-none" />
     </section>
   );
 }

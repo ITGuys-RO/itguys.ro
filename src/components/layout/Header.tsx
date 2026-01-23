@@ -21,21 +21,28 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-brand-950/80 backdrop-blur-md border-b border-brand-200 dark:border-brand-800">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-brand-950/80 backdrop-blur-xl border-b border-brand-700/30">
+      {/* Neon accent line at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-400/50 to-transparent" />
+
       <nav className="max-w-4xl mx-auto px-6 md:px-8">
         <div className="flex items-center justify-between h-16">
           <Link
             href="/"
-            className="flex items-center gap-2 text-xl font-bold text-zinc-900 dark:text-white"
+            className="flex items-center gap-2 text-xl font-bold text-white group"
           >
-            <Image
-              src="/itguys_logo.png"
-              alt="ITGuys"
-              width={32}
-              height={32}
-              className="rounded-full"
-            />
-            ITGuys
+            {/* Tech frame around logo */}
+            <div className="relative">
+              <Image
+                src="/itguys_logo.png"
+                alt="ITGuys"
+                width={32}
+                height={32}
+                className="rounded-full relative z-10 transition-all duration-300 group-hover:shadow-[0_0_15px_rgba(0,212,255,0.4)]"
+              />
+              <div className="absolute -inset-1 border border-brand-400/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+            <span className="transition-all duration-300 group-hover:text-brand-300">ITGuys</span>
           </Link>
 
           {/* Desktop navigation */}
@@ -44,7 +51,7 @@ export function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="flex items-center gap-1.5 text-sm font-medium text-zinc-600 hover:text-brand-600 dark:text-zinc-400 dark:hover:text-brand-400 transition-colors"
+                className="flex items-center gap-1.5 text-sm font-medium text-brand-200 hover:text-neon transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.5)]"
               >
                 <item.icon className="w-4 h-4" />
                 {item.name}
@@ -59,7 +66,7 @@ export function Header() {
           {/* Mobile menu button */}
           <button
             type="button"
-            className="md:hidden p-2 text-zinc-600 dark:text-zinc-400"
+            className="md:hidden p-2 text-brand-200 hover:text-neon transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -97,13 +104,13 @@ export function Header() {
 
         {/* Mobile navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-brand-200 dark:border-brand-800">
+          <div className="md:hidden py-4 border-t border-brand-700/30">
             <div className="flex flex-col gap-4">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="flex items-center gap-2 text-base font-medium text-zinc-600 hover:text-brand-600 dark:text-zinc-400 dark:hover:text-brand-400 transition-colors"
+                  className="flex items-center gap-2 text-base font-medium text-brand-200 hover:text-neon transition-all duration-300"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <item.icon className="w-5 h-5" />
