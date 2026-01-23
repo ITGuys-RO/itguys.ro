@@ -1,5 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Hero, CTA } from "@/components/sections";
+import { WebPageSchema } from "@/components/structured-data";
 import { Section, Card, CardTitle, CardDescription, AnimateOnScroll } from "@/components/ui";
 import { HeroIllustration } from "@/components/illustrations";
 import { homeContent } from "@/content";
@@ -23,11 +25,25 @@ const buildIcons = [
   { icon: ShieldCheckIcon, label: "Security" },
 ];
 
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    url: "https://itguys.ro",
+  },
+};
+
 export default function HomePage() {
   const { hero, stats, whatSetsUsApart, whoWeWorkWith, whatWeBuild, cta } = homeContent;
 
   return (
     <>
+      <WebPageSchema
+        title="ITGuys - Custom Software Development & Security Services"
+        description="Custom web and mobile apps, plus security services. We build software with the right technology for your problem."
+        url="https://itguys.ro"
+      />
       <Hero
         headline={hero.headline}
         subheadline={hero.subheadline}

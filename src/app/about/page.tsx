@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { TeamIllustration } from "@/components/illustrations";
+import { BreadcrumbSchema } from "@/components/structured-data";
 import { aboutContent } from "@/content";
 import {
   LightBulbIcon,
@@ -16,9 +17,19 @@ import {
 const valueIcons = [LightBulbIcon, ShieldCheckIcon, ChatBubbleBottomCenterTextIcon];
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About Us - Expert Software Development Team",
   description:
-    "15+ years of building secure software for companies like Electronic Arts and TUI. Based in Romania, working with clients worldwide.",
+    "15+ years of building secure, scalable software for global companies including Electronic Arts, TUI, and Nagarro. Based in Romania, delivering custom software solutions worldwide with expertise in web, mobile, and security.",
+  openGraph: {
+    title: "About ITGuys - Expert Software Development Team",
+    description:
+      "15+ years of building secure software for companies like Electronic Arts and TUI. Based in Romania, working with clients worldwide.",
+    url: "https://itguys.ro/about",
+    type: "website",
+  },
+  alternates: {
+    canonical: "/about",
+  },
 };
 
 export default function AboutPage() {
@@ -26,6 +37,7 @@ export default function AboutPage() {
 
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "About", url: "https://itguys.ro/about" }]} />
       <Hero
         headline={hero.headline}
         subheadline={hero.subheadline}

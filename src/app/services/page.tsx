@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { SecurityIllustration } from "@/components/illustrations";
+import { BreadcrumbSchema, FAQSchema } from "@/components/structured-data";
 import { servicesContent } from "@/content";
 import {
   CodeBracketIcon,
@@ -20,16 +21,51 @@ const serviceIcons: Record<string, typeof CodeBracketIcon> = {
 };
 
 export const metadata: Metadata = {
-  title: "Services",
+  title: "Services - Custom Software Development & Security",
   description:
-    "Custom software and security services. Web apps, mobile apps, APIs, security audits, and penetration testing.",
+    "Comprehensive software development and security services including custom web applications, mobile apps, API development, cloud solutions, security audits, and penetration testing. Expert consulting for your technology needs.",
+  openGraph: {
+    title: "Our Services - ITGuys",
+    description:
+      "Custom software and security services. Web apps, mobile apps, APIs, security audits, and penetration testing.",
+    url: "https://itguys.ro/services",
+    type: "website",
+  },
+  alternates: {
+    canonical: "/services",
+  },
 };
 
 export default function ServicesPage() {
   const { hero, services, cta } = servicesContent;
 
+  const faqItems = [
+    {
+      question: "What types of software do you develop?",
+      answer: "We develop custom web applications, mobile apps (iOS and Android), APIs, backend systems, and cloud-based solutions. We specialize in React, Next.js, Node.js, and modern JavaScript technologies.",
+    },
+    {
+      question: "Do you offer security testing services?",
+      answer: "Yes, we provide comprehensive security services including security audits, penetration testing, vulnerability assessments, and security consulting to help protect your applications and infrastructure.",
+    },
+    {
+      question: "What is your development process?",
+      answer: "We follow agile methodologies with iterative development cycles. We start with requirements gathering, then move through design, development, testing, and deployment phases with continuous client communication.",
+    },
+    {
+      question: "Do you work with clients outside Romania?",
+      answer: "Absolutely. While we're based in Romania, we serve clients worldwide across Europe, UK, and other regions. We're experienced in remote collaboration and working across time zones.",
+    },
+    {
+      question: "What technologies do you specialize in?",
+      answer: "Our core expertise includes React, Next.js, Node.js, TypeScript, PostgreSQL, MongoDB, AWS, and various modern web and mobile frameworks. We choose the right technology stack based on your specific needs.",
+    },
+  ];
+
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Services", url: "https://itguys.ro/services" }]} />
+      <FAQSchema items={faqItems} />
       <Hero
         headline={hero.headline}
         subheadline={hero.subheadline}

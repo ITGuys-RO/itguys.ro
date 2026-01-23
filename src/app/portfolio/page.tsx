@@ -1,13 +1,24 @@
 import type { Metadata } from "next";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, Carousel } from "@/components/ui";
+import { BreadcrumbSchema } from "@/components/structured-data";
 import { portfolioContent } from "@/content";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 
 export const metadata: Metadata = {
-  title: "Portfolio",
+  title: "Portfolio - Our Software Development Projects",
   description:
-    "Projects we've built across events, audio, legal tech, iGaming, and more. See our work for XtendLive, AudioMovers, FSC, and others.",
+    "Explore successful projects we've delivered across events, audio technology, legal tech, iGaming, and more. Real-world solutions for XtendLive, AudioMovers, FSC, and other innovative companies. See how we solve complex technical challenges.",
+  openGraph: {
+    title: "Our Portfolio - ITGuys Projects",
+    description:
+      "Projects we've built across events, audio, legal tech, iGaming, and more. See our work for XtendLive, AudioMovers, FSC, and others.",
+    url: "https://itguys.ro/portfolio",
+    type: "website",
+  },
+  alternates: {
+    canonical: "/portfolio",
+  },
 };
 
 export default function PortfolioPage() {
@@ -15,6 +26,7 @@ export default function PortfolioPage() {
 
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Portfolio", url: "https://itguys.ro/portfolio" }]} />
       <Hero headline={hero.headline} subheadline={hero.subheadline} />
 
       <Section wide>

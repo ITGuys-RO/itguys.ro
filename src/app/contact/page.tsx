@@ -2,12 +2,23 @@ import type { Metadata } from "next";
 import { Hero } from "@/components/sections";
 import { ContactForm } from "@/components/sections";
 import { Section } from "@/components/ui";
+import { BreadcrumbSchema } from "@/components/structured-data";
 import { contactContent } from "@/content";
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: "Contact Us - Get a Free Project Consultation",
   description:
-    "Have a project in mind? Tell us about it. We'll respond within 1-2 business days.",
+    "Have a project in mind? Tell us about your software development or security needs. We'll respond within 1-2 business days with a consultation. Based in Romania, serving clients worldwide.",
+  openGraph: {
+    title: "Contact ITGuys - Free Consultation",
+    description:
+      "Have a project in mind? Tell us about it. We'll respond within 1-2 business days.",
+    url: "https://itguys.ro/contact",
+    type: "website",
+  },
+  alternates: {
+    canonical: "/contact",
+  },
 };
 
 export default function ContactPage() {
@@ -15,6 +26,7 @@ export default function ContactPage() {
 
   return (
     <>
+      <BreadcrumbSchema items={[{ name: "Contact", url: "https://itguys.ro/contact" }]} />
       <Hero headline={hero.headline} subheadline={hero.subheadline} />
 
       <Section id="contact-form">
