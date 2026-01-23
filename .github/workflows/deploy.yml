@@ -43,10 +43,15 @@ jobs:
           compatibility_date = "2024-09-23"
           compatibility_flags = ["nodejs_compat"]
           main = ".open-next/worker.js"
-          routes = [
-            { pattern = "itguys.ro", custom_domain = true },
-            { pattern = "www.itguys.ro", custom_domain = true }
-          ]
+          [[routes]]
+          pattern = "itguys.ro"
+          custom_domain = true
+          override_existing_dns_record = true
+
+          [[routes]]
+          pattern = "www.itguys.ro"
+          custom_domain = true
+          override_existing_dns_record = true
 
           [assets]
           directory = ".open-next/assets"
