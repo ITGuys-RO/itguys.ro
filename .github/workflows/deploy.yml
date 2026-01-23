@@ -47,6 +47,11 @@ jobs:
           [assets]
           directory = ".open-next/assets"
 
+          routes = [
+            { pattern = "itguys.ro", custom_domain = true },
+            { pattern = "www.itguys.ro", custom_domain = true }
+          ]
+
           [vars]
           TELEGRAM_BOT_TOKEN = "${{ secrets.TELEGRAM_BOT_TOKEN }}"
           TELEGRAM_CHAT_ID = "${{ secrets.TELEGRAM_CHAT_ID }}"
