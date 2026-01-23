@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
+import crypto from "crypto";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { TeamIllustration } from "@/components/illustrations";
@@ -13,6 +15,11 @@ import {
   AcademicCapIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
+
+function getGravatarUrl(email: string, size = 128) {
+  const hash = crypto.createHash("md5").update(email.toLowerCase().trim()).digest("hex");
+  return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=mp`;
+}
 
 const valueIcons = [LightBulbIcon, ShieldCheckIcon, ChatBubbleBottomCenterTextIcon];
 
@@ -145,10 +152,40 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {team.members.map((member) => (
               <Card key={member.name} className="p-8">
-                <CardTitle className="text-xl">{member.name}</CardTitle>
-                <p className="text-brand-300 font-medium mb-3">
-                  {member.role}
-                </p>
+                <div className="flex items-center gap-4 mb-4">
+                  {member.email ? (
+                    <Image
+                      src={getGravatarUrl(member.email)}
+                      alt={member.name}
+                      width={64}
+                      height={64}
+                      className="rounded-full object-cover w-16 h-16"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 rounded-full bg-brand-800/50 border border-brand-700/30 flex items-center justify-center">
+                      <UserCircleIcon className="w-10 h-10 text-brand-400" />
+                    </div>
+                  )}
+                  <div>
+                    <CardTitle className="text-xl mb-1">
+                      {member.linkedIn ? (
+                        <Link
+                          href={member.linkedIn}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:text-neon transition-colors"
+                        >
+                          {member.name}
+                        </Link>
+                      ) : (
+                        member.name
+                      )}
+                    </CardTitle>
+                    <p className="text-brand-300 font-medium">
+                      {member.role}
+                    </p>
+                  </div>
+                </div>
                 <CardDescription>{member.bio}</CardDescription>
               </Card>
             ))}

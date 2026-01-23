@@ -2,7 +2,8 @@ type TeamMember = {
   name: string;
   role: string;
   bio: string;
-  image?: string;
+  email?: string;
+  linkedIn?: string;
 };
 
 export const aboutContent = {
@@ -68,11 +69,14 @@ export const aboutContent = {
         name: "Catalin Teodorescu",
         role: "Founder & Lead Engineer",
         bio: "15+ years in software development and cybersecurity. Previously at TUI, Electronic Arts, and Team Extension AG. Specializes in secure architecture, DevOps, and web application security.",
+        linkedIn: "https://www.linkedin.com/in/dustfeather/",
+        email: "dustfeather@gmail.com",
       },
       {
         name: "Cristian-Marian Mincu",
         role: "Senior Mobile Developer",
         bio: "10+ years building native iOS and Android apps. Previously at Nagarro and Enea AB. Expert in mobile architecture, IoT integrations, and CI/CD pipelines. Master's in Information Security from Politehnica Bucharest.",
+        linkedIn: "https://www.linkedin.com/in/cristian-marian-mincu-44849690/",
       },
     ] as TeamMember[],
   },
