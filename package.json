@@ -2,6 +2,14 @@
   "name": "itguys-website",
   "version": "0.1.0",
   "private": true,
+  "overrides": {
+    "@smithy/config-resolver": "^4.4.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@smithy/config-resolver": "^4.4.0"
+    }
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
