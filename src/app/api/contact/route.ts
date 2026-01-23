@@ -85,8 +85,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
+    if (!isValidEmail(data.email)) {
       return NextResponse.json(
         { error: "Invalid email address" },
         { status: 400 }
@@ -134,4 +133,17 @@ function escapeHtml(text: string): string {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
+}
+
+function isValidEmail(email: string): boolean {
+  if (typeof email !== "string" || email.length > 254) return false;
+  const atIndex = email.indexOf("@");
+  if (atIndex < 1 || atIndex > 64) return false;
+  const localPart = email.slice(0, atIndex);
+  const domain = email.slice(atIndex + 1);
+  if (localPart.includes(" ") || domain.includes(" ")) return false;
+  if (domain.length < 3 || !domain.includes(".")) return false;
+  const lastDotIndex = domain.lastIndexOf(".");
+  if (lastDotIndex === domain.length - 1 || lastDotIndex === 0) return false;
+  return true;
 }
