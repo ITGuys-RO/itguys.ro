@@ -1,0 +1,8 @@
+name = "itguys-website"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+TELEGRAM_BOT_TOKEN = "your_bot_token_here"
+TELEGRAM_CHAT_ID = "your_chat_id_here"
+TURNSTILE_SECRET_KEY = "your_turnstile_secret_key_here"

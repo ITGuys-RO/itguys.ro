@@ -1,0 +1,46 @@
+name: Deploy to Cloudflare
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate wrangler.toml
+        run: |
+          cat > wrangler.toml << 'EOF'
+          name = "itguys-website"
+          compatibility_date = "2024-01-01"
+          compatibility_flags = ["nodejs_compat"]
+
+          [vars]
+          TELEGRAM_BOT_TOKEN = "${{ secrets.TELEGRAM_BOT_TOKEN }}"
+          TELEGRAM_CHAT_ID = "${{ secrets.TELEGRAM_CHAT_ID }}"
+          TURNSTILE_SECRET_KEY = "${{ secrets.TURNSTILE_SECRET_KEY }}"
+          EOF
+
+      - name: Build
+        run: npm run build:cloudflare
+        env:
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
+
+      - name: Deploy to Cloudflare
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
