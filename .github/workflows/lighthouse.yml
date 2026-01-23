@@ -1,0 +1,59 @@
+name: Lighthouse Report
+
+on:
+  schedule:
+    - cron: "0 8 * * *" # 8AM UTC daily
+  workflow_dispatch: # Allow manual triggers
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Lighthouse
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            https://itguys.ro/
+            https://itguys.ro/about
+            https://itguys.ro/services
+            https://itguys.ro/portfolio
+            https://itguys.ro/contact
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Format Lighthouse Results
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const resultsPath = '.lighthouseci';
+            if (!fs.existsSync(resultsPath)) {
+              console.log('No Lighthouse results found');
+              return;
+            }
+
+            const files = fs.readdirSync(resultsPath).filter(f => f.endsWith('.json') && f.startsWith('lhr-'));
+
+            let summary = '## Lighthouse Report - ' + new Date().toISOString().split('T')[0] + '\n\n';
+
+            for (const file of files) {
+              const data = JSON.parse(fs.readFileSync(path.join(resultsPath, file), 'utf8'));
+              const url = new URL(data.finalUrl).pathname || '/';
+
+              summary += `### ${url === '/' ? 'Home' : url}\n`;
+              summary += `| Metric | Score |\n`;
+              summary += `|--------|-------|\n`;
+              summary += `| Performance | ${Math.round(data.categories.performance.score * 100)} |\n`;
+              summary += `| Accessibility | ${Math.round(data.categories.accessibility.score * 100)} |\n`;
+              summary += `| Best Practices | ${Math.round(data.categories['best-practices'].score * 100)} |\n`;
+              summary += `| SEO | ${Math.round(data.categories.seo.score * 100)} |\n\n`;
+            }
+
+            console.log(summary);
+            core.summary.addRaw(summary).write();
