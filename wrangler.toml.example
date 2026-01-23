@@ -6,6 +6,10 @@ main = ".open-next/worker.js"
 [assets]
 directory = ".open-next/assets"
 
+routes = [
+  { pattern = "yourdomain.com", custom_domain = true }
+]
+
 [vars]
 TELEGRAM_BOT_TOKEN = "your_bot_token_here"
 TELEGRAM_CHAT_ID = "your_chat_id_here"
