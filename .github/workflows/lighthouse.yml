@@ -8,11 +8,15 @@ on:
 jobs:
   lighthouse:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Run Lighthouse
+        id: lighthouse
         uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
@@ -24,7 +28,7 @@ jobs:
           uploadArtifacts: true
           temporaryPublicStorage: true
 
-      - name: Format Lighthouse Results
+      - name: Check Scores and Create PR if Needed
         uses: actions/github-script@v7
         if: always()
         with:
@@ -32,28 +36,130 @@ jobs:
             const fs = require('fs');
             const path = require('path');
 
+            const THRESHOLD = 95;
             const resultsPath = '.lighthouseci';
+
             if (!fs.existsSync(resultsPath)) {
               console.log('No Lighthouse results found');
               return;
             }
 
             const files = fs.readdirSync(resultsPath).filter(f => f.endsWith('.json') && f.startsWith('lhr-'));
+            const date = new Date().toISOString().split('T')[0];
 
-            let summary = '## Lighthouse Report - ' + new Date().toISOString().split('T')[0] + '\n\n';
+            let summary = `## Lighthouse Report - ${date}\n\n`;
+            let issues = [];
 
             for (const file of files) {
               const data = JSON.parse(fs.readFileSync(path.join(resultsPath, file), 'utf8'));
-              const url = new URL(data.finalUrl).pathname || '/';
+              const urlPath = new URL(data.finalUrl).pathname || '/';
+              const pageName = urlPath === '/' ? 'Home' : urlPath;
 
-              summary += `### ${url === '/' ? 'Home' : url}\n`;
-              summary += `| Metric | Score |\n`;
-              summary += `|--------|-------|\n`;
-              summary += `| Performance | ${Math.round(data.categories.performance.score * 100)} |\n`;
-              summary += `| Accessibility | ${Math.round(data.categories.accessibility.score * 100)} |\n`;
-              summary += `| Best Practices | ${Math.round(data.categories['best-practices'].score * 100)} |\n`;
-              summary += `| SEO | ${Math.round(data.categories.seo.score * 100)} |\n\n`;
+              const scores = {
+                'Performance': Math.round(data.categories.performance.score * 100),
+                'Accessibility': Math.round(data.categories.accessibility.score * 100),
+                'Best Practices': Math.round(data.categories['best-practices'].score * 100),
+                'SEO': Math.round(data.categories.seo.score * 100)
+              };
+
+              summary += `### ${pageName}\n`;
+              summary += `| Metric | Score | Status |\n`;
+              summary += `|--------|-------|--------|\n`;
+
+              for (const [metric, score] of Object.entries(scores)) {
+                const status = score >= THRESHOLD ? '✅' : '⚠️';
+                summary += `| ${metric} | ${score} | ${status} |\n`;
+
+                if (score < THRESHOLD) {
+                  issues.push({ page: pageName, metric, score });
+                }
+              }
+              summary += '\n';
             }
 
             console.log(summary);
             core.summary.addRaw(summary).write();
+
+            // Create PR if there are issues
+            if (issues.length > 0) {
+              const branchName = `lighthouse-alert/${date}`;
+              const { exec } = require('child_process');
+              const util = require('util');
+              const execAsync = util.promisify(exec);
+
+              // Check if branch already exists
+              try {
+                await github.rest.repos.getBranch({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  branch: branchName
+                });
+                console.log(`Branch ${branchName} already exists, skipping PR creation`);
+                return;
+              } catch (e) {
+                // Branch doesn't exist, continue
+              }
+
+              // Create issue report file
+              let reportContent = `# Lighthouse Performance Alert - ${date}\n\n`;
+              reportContent += `## Summary\n\n`;
+              reportContent += `The following metrics have dropped below the ${THRESHOLD}% threshold:\n\n`;
+              reportContent += `| Page | Metric | Score |\n`;
+              reportContent += `|------|--------|-------|\n`;
+
+              for (const issue of issues) {
+                reportContent += `| ${issue.page} | ${issue.metric} | ${issue.score}% |\n`;
+              }
+
+              reportContent += `\n## Required Actions\n\n`;
+              reportContent += `1. Investigate the cause of the score drop\n`;
+              reportContent += `2. Implement necessary fixes\n`;
+              reportContent += `3. Verify improvements locally using Lighthouse\n`;
+              reportContent += `4. Update this PR with findings and fixes\n\n`;
+              reportContent += `## Resources\n\n`;
+              reportContent += `- [Lighthouse Documentation](https://developer.chrome.com/docs/lighthouse/)\n`;
+              reportContent += `- [Web Vitals](https://web.dev/vitals/)\n`;
+
+              // Create branch and file
+              const mainRef = await github.rest.git.getRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: 'heads/master'
+              });
+
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `refs/heads/${branchName}`,
+                sha: mainRef.data.object.sha
+              });
+
+              // Create/update the report file
+              await github.rest.repos.createOrUpdateFileContents({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                path: `.github/lighthouse-reports/${date}.md`,
+                message: `docs: add Lighthouse alert report for ${date}`,
+                content: Buffer.from(reportContent).toString('base64'),
+                branch: branchName
+              });
+
+              // Create PR
+              const prBody = `## Lighthouse Performance Alert\n\n` +
+                `Automated Lighthouse testing has detected scores below ${THRESHOLD}%.\n\n` +
+                summary +
+                `\n---\n` +
+                `*This PR was automatically created by the Lighthouse CI workflow.*`;
+
+              const pr = await github.rest.pulls.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `⚠️ Lighthouse Alert: Scores below ${THRESHOLD}% - ${date}`,
+                head: branchName,
+                base: 'master',
+                body: prBody
+              });
+
+              console.log(`Created PR #${pr.data.number}: ${pr.data.html_url}`);
+              core.summary.addRaw(`\n\n🚨 **Alert PR Created:** ${pr.data.html_url}`).write();
+            }
