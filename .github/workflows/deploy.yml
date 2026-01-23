@@ -46,12 +46,10 @@ jobs:
           [[routes]]
           pattern = "itguys.ro"
           custom_domain = true
-          override_existing_dns_record = true
 
           [[routes]]
           pattern = "www.itguys.ro"
           custom_domain = true
-          override_existing_dns_record = true
 
           [assets]
           directory = ".open-next/assets"
