@@ -43,14 +43,13 @@ jobs:
           compatibility_date = "2024-09-23"
           compatibility_flags = ["nodejs_compat"]
           main = ".open-next/worker.js"
-
-          [assets]
-          directory = ".open-next/assets"
-
           routes = [
             { pattern = "itguys.ro", custom_domain = true },
             { pattern = "www.itguys.ro", custom_domain = true }
           ]
+
+          [assets]
+          directory = ".open-next/assets"
 
           [vars]
           TELEGRAM_BOT_TOKEN = "${{ secrets.TELEGRAM_BOT_TOKEN }}"
