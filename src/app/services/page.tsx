@@ -78,21 +78,21 @@ export default function ServicesPage() {
         return (
         <Section
           key={service.id}
-          className={index % 2 === 1 ? "bg-brand-50 dark:bg-brand-900" : ""}
+          className={index % 2 === 1 ? "bg-brand-900/50" : ""}
         >
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-brand-100 dark:bg-brand-800">
-              <Icon className="w-6 h-6 text-brand-600 dark:text-brand-400" />
+            <div className="p-2 rounded-lg bg-brand-800/50 border border-brand-700/30">
+              <Icon className="w-6 h-6 text-neon" />
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white">
+            <h2 className="text-2xl md:text-3xl font-bold text-white">
               {service.title}
             </h2>
           </div>
-          <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
+          <p className="mt-4 text-lg text-brand-200">
             {service.description}
           </p>
           {service.details && (
-            <p className="mt-4 text-zinc-600 dark:text-zinc-400">
+            <p className="mt-4 text-brand-200">
               {service.details}
             </p>
           )}
@@ -113,7 +113,7 @@ export default function ServicesPage() {
               {service.technologies.map((tech) => (
                 <span
                   key={tech}
-                  className="px-3 py-1 text-sm bg-brand-100 dark:bg-brand-800 text-brand-700 dark:text-brand-300 rounded-full"
+                  className="px-3 py-1 text-sm bg-brand-800/50 border border-brand-700/30 text-brand-200 rounded-full hover:border-neon/30 hover:text-neon transition-colors"
                 >
                   {tech}
                 </span>
@@ -122,7 +122,7 @@ export default function ServicesPage() {
           )}
 
           {service.note && (
-            <p className="mt-6 text-sm text-zinc-500 dark:text-zinc-500 italic">
+            <p className="mt-6 text-sm text-brand-400 italic">
               {service.note}
             </p>
           )}

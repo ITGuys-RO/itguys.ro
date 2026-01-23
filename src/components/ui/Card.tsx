@@ -3,19 +3,38 @@ import { clsx } from "clsx";
 type CardProps = {
   children: React.ReactNode;
   className?: string;
+  glowOnHover?: boolean;
+  cornerAccents?: boolean;
 };
 
-export function Card({ children, className }: CardProps) {
+export function Card({ children, className, glowOnHover = true, cornerAccents = false }: CardProps) {
   return (
     <div
       className={clsx(
-        "p-6 rounded-xl bg-white dark:bg-brand-800 border border-brand-200 dark:border-brand-700",
-        "shadow-sm shadow-brand-200/50 dark:shadow-brand-950/50",
-        "transition-all duration-300 hover:shadow-lg hover:shadow-brand-500/20 hover:border-brand-300 dark:hover:border-brand-600",
-        "hover:-translate-y-1",
+        "relative p-6 rounded-xl",
+        // Glass morphism base
+        "bg-brand-900/60 dark:bg-brand-900/60 backdrop-blur-xl",
+        "border border-brand-700/30 dark:border-brand-700/30",
+        // Transition
+        "transition-all duration-300",
+        // Hover effects
+        glowOnHover && [
+          "hover:border-brand-400/40 dark:hover:border-brand-400/40",
+          "hover:shadow-[0_0_30px_rgba(81,116,161,0.15),0_0_60px_rgba(81,116,161,0.05)]",
+          "hover:-translate-y-1",
+        ],
         className
       )}
     >
+      {/* Corner accents for HUD style */}
+      {cornerAccents && (
+        <>
+          <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-neon/40 rounded-tl-lg" />
+          <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-neon/40 rounded-tr-lg" />
+          <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-neon/40 rounded-bl-lg" />
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-neon/40 rounded-br-lg" />
+        </>
+      )}
       {children}
     </div>
   );
@@ -30,7 +49,7 @@ export function CardTitle({ children, className }: CardTitleProps) {
   return (
     <h3
       className={clsx(
-        "text-lg font-semibold text-zinc-900 dark:text-white mb-2",
+        "text-lg font-semibold text-white mb-2",
         className
       )}
     >
@@ -46,7 +65,7 @@ type CardDescriptionProps = {
 
 export function CardDescription({ children, className }: CardDescriptionProps) {
   return (
-    <p className={clsx("text-zinc-600 dark:text-zinc-400", className)}>
+    <p className={clsx("text-brand-200 dark:text-brand-200", className)}>
       {children}
     </p>
   );

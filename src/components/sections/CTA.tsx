@@ -10,35 +10,65 @@ type CTAProps = {
 
 export function CTA({ headline, body, buttonText, buttonHref }: CTAProps) {
   return (
-    <Section className="relative bg-brand-600 dark:bg-brand-800 text-white overflow-hidden">
-      {/* Background decoration */}
+    <Section className="relative bg-brand-900 text-white overflow-hidden">
+      {/* Cyberpunk background decoration */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-brand-500/30 dark:bg-brand-700/30 rounded-full blur-3xl" />
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-brand-400/20 dark:bg-brand-900/30 rounded-full blur-3xl" />
-        {/* Grid overlay */}
-        <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="cta-grid" width="32" height="32" patternUnits="userSpaceOnUse">
-              <path d="M 32 0 L 0 0 0 32" fill="none" stroke="white" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#cta-grid)" />
-        </svg>
+        {/* Perspective grid */}
+        <div className="absolute inset-x-0 bottom-0 h-[70%] overflow-hidden">
+          <div
+            className="absolute inset-0 opacity-20 animate-grid-pulse"
+            style={{
+              backgroundImage: `
+                linear-gradient(rgba(0, 212, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.3) 1px, transparent 1px)
+              `,
+              backgroundSize: '50px 50px',
+              transform: 'perspective(400px) rotateX(55deg)',
+              transformOrigin: 'center top',
+            }}
+          />
+        </div>
+
+        {/* Glowing orbs */}
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-neon/20 rounded-full blur-[100px]" />
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-brand-400/30 rounded-full blur-[100px]" />
+
+        {/* Accent lines */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neon/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-400/30 to-transparent" />
+
+        {/* Corner accents */}
+        <div className="absolute top-0 left-0 w-32 h-32">
+          <div className="absolute top-4 left-4 w-16 h-px bg-gradient-to-r from-neon/50 to-transparent" />
+          <div className="absolute top-4 left-4 h-16 w-px bg-gradient-to-b from-neon/50 to-transparent" />
+        </div>
+        <div className="absolute top-0 right-0 w-32 h-32">
+          <div className="absolute top-4 right-4 w-16 h-px bg-gradient-to-l from-neon/50 to-transparent" />
+          <div className="absolute top-4 right-4 h-16 w-px bg-gradient-to-b from-neon/50 to-transparent" />
+        </div>
+        <div className="absolute bottom-0 left-0 w-32 h-32">
+          <div className="absolute bottom-4 left-4 w-16 h-px bg-gradient-to-r from-neon/50 to-transparent" />
+          <div className="absolute bottom-4 left-4 h-16 w-px bg-gradient-to-t from-neon/50 to-transparent" />
+        </div>
+        <div className="absolute bottom-0 right-0 w-32 h-32">
+          <div className="absolute bottom-4 right-4 w-16 h-px bg-gradient-to-l from-neon/50 to-transparent" />
+          <div className="absolute bottom-4 right-4 h-16 w-px bg-gradient-to-t from-neon/50 to-transparent" />
+        </div>
       </div>
 
       <div className="relative text-center">
         <AnimateOnScroll animation="fade-in-up">
-          <h2 className="text-2xl md:text-3xl font-bold">{headline}</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-white">{headline}</h2>
         </AnimateOnScroll>
         <AnimateOnScroll animation="fade-in-up" delay={100}>
-          <p className="mt-4 text-brand-100 max-w-xl mx-auto">{body}</p>
+          <p className="mt-4 text-brand-200 max-w-xl mx-auto">{body}</p>
         </AnimateOnScroll>
         <AnimateOnScroll animation="scale-in" delay={200}>
           <div className="mt-8">
             <Button
               href={buttonHref}
-              variant="primary"
-              className="bg-white text-brand-700 hover:bg-brand-50 dark:bg-white dark:text-brand-700 inline-flex items-center gap-2"
+              variant="neon"
+              className="inline-flex items-center gap-2"
             >
               {buttonText}
               <ArrowRightIcon className="w-4 h-4" />
