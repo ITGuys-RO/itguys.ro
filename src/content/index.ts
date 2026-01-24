@@ -4,12 +4,16 @@ import * as enContent from "./en";
 import * as roContent from "./ro";
 import * as frContent from "./fr";
 import * as deContent from "./de";
+import * as itContent from "./it";
+import * as esContent from "./es";
 
 const contentByLocale = {
   en: enContent,
   ro: roContent,
   fr: frContent,
   de: deContent,
+  it: itContent,
+  es: esContent,
 } as const;
 
 export function getContent(locale: Locale) {
