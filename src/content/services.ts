@@ -2,13 +2,13 @@ export const servicesContent = {
   hero: {
     headline: "What We Build",
     subheadline:
-      "Custom software and security services backed by 25+ combined years at EA, TUI, and Nagarro.",
+      "Custom software development backed by 25+ combined years at EA, TUI, and Nagarro. Web, mobile, cloud, and AI solutions.",
   },
 
   services: [
     {
       id: "development",
-      title: "Web applications",
+      title: "Web Applications",
       description:
         "From internal dashboards to customer-facing platforms. SPAs, PWAs, admin panels, SaaS products. Whatever your users need.",
       details:
@@ -56,44 +56,75 @@ export const servicesContent = {
       technologies: ["AWS", "Docker", "Kubernetes", "Terraform", "CircleCI"],
     },
     {
-      id: "consulting",
+      id: "backend",
       title: "Backend, APIs & Integrations",
       description:
         "The engine behind your application. RESTful APIs, microservices, database optimization, and third-party integrations.",
       details:
         "MySQL, PostgreSQL, Elastic Search for complex queries. We handle legacy modernization, system integrations, and standalone modules for larger products. If you have a specific technical challenge, we're happy to dig in.",
-      technologies: ["MySQL", "PostgreSQL", "Elastic Search", "Redis"],
+      technologies: ["Node.js", "Python", "PHP", "GraphQL", "REST APIs"],
     },
     {
-      id: "security",
-      title: "Security Services",
+      id: "ai-ml",
+      title: "AI & Machine Learning",
       description:
-        "With backgrounds at Electronic Arts and TUI, we don't just build software. We know how to break it. That perspective shapes everything we create.",
-      details: null,
+        "From natural language processing to computer vision, we build intelligent systems that learn and adapt. Turn data into actionable insights.",
+      details:
+        "We develop custom AI solutions using TensorFlow, PyTorch, and Scikit-learn. Whether it's building predictive models, implementing NLP for chatbots, or creating computer vision systems for image recognition, we focus on practical AI that solves real business problems.",
+      technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
       subservices: [
         {
-          title: "Penetration testing",
+          title: "Natural Language Processing",
           description:
-            "Manual and automated vulnerability testing against web apps, APIs, and infrastructure. The same techniques we used at EA, now for your applications.",
+            "Chatbots, sentiment analysis, text classification, and machine translation. Make your applications understand and respond to human language.",
         },
         {
-          title: "Security audits",
+          title: "Computer Vision",
           description:
-            "Code reviews and architecture assessments to find vulnerabilities before attackers do. We've reviewed game binaries and enterprise platforms.",
+            "Image recognition, object detection, and video analysis. From quality control to security monitoring.",
         },
         {
-          title: "Cloud security",
+          title: "Deep Learning",
           description:
-            "AWS configuration reviews, IAM policies, network segmentation, secrets management. The boring stuff that prevents breaches.",
+            "Neural networks for complex pattern recognition. When traditional algorithms aren't enough.",
         },
         {
-          title: "DDoS & Bot protection",
+          title: "Predictive Analytics",
           description:
-            "Implementation and tuning of Akamai and Cloudflare defenses. Credential stuffing, scraping, DDoS, account takeover prevention. Akamai-certified.",
+            "Machine learning models that forecast trends, detect anomalies, and optimize decisions based on historical data.",
         },
       ],
-      note: "We can work as a standalone security team or alongside your development work with us.",
-      technologies: ["Akamai", "Cloudflare", "Kali Linux", "AWS Security"],
+    },
+    {
+      id: "database",
+      title: "Database Design & Management",
+      description:
+        "SQL, NoSQL, data modeling, and administration. We design databases that scale and stay fast.",
+      details:
+        "From schema design to performance optimization, we handle the data layer. MySQL, PostgreSQL, MongoDB, Redis. We choose based on your access patterns, not our preferences. Database administration, migrations, and disaster recovery included.",
+      technologies: ["MySQL", "PostgreSQL", "MongoDB", "Redis", "Elasticsearch"],
+      subservices: [
+        {
+          title: "SQL Databases",
+          description:
+            "Relational database design, optimization, and management. MySQL, PostgreSQL, and enterprise solutions.",
+        },
+        {
+          title: "NoSQL Solutions",
+          description:
+            "Document stores, key-value databases, and graph databases for high-velocity and unstructured data.",
+        },
+        {
+          title: "Data Modeling",
+          description:
+            "Schema design that supports your queries and scales with your growth. Getting the foundation right.",
+        },
+        {
+          title: "Database Administration",
+          description:
+            "Backup strategies, performance tuning, security hardening, and disaster recovery planning.",
+        },
+      ],
     },
   ],
 

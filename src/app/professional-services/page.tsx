@@ -3,70 +3,62 @@ import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { SecurityIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, FAQSchema } from "@/components/structured-data";
-import { servicesContent } from "@/content";
+import { professionalServicesContent } from "@/content";
 import {
-  CodeBracketIcon,
-  CloudIcon,
-  CpuChipIcon,
-  DevicePhoneMobileIcon,
-  CircleStackIcon,
-  SparklesIcon,
+  ShieldCheckIcon,
+  BeakerIcon,
+  ChartBarIcon,
+  ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 
-const serviceIcons: Record<string, typeof CodeBracketIcon> = {
-  development: CodeBracketIcon,
-  mobile: DevicePhoneMobileIcon,
-  cloud: CloudIcon,
-  backend: CpuChipIcon,
-  "ai-ml": SparklesIcon,
-  database: CircleStackIcon,
+const serviceIcons: Record<string, typeof ShieldCheckIcon> = {
+  "qa-testing": BeakerIcon,
+  security: ShieldCheckIcon,
+  "data-analytics": ChartBarIcon,
+  consulting: ChatBubbleLeftRightIcon,
 };
 
 export const metadata: Metadata = {
-  title: "Development Services - Web, Mobile, Cloud & AI",
+  title: "Professional Services - QA, Security & Analytics",
   description:
-    "Custom software development services including web applications, mobile apps, cloud infrastructure, APIs, AI/ML solutions, and database design. Built by experts from EA, TUI, and Nagarro.",
+    "Professional IT services including quality assurance, security audits, penetration testing, and data analytics. Expert consulting backed by experience at Electronic Arts and TUI.",
   openGraph: {
-    title: "Development Services - ITGuys",
+    title: "Professional Services - ITGuys",
     description:
-      "Custom software development: web apps, mobile apps, cloud infrastructure, AI/ML, and database solutions.",
-    url: "https://itguys.ro/services",
+      "QA testing, security audits, penetration testing, and analytics services from experts with EA and TUI backgrounds.",
+    url: "https://itguys.ro/professional-services",
     type: "website",
   },
   alternates: {
-    canonical: "/services",
+    canonical: "/professional-services",
   },
 };
 
-export default function ServicesPage() {
-  const { hero, services, cta } = servicesContent;
+export default function ProfessionalServicesPage() {
+  const { hero, services, cta } = professionalServicesContent;
 
   const faqItems = [
     {
-      question: "What types of software do you develop?",
-      answer: "We develop custom web applications, mobile apps (iOS and Android), APIs, backend systems, and cloud-based solutions. We specialize in React, Next.js, Node.js, and modern JavaScript technologies.",
+      question: "What security testing services do you offer?",
+      answer: "We provide penetration testing, security audits, cloud security reviews, DDoS protection, and incident response services. Our team has backgrounds at Electronic Arts and TUI, bringing enterprise-level security expertise.",
     },
     {
-      question: "Do you offer security testing services?",
-      answer: "Yes, we provide comprehensive security services including security audits, penetration testing, vulnerability assessments, and security consulting to help protect your applications and infrastructure.",
+      question: "Do you offer QA services for existing projects?",
+      answer: "Yes, we can integrate with your existing development team to provide manual testing, automated testing, performance testing, and security testing services. We work with Selenium, Appium, JMeter, and other industry-standard tools.",
     },
     {
-      question: "What is your development process?",
-      answer: "We follow agile methodologies with iterative development cycles. We start with requirements gathering, then move through design, development, testing, and deployment phases with continuous client communication.",
+      question: "What analytics solutions do you provide?",
+      answer: "We implement custom dashboards, real-time monitoring, performance tracking, and competitive analysis. We help you transform raw data into actionable business intelligence using tools like Google Analytics, Mixpanel, and Grafana.",
     },
     {
-      question: "Do you work with clients outside Romania?",
-      answer: "Absolutely. While we're based in Romania, we serve clients worldwide across Europe, UK, and other regions. We're experienced in remote collaboration and working across time zones.",
-    },
-    {
-      question: "What technologies do you specialize in?",
-      answer: "Our core expertise includes React, Next.js, Node.js, TypeScript, PostgreSQL, MongoDB, AWS, and various modern web and mobile frameworks. We choose the right technology stack based on your specific needs.",
+      question: "Can you help with compliance and data privacy?",
+      answer: "Absolutely. We help organizations achieve compliance with GDPR, CCPA, HIPAA, and other regulations. Our security audits include data privacy assessments and recommendations for regulatory compliance.",
     },
   ];
 
   return (
     <>
-      <BreadcrumbSchema items={[{ name: "Services", url: "https://itguys.ro/services" }]} />
+      <BreadcrumbSchema items={[{ name: "Professional Services", url: "https://itguys.ro/professional-services" }]} />
       <FAQSchema items={faqItems} />
       <Hero
         headline={hero.headline}
@@ -76,7 +68,7 @@ export default function ServicesPage() {
       />
 
       {services.map((service, index) => {
-        const Icon = serviceIcons[service.id] || CodeBracketIcon;
+        const Icon = serviceIcons[service.id] || ShieldCheckIcon;
         return (
         <Section
           key={service.id}
@@ -110,7 +102,7 @@ export default function ServicesPage() {
             </div>
           )}
 
-          {service.technologies && (
+          {service.technologies && service.technologies.length > 0 && (
             <div className="mt-6 flex flex-wrap gap-2">
               {service.technologies.map((tech) => (
                 <span
@@ -121,6 +113,12 @@ export default function ServicesPage() {
                 </span>
               ))}
             </div>
+          )}
+
+          {service.note && (
+            <p className="mt-6 text-sm text-brand-400 italic">
+              {service.note}
+            </p>
           )}
         </Section>
         );

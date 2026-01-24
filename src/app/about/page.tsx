@@ -14,6 +14,14 @@ import {
   BuildingOffice2Icon,
   AcademicCapIcon,
   UserCircleIcon,
+  SparklesIcon,
+  ArrowPathIcon,
+  CubeTransparentIcon,
+  WrenchScrewdriverIcon,
+  RocketLaunchIcon,
+  UserGroupIcon,
+  EyeIcon,
+  FlagIcon,
 } from "@heroicons/react/24/outline";
 
 function getGravatarUrl(email: string, size = 128) {
@@ -21,7 +29,14 @@ function getGravatarUrl(email: string, size = 128) {
   return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=mp`;
 }
 
-const valueIcons = [LightBulbIcon, ShieldCheckIcon, ChatBubbleBottomCenterTextIcon];
+const valueIcons = [
+  SparklesIcon,         // Simplicity
+  ShieldCheckIcon,      // Reliability
+  ArrowPathIcon,        // Adaptability
+  LightBulbIcon,        // Security
+  WrenchScrewdriverIcon, // Right tool for the job
+  ChatBubbleBottomCenterTextIcon, // Clear communication
+];
 
 export const metadata: Metadata = {
   title: "About Us - Expert Software Development Team",
@@ -40,7 +55,7 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
-  const { hero, ourStory, experience, whatWeBelieve, certifications, team, cta } = aboutContent;
+  const { hero, vision, ourStory, mission, experience, whatWeBelieve, deliveryModels, certifications, team, cta } = aboutContent;
 
   return (
     <>
@@ -52,12 +67,51 @@ export default function AboutPage() {
         illustration={<TeamIllustration className="w-full h-auto max-w-md mx-auto" />}
       />
 
+      <Section className="bg-brand-900/50">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 rounded-lg bg-brand-800/50 border border-brand-700/30">
+            <EyeIcon className="w-6 h-6 text-neon" />
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-white">
+            {vision.title}
+          </h2>
+        </div>
+        <div className="space-y-4">
+          {vision.body.map((paragraph, i) => (
+            <p key={i} className="text-lg text-brand-200">
+              {paragraph}
+            </p>
+          ))}
+          <p className="text-xl font-semibold text-neon mt-6">
+            {vision.highlight}
+          </p>
+        </div>
+      </Section>
+
       <Section>
         <h2 className="text-2xl md:text-3xl font-bold text-white">
           {ourStory.title}
         </h2>
         <div className="mt-6 space-y-4">
           {ourStory.body.map((paragraph, i) => (
+            <p key={i} className="text-lg text-brand-200">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+      </Section>
+
+      <Section className="bg-brand-900/50">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 rounded-lg bg-brand-800/50 border border-brand-700/30">
+            <FlagIcon className="w-6 h-6 text-neon" />
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-white">
+            {mission.title}
+          </h2>
+        </div>
+        <div className="space-y-4">
+          {mission.body.map((paragraph, i) => (
             <p key={i} className="text-lg text-brand-200">
               {paragraph}
             </p>
@@ -102,7 +156,12 @@ export default function AboutPage() {
         <h2 className="text-2xl md:text-3xl font-bold text-white">
           {whatWeBelieve.title}
         </h2>
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        {whatWeBelieve.intro && (
+          <p className="mt-4 text-lg text-brand-200 max-w-3xl">
+            {whatWeBelieve.intro}
+          </p>
+        )}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {whatWeBelieve.values.map((value, index) => {
             const Icon = valueIcons[index] || LightBulbIcon;
             return (
@@ -119,6 +178,29 @@ export default function AboutPage() {
       </Section>
 
       <Section className="bg-brand-900/50">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 rounded-lg bg-brand-800/50 border border-brand-700/30">
+            <RocketLaunchIcon className="w-6 h-6 text-neon" />
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-white">
+            {deliveryModels.title}
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {deliveryModels.models.map((model) => (
+            <Card key={model.title} cornerAccents className="p-8">
+              <div className="p-2 rounded-lg bg-brand-800/50 border border-brand-700/30 w-fit mb-4">
+                <UserGroupIcon className="w-6 h-6 text-brand-300" />
+              </div>
+              <CardTitle className="text-xl mb-3">{model.title}</CardTitle>
+              <CardDescription className="mb-4">{model.description}</CardDescription>
+              <p className="text-sm text-neon font-medium">{model.ideal}</p>
+            </Card>
+          ))}
+        </div>
+      </Section>
+
+      <Section>
         <div className="flex items-center gap-3 mb-8">
           <div className="p-2 rounded-lg bg-brand-800/50 border border-brand-700/30">
             <AcademicCapIcon className="w-6 h-6 text-neon" />
