@@ -8,7 +8,13 @@
   "pnpm": {
     "overrides": {
       "@smithy/config-resolver": "^4.4.0"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp",
+      "unrs-resolver",
+      "workerd"
+    ]
   },
   "scripts": {
     "dev": "next dev",
