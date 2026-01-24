@@ -71,7 +71,7 @@ export const portfolioContent = {
       clientType: "Enterprise",
       industry: "iGaming",
       challenge:
-        "O platformă de afiliere poker stabilită cu 250.000+ membri trebuia să scaleze sistemele de tracking rakeback și plăți în timp ce se integra cu zeci de camere de poker și site-uri de jocuri. Securitatea și tracking-ul financiar precis erau critice.",
+        "O platformă de afiliere poker activă încă din 2004, cu peste 250.000 de membri, avea nevoie de extinderea sistemelor de tracking rakeback și plăți, integrându-se totodată cu zeci de camere de poker și site-uri de jocuri. Securitatea și tracking-ul financiar precis erau critice.",
       solution:
         "Am construit sisteme robuste de tracking și plată capabile să gestioneze volume mari de tranzacții. Am implementat integrări sigure cu mai multe platforme de jocuri și calcule automate de plăți. Am adăugat funcții de comunitate incluzând turnee freeroll și clasamente.",
       tech: ["CraftCMS", "PHP", "MySQL", "Redis", "JavaScript"],
@@ -85,7 +85,7 @@ export const portfolioContent = {
       challenge:
         "Firmele de avocatură aveau nevoie de o soluție cuprinzătoare de management al practicii bazată pe cloud, acoperind time tracking, facturare, managementul cazurilor și raportare financiară. Sistemul trebuia să gestioneze date sensibile ale clienților cu cerințe stricte de securitate.",
       solution:
-        "Am dezvoltat o platformă completă de management al practicii legale cu timesheets integrate, facturare automatizată, tracking audiențe în instanță și dashboard-uri de performanță. Am implementat criptare SSL și controale de acces bazate pe roluri pentru protecția datelor.",
+        "Am dezvoltat o platformă completă de management al practicii legale cu pontaj integrat, facturare automatizată, tracking audiențe în instanță și dashboard-uri de performanță. Am implementat criptare SSL și controale de acces bazate pe roluri pentru protecția datelor.",
       tech: ["PHP", "Laravel", "Angular", "MySQL", "AWS"],
       result: "Servind firme de avocatură de la practicieni individuali la practici mari cu mai multe echipe în Europa.",
       url: "https://www.keyvision.eu/",

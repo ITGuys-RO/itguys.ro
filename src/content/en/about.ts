@@ -1,3 +1,5 @@
+import { getCombinedYearsText } from "@/lib/utils";
+
 type TeamMember = {
   name: string;
   role: string;
@@ -10,7 +12,7 @@ export const aboutContent = {
   hero: {
     headline: "We're ITGuys",
     subheadline:
-      "Combined 25+ years of experience from Electronic Arts, TUI, Nagarro, and Swiss enterprises. Web, mobile, and security. Based in Romania, working worldwide.",
+      `Combined ${getCombinedYearsText()} years of experience from Electronic Arts, TUI, Nagarro, and Swiss enterprises. Web, mobile, and security. Based in Romania, working worldwide.`,
   },
 
   vision: {

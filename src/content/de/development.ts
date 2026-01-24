@@ -1,8 +1,10 @@
+import { getCombinedYears } from "@/lib/utils";
+
 export const developmentContent = {
   hero: {
     headline: "Was wir bauen",
     subheadline:
-      "Maßgeschneiderte Softwareentwicklung, gestützt durch über 25 Jahre kombinierte Erfahrung bei EA, TUI und Nagarro. Web-, Mobile-, Cloud- und KI-Lösungen.",
+      `Maßgeschneiderte Softwareentwicklung, gestützt durch über ${getCombinedYears()} Jahre kombinierte Erfahrung bei EA, TUI und Nagarro. Web-, Mobile-, Cloud- und KI-Lösungen.`,
   },
 
   services: [
