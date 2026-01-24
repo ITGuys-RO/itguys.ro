@@ -39,7 +39,7 @@ export const homeContent = {
       {
         title: "Echipe Enterprise",
         description:
-          "Experiență la Nagarro, TUI și clienți enterprise elvețieni. Module independente, integrări sigure și sisteme care respectă cerințele de conformitate.",
+          "Experiență la Nagarro, TUI și clienți enterprise elvețieni. Module independente, integrări sigure și sisteme care îndeplicesc cerințele de conformitate.",
       },
     ],
   },

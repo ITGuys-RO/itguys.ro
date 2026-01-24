@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, Carousel } from "@/components/ui";
-import { BreadcrumbSchema } from "@/components/structured-data";
+import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { locales, type Locale } from "@/i18n/config";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
@@ -38,7 +38,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       languages: {
         en: "/portfolio",
         ro: "/ro/portfolio",
+        fr: "/fr/portfolio",
+        de: "/de/portfolio",
       },
+    },
+    twitter: {
+      card: "summary_large_image",
+      images: ["/og-image.png"],
     },
   };
 }
@@ -51,6 +57,7 @@ export default async function PortfolioPage({ params }: Props) {
 
   return (
     <>
+      <OrganizationSchema />
       <BreadcrumbSchema items={[{ name: "Portfolio", url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/portfolio` }]} />
       <Hero headline={hero.headline} subheadline={hero.subheadline} />
 

@@ -3,6 +3,7 @@ interface WebPageSchemaProps {
   description: string;
   url: string;
   breadcrumbs?: Array<{ name: string; url: string }>;
+  language?: string;
 }
 
 export function WebPageSchema({
@@ -10,7 +11,16 @@ export function WebPageSchema({
   description,
   url,
   breadcrumbs,
+  language = "en",
 }: WebPageSchemaProps) {
+  // Map locale codes to proper language tags
+  const languageMap: Record<string, string> = {
+    en: "en-US",
+    ro: "ro-RO",
+    fr: "fr-FR",
+    de: "de-DE",
+  };
+
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -29,7 +39,7 @@ export function WebPageSchema({
         "@id": `${url}#breadcrumb`,
       },
     }),
-    inLanguage: "en-US",
+    inLanguage: languageMap[language] || "en-US",
     potentialAction: [
       {
         "@type": "ReadAction",

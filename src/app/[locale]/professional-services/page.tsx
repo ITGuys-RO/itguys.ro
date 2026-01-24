@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { SecurityIllustration } from "@/components/illustrations";
-import { BreadcrumbSchema, FAQSchema } from "@/components/structured-data";
+import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { locales, type Locale } from "@/i18n/config";
 import {
@@ -51,7 +51,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       languages: {
         en: "/professional-services",
         ro: "/ro/professional-services",
+        fr: "/fr/professional-services",
+        de: "/de/professional-services",
       },
+    },
+    twitter: {
+      card: "summary_large_image",
+      images: ["/og-image.png"],
     },
   };
 }
@@ -83,6 +89,7 @@ export default async function ProfessionalServicesPage({ params }: Props) {
 
   return (
     <>
+      <OrganizationSchema />
       <BreadcrumbSchema items={[{ name: "Professional Services", url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/professional-services` }]} />
       <FAQSchema items={faqItems} />
       <Hero

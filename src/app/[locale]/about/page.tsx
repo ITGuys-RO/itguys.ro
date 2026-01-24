@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
-import { BreadcrumbSchema } from "@/components/structured-data";
+import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { getGravatarUrl } from "@/lib/gravatar";
 import { locales, type Locale } from "@/i18n/config";
@@ -79,6 +79,7 @@ export default async function AboutPage({ params }: Props) {
 
   return (
     <>
+      <OrganizationSchema />
       <BreadcrumbSchema
         items={[
           {

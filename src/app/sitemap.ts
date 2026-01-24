@@ -3,7 +3,9 @@ import { locales, defaultLocale } from '@/i18n/config';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://itguys.ro';
-  const currentDate = new Date();
+  // Use a static date for lastModified to avoid constant changes
+  // Update this date when you make significant content updates
+  const lastModified = new Date('2026-01-24');
 
   const pages = [
     { path: '', priority: 1.0, changeFrequency: 'weekly' as const },
@@ -16,6 +18,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const entries: MetadataRoute.Sitemap = [];
 
+  // Create language alternatives object dynamically
+  const createLanguageAlternates = (path: string) => {
+    const alternates: Record<string, string> = {};
+    for (const locale of locales) {
+      alternates[locale] = locale === defaultLocale
+        ? `${baseUrl}${path}`
+        : `${baseUrl}/${locale}${path}`;
+    }
+    return alternates;
+  };
+
   for (const page of pages) {
     for (const locale of locales) {
       const url = locale === defaultLocale
@@ -24,16 +37,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
       entries.push({
         url,
-        lastModified: currentDate,
+        lastModified,
         changeFrequency: page.changeFrequency,
         priority: page.priority,
         alternates: {
-          languages: {
-            en: `${baseUrl}${page.path}`,
-            ro: `${baseUrl}/ro${page.path}`,
-            fr: `${baseUrl}/fr${page.path}`,
-            de: `${baseUrl}/de${page.path}`,
-          },
+          languages: createLanguageAlternates(page.path),
         },
       });
     }

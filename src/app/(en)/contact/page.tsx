@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Hero } from "@/components/sections";
 import { ContactForm } from "@/components/sections";
 import { Section } from "@/components/ui";
-import { BreadcrumbSchema } from "@/components/structured-data";
+import { BreadcrumbSchema, OrganizationSchema, LocalBusinessSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 
 export const metadata: Metadata = {
@@ -19,7 +19,15 @@ export const metadata: Metadata = {
     languages: {
       en: "/contact",
       ro: "/ro/contact",
+      fr: "/fr/contact",
+      de: "/de/contact",
     },
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact ITGuys - Free Consultation",
+    description: "Have a project in mind? We'll respond within 1-2 business days.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -29,6 +37,8 @@ export default function ContactPage() {
 
   return (
     <>
+      <OrganizationSchema />
+      <LocalBusinessSchema />
       <BreadcrumbSchema items={[{ name: "Contact", url: "https://itguys.ro/contact" }]} />
       <Hero headline={hero.headline} subheadline={hero.subheadline} />
 
