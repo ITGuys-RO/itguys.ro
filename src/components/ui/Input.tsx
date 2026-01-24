@@ -80,6 +80,7 @@ type SelectProps = {
   label: string;
   name: string;
   options: { value: string; label: string }[];
+  placeholder?: string;
   required?: boolean;
   className?: string;
 };
@@ -88,6 +89,7 @@ export function Select({
   label,
   name,
   options,
+  placeholder = "Select an option",
   required = false,
   className,
 }: SelectProps) {
@@ -106,7 +108,7 @@ export function Select({
         required={required}
         className="px-4 py-3 rounded-lg border border-brand-700/50 bg-brand-900/60 backdrop-blur-sm text-white focus:outline-none focus:ring-2 focus:ring-neon/30 focus:border-neon/50 focus:shadow-[0_0_15px_rgba(0,212,255,0.15)] transition-all duration-300"
       >
-        <option value="" className="bg-brand-900">Select an option</option>
+        <option value="" className="bg-brand-900">{placeholder}</option>
         {options.map((option) => (
           <option key={option.value} value={option.value} className="bg-brand-900">
             {option.label}
