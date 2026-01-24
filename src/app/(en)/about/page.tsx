@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
-import { BreadcrumbSchema } from "@/components/structured-data";
+import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { getGravatarUrl } from "@/lib/gravatar";
 import {
@@ -30,6 +30,12 @@ export const metadata: Metadata = {
       de: "/de/about",
     },
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Us - ITGuys",
+    description: "Learn about ITGuys - a team with 25+ years combined experience from EA, TUI, and Nagarro.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function AboutPage() {
@@ -49,6 +55,7 @@ export default function AboutPage() {
 
   return (
     <>
+      <OrganizationSchema />
       <BreadcrumbSchema
         items={[
           {

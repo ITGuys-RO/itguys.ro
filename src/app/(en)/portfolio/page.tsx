@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, Carousel } from "@/components/ui";
-import { BreadcrumbSchema } from "@/components/structured-data";
+import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 
@@ -19,7 +19,15 @@ export const metadata: Metadata = {
     languages: {
       en: "/portfolio",
       ro: "/ro/portfolio",
+      fr: "/fr/portfolio",
+      de: "/de/portfolio",
     },
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Our Portfolio - ITGuys Projects",
+    description: "Projects we've built across events, audio, legal tech, iGaming, and more.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -29,6 +37,7 @@ export default function PortfolioPage() {
 
   return (
     <>
+      <OrganizationSchema />
       <BreadcrumbSchema items={[{ name: "Portfolio", url: "https://itguys.ro/portfolio" }]} />
       <Hero headline={hero.headline} subheadline={hero.subheadline} />
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Hero } from "@/components/sections";
 import { ContactForm } from "@/components/sections";
 import { Section } from "@/components/ui";
-import { BreadcrumbSchema } from "@/components/structured-data";
+import { BreadcrumbSchema, OrganizationSchema, LocalBusinessSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { locales, type Locale } from "@/i18n/config";
 
@@ -38,7 +38,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       languages: {
         en: "/contact",
         ro: "/ro/contact",
+        fr: "/fr/contact",
+        de: "/de/contact",
       },
+    },
+    twitter: {
+      card: "summary_large_image",
+      images: ["/og-image.png"],
     },
   };
 }
@@ -51,6 +57,8 @@ export default async function ContactPage({ params }: Props) {
 
   return (
     <>
+      <OrganizationSchema />
+      <LocalBusinessSchema />
       <BreadcrumbSchema items={[{ name: "Contact", url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/contact` }]} />
       <Hero headline={hero.headline} subheadline={hero.subheadline} />
 

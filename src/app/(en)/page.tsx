@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Hero, CTA } from "@/components/sections";
-import { WebPageSchema } from "@/components/structured-data";
+import { WebPageSchema, OrganizationSchema } from "@/components/structured-data";
 import { Section, Card, CardTitle, CardDescription, AnimateOnScroll } from "@/components/ui";
 import { HeroIllustration } from "@/components/illustrations";
 import { getContent } from "@/content";
@@ -26,10 +26,24 @@ export const metadata: Metadata = {
     languages: {
       en: "/",
       ro: "/ro",
+      fr: "/fr",
+      de: "/de",
     },
   },
   openGraph: {
     url: "https://itguys.ro",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "ITGuys - Custom Software Development",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/og-image.png"],
   },
 };
 
@@ -39,10 +53,12 @@ export default function HomePage() {
 
   return (
     <>
+      <OrganizationSchema />
       <WebPageSchema
         title="ITGuys - Custom Software Development & Security Services"
         description="Custom web and mobile apps, plus security services. We build software with the right technology for your problem."
         url="https://itguys.ro"
+        language="en"
       />
       <Hero
         headline={hero.headline}

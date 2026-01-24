@@ -68,7 +68,7 @@ export const servicesContent = {
         {
           title: "Plăți & e-commerce",
           description:
-            "Stripe, Shopify și integrări de plată personalizate. Tranzacții sigure care respectă cerințele de conformitate.",
+            "Stripe, Shopify și integrări de plată personalizate. Tranzacții sigure care îndeplinesc cerințele de conformitate.",
         },
         {
           title: "Sănătate & pharma",

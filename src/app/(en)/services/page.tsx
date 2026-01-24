@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { SecurityIllustration } from "@/components/illustrations";
-import { BreadcrumbSchema, FAQSchema } from "@/components/structured-data";
+import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import {
   CodeBracketIcon,
@@ -36,7 +36,15 @@ export const metadata: Metadata = {
     languages: {
       en: "/services",
       ro: "/ro/services",
+      fr: "/fr/services",
+      de: "/de/services",
     },
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Development Services - Web, Mobile, Cloud & AI",
+    description: "Custom software development services from experts at EA, TUI, and Nagarro.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -69,6 +77,7 @@ export default function ServicesPage() {
 
   return (
     <>
+      <OrganizationSchema />
       <BreadcrumbSchema items={[{ name: "Services", url: "https://itguys.ro/services" }]} />
       <FAQSchema items={faqItems} />
       <Hero

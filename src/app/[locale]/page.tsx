@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Hero, CTA } from "@/components/sections";
-import { WebPageSchema } from "@/components/structured-data";
+import { WebPageSchema, OrganizationSchema } from "@/components/structured-data";
 import { Section, Card, CardTitle, CardDescription, AnimateOnScroll } from "@/components/ui";
 import { HeroIllustration } from "@/components/illustrations";
 import { getContent } from "@/content";
@@ -38,10 +38,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       languages: {
         en: "/",
         ro: "/ro",
+        fr: "/fr",
+        de: "/de",
       },
     },
     openGraph: {
       url: locale === "en" ? "https://itguys.ro" : `https://itguys.ro/${locale}`,
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: "ITGuys - Custom Software Development",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      images: ["/og-image.png"],
     },
   };
 }
@@ -54,10 +68,12 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <>
+      <OrganizationSchema />
       <WebPageSchema
         title="ITGuys - Custom Software Development & Security Services"
         description="Custom web and mobile apps, plus security services. We build software with the right technology for your problem."
         url={locale === "en" ? "https://itguys.ro" : `https://itguys.ro/${locale}`}
+        language={locale}
       />
       <Hero
         headline={hero.headline}
