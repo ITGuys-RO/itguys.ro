@@ -1,17 +1,30 @@
 @import "tailwindcss";
 
-/* Dark mode is the default */
+/* Theme CSS Variables */
 :root {
+  /* Dark theme (default) */
   --background: #0a0f14;
   --foreground: #fafafa;
+  --glass-bg: rgba(17, 25, 33, 0.8);
+  --glass-border: rgba(112, 146, 190, 0.2);
+  --card-bg: rgba(17, 25, 33, 0.6);
+  --header-bg: rgba(10, 15, 20, 0.8);
+  --text-primary: #fafafa;
+  --text-secondary: #9eb8d6;
+  --text-muted: #7092be;
 }
 
-/* Light mode only for explicit preference */
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: #f8fafc;
-    --foreground: #1a2636;
-  }
+/* Light theme - applied via .light class on html */
+html.light {
+  --background: #f8fafc;
+  --foreground: #1a2636;
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(81, 116, 161, 0.2);
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --header-bg: rgba(248, 250, 252, 0.8);
+  --text-primary: #1a2636;
+  --text-secondary: #3d5a82;
+  --text-muted: #5174a1;
 }
 
 @theme inline {
@@ -40,13 +53,17 @@
 
 html {
   scroll-behavior: smooth;
-  /* Force dark class for dark-first approach */
   color-scheme: dark;
+}
+
+html.light {
+  color-scheme: light;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Glow effect utilities */
@@ -66,15 +83,353 @@ body {
   box-shadow: 0 0 10px rgba(0, 212, 255, 0.25);
 }
 
+/* Light mode: softer glow effects */
+html.light .glow-brand {
+  box-shadow: 0 0 20px rgba(81, 116, 161, 0.3);
+}
+
+html.light .glow-neon {
+  box-shadow: 0 0 20px rgba(0, 153, 187, 0.3);
+}
+
+html.light .glow-brand-sm {
+  box-shadow: 0 0 10px rgba(81, 116, 161, 0.2);
+}
+
+html.light .glow-neon-sm {
+  box-shadow: 0 0 10px rgba(0, 153, 187, 0.2);
+}
+
 /* Glass morphism utility */
 .glass {
-  background: rgba(17, 25, 33, 0.8);
+  background: var(--glass-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 
 .glass-border {
-  border: 1px solid rgba(112, 146, 190, 0.2);
+  border: 1px solid var(--glass-border);
+}
+
+/* Theme-aware component styles */
+.theme-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+.theme-header {
+  background: var(--header-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Light mode text color overrides */
+html.light .text-white {
+  color: var(--text-primary);
+}
+
+html.light .text-brand-200 {
+  color: var(--text-secondary);
+}
+
+html.light .text-brand-300 {
+  color: var(--text-muted);
+}
+
+html.light .text-brand-400 {
+  color: #5174a1;
+}
+
+/* Light mode background overrides */
+html.light .bg-brand-900\/50 {
+  background-color: rgba(232, 238, 245, 0.7);
+}
+
+html.light .bg-brand-900\/60 {
+  background-color: rgba(232, 238, 245, 0.8);
+}
+
+html.light .bg-brand-900\/80 {
+  background-color: rgba(232, 238, 245, 0.9);
+}
+
+html.light .bg-brand-800\/30 {
+  background-color: rgba(197, 212, 232, 0.4);
+}
+
+html.light .bg-brand-800\/50 {
+  background-color: rgba(197, 212, 232, 0.5);
+}
+
+/* Light mode border overrides */
+html.light .border-brand-700\/30 {
+  border-color: rgba(81, 116, 161, 0.25);
+}
+
+html.light .border-brand-700\/50 {
+  border-color: rgba(81, 116, 161, 0.35);
+}
+
+html.light .border-brand-400\/40 {
+  border-color: rgba(81, 116, 161, 0.4);
+}
+
+/* Light mode hover states */
+html.light .hover\:border-brand-400\/40:hover {
+  border-color: rgba(81, 116, 161, 0.5);
+}
+
+html.light .hover\:border-neon\/30:hover {
+  border-color: rgba(0, 153, 187, 0.4);
+}
+
+/* Light mode shadows */
+html.light .hover\:shadow-\[0_0_20px_rgba\(81\,116\,161\,0\.15\)\]:hover {
+  box-shadow: 0 0 20px rgba(81, 116, 161, 0.25);
+}
+
+html.light .drop-shadow-\[0_0_10px_rgba\(0\,212\,255\,0\.3\)\] {
+  filter: drop-shadow(0 0 10px rgba(0, 153, 187, 0.4));
+}
+
+/* Light mode neon color adjustment for better contrast */
+html.light .text-neon {
+  color: #0099bb;
+}
+
+html.light .border-neon\/40 {
+  border-color: rgba(0, 153, 187, 0.4);
+}
+
+html.light .bg-neon {
+  background-color: #0099bb;
+}
+
+/* Light mode gradient overlays */
+html.light .via-neon\/30 {
+  --tw-gradient-via: rgba(0, 153, 187, 0.3);
+}
+
+html.light .via-brand-400\/50 {
+  --tw-gradient-via: rgba(81, 116, 161, 0.4);
+}
+
+/* Stats bar in light mode */
+html.light .border-y.border-brand-700\/30.bg-brand-900\/80 {
+  background-color: rgba(232, 238, 245, 0.9);
+  border-color: rgba(81, 116, 161, 0.2);
+}
+
+/* CTA section background */
+html.light .bg-brand-900 {
+  background-color: #e8eef5;
+}
+
+html.light .bg-brand-950 {
+  background-color: #f8fafc;
+}
+
+/* Hero bottom fade gradient */
+html.light .from-brand-950 {
+  --tw-gradient-from: #f8fafc;
+}
+
+html.light .to-transparent {
+  --tw-gradient-to: transparent;
+}
+
+/* Glow orbs - softer in light mode */
+html.light .bg-neon\/20 {
+  background-color: rgba(0, 153, 187, 0.1);
+}
+
+html.light .bg-neon\/10 {
+  background-color: rgba(0, 153, 187, 0.05);
+}
+
+html.light .bg-brand-400\/20 {
+  background-color: rgba(81, 116, 161, 0.1);
+}
+
+html.light .bg-brand-400\/30 {
+  background-color: rgba(81, 116, 161, 0.15);
+}
+
+html.light .bg-brand-500\/10 {
+  background-color: rgba(61, 90, 130, 0.08);
+}
+
+/* Neon badge in light mode */
+html.light .bg-neon\/10 {
+  background-color: rgba(0, 153, 187, 0.1);
+}
+
+html.light .border-neon\/30 {
+  border-color: rgba(0, 153, 187, 0.3);
+}
+
+/* Grid pattern opacity - more visible in light mode */
+html.light .opacity-\[0\.02\] {
+  opacity: 0.04;
+}
+
+/* Hover drop shadows for light mode */
+html.light .hover\:drop-shadow-\[0_0_8px_rgba\(0\,212\,255\,0\.5\)\]:hover {
+  filter: drop-shadow(0 0 8px rgba(0, 153, 187, 0.5));
+}
+
+html.light .hover\:drop-shadow-\[0_0_8px_rgba\(0\,212\,255\,0\.4\)\]:hover {
+  filter: drop-shadow(0 0 8px rgba(0, 153, 187, 0.4));
+}
+
+/* Carousel/Card shadows for light mode */
+html.light .hover\:shadow-\[0_0_30px_rgba\(81\,116\,161\,0\.15\)\,0_0_60px_rgba\(81\,116\,161\,0\.05\)\]:hover {
+  box-shadow: 0 4px 20px rgba(81, 116, 161, 0.15), 0 8px 40px rgba(81, 116, 161, 0.08);
+}
+
+/* Light mode input/form styles */
+html.light input,
+html.light textarea,
+html.light select {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(81, 116, 161, 0.3) !important;
+  color: #1a2636 !important;
+}
+
+html.light input::placeholder,
+html.light textarea::placeholder {
+  color: #5174a1 !important;
+}
+
+html.light input:focus,
+html.light textarea:focus,
+html.light select:focus {
+  border-color: #0099bb !important;
+  box-shadow: 0 0 0 2px rgba(0, 153, 187, 0.2), 0 0 15px rgba(0, 153, 187, 0.1) !important;
+}
+
+html.light select option {
+  background-color: #ffffff;
+  color: #1a2636;
+}
+
+/* Form input specific overrides */
+html.light .bg-brand-900\/60 {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+html.light .border-brand-700\/50 {
+  border-color: rgba(81, 116, 161, 0.3);
+}
+
+html.light .placeholder\:text-brand-400::placeholder {
+  color: #5174a1;
+}
+
+html.light .focus\:ring-neon\/30:focus {
+  --tw-ring-color: rgba(0, 153, 187, 0.3);
+}
+
+html.light .focus\:border-neon\/50:focus {
+  border-color: rgba(0, 153, 187, 0.5);
+}
+
+html.light .focus\:shadow-\[0_0_15px_rgba\(0\,212\,255\,0\.15\)\]:focus {
+  box-shadow: 0 0 15px rgba(0, 153, 187, 0.15);
+}
+
+/* Button focus ring offset for light mode */
+html.light .focus\:ring-offset-brand-950 {
+  --tw-ring-offset-color: #f8fafc;
+}
+
+/* Secondary button text in light mode */
+html.light .text-brand-200 {
+  color: #3d5a82;
+}
+
+html.light .hover\:text-white:hover {
+  color: #1a2636;
+}
+
+/* Neon button adjustments for light mode */
+html.light .hover\:bg-neon\/10:hover {
+  background-color: rgba(0, 153, 187, 0.1);
+}
+
+html.light .border-neon\/50 {
+  border-color: rgba(0, 153, 187, 0.5);
+}
+
+html.light .hover\:border-neon:hover {
+  border-color: #0099bb;
+}
+
+/* Technology tag hover */
+html.light .hover\:text-neon:hover {
+  color: #0099bb;
+}
+
+/* Stats neon text glow - softer in light mode */
+html.light .drop-shadow-\[0_0_10px_rgba\(0\,212\,255\,0\.3\)\] {
+  filter: drop-shadow(0 0 8px rgba(0, 153, 187, 0.4));
+}
+
+/* Corner accent borders */
+html.light .border-t.border-l.border-neon\/40,
+html.light .border-t.border-r.border-neon\/40,
+html.light .border-b.border-l.border-neon\/40,
+html.light .border-b.border-r.border-neon\/40 {
+  border-color: rgba(0, 153, 187, 0.4);
+}
+
+/* Team member cards */
+html.light .bg-brand-800\/30 {
+  background-color: rgba(197, 212, 232, 0.4);
+}
+
+/* Certification badges */
+html.light .bg-brand-800\/50.border.border-brand-700\/30 {
+  background-color: rgba(197, 212, 232, 0.5);
+  border-color: rgba(81, 116, 161, 0.25);
+}
+
+/* Language switcher dropdown */
+html.light .bg-brand-900.border.border-brand-700\/50 {
+  background-color: #ffffff;
+  border-color: rgba(81, 116, 161, 0.3);
+  box-shadow: 0 4px 20px rgba(81, 116, 161, 0.15);
+}
+
+html.light .bg-brand-800 {
+  background-color: rgba(197, 212, 232, 0.6);
+}
+
+html.light .hover\:bg-brand-800:hover {
+  background-color: rgba(197, 212, 232, 0.6);
+}
+
+/* Shadow adjustments */
+html.light .shadow-black\/20 {
+  --tw-shadow-color: rgba(81, 116, 161, 0.15);
+}
+
+/* Theme switcher hover */
+html.light .hover\:bg-brand-800\/50:hover {
+  background-color: rgba(197, 212, 232, 0.5);
+}
+
+/* Contact form card styling */
+html.light .bg-brand-900\/60.backdrop-blur-sm.border.border-brand-700\/30 {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(81, 116, 161, 0.25);
+}
+
+/* Sticky sidebar */
+html.light .sticky.top-24 .bg-brand-900\/60 {
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 /* Blob animation for background effects */

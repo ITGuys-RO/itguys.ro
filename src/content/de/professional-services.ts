@@ -7,33 +7,33 @@ export const professionalServicesContent = {
 
   services: [
     {
-      id: "qa-testing",
-      title: "QA & Testing Services",
+      id: "consulting",
+      title: "Technische Beratung",
       description:
-        "Qualität ist nicht optional. Wir stellen sicher, dass Ihre Software einwandfrei funktioniert durch umfassende manuelle und automatisierte Tests.",
+        "Expertenberatung zu Architekturentscheidungen, Technologiewahl und Entwicklungsstrategien.",
       details:
-        "Unser Testansatz umfasst Funktionalität, Performance, Sicherheit und User Experience. Wir nutzen branchenübliche Tools wie Selenium, Appium und JMeter, um Probleme zu erkennen, bevor sie Ihre Nutzer erreichen.",
-      technologies: ["Selenium", "Appium", "JMeter", "Postman", "Cypress"],
+        "Manchmal brauchen Sie eine zweite Meinung oder Expertenberatung, bevor Sie sich auf eine Richtung festlegen. Wir bieten Beratungsdienste, um Ihnen bei informierten Entscheidungen über Ihren Technologie-Stack, Ihre Architektur und Ihren Entwicklungsansatz zu helfen.",
+      technologies: [],
       subservices: [
         {
-          title: "Manuelle Tests",
+          title: "Architektur-Review",
           description:
-            "Praktische Tests, die UX-Probleme, Edge Cases und reale Szenarien erfassen, die automatisierte Tests übersehen.",
+            "Bewertung Ihrer aktuellen Architektur mit Empfehlungen für Skalierbarkeit, Sicherheit und Wartbarkeit.",
         },
         {
-          title: "Automatisierte Tests",
+          title: "Technologieauswahl",
           description:
-            "Selenium, Appium und individuelle Test-Suites für schnelle, wiederholbare Regressionstests über alle Builds hinweg.",
+            "Unparteiische Beratung bei der Wahl der richtigen Technologien für Ihre spezifischen Anforderungen und Einschränkungen.",
         },
         {
-          title: "Performance-Tests",
+          title: "Code-Review",
           description:
-            "Lasttests, Stresstests und Engpass-Identifizierung. Kennen Sie Ihre Grenzen, bevor Ihre Nutzer sie finden.",
+            "Experten-Review Ihres Codes mit Fokus auf Best Practices, Sicherheitslücken und Performance-Probleme.",
         },
         {
-          title: "Sicherheitstests",
+          title: "DevSecOps-Strategie",
           description:
-            "Schwachstellen-Scans, Penetrationstests und Risikobewertung integriert in Ihren Entwicklungszyklus.",
+            "Integration von Sicherheit in Ihren Entwicklungsprozess. Shift left ohne Verlangsamung.",
         },
       ],
     },
@@ -111,33 +111,33 @@ export const professionalServicesContent = {
       ],
     },
     {
-      id: "consulting",
-      title: "Technische Beratung",
+      id: "qa-testing",
+      title: "QA & Testing Services",
       description:
-        "Expertenberatung zu Architekturentscheidungen, Technologiewahl und Entwicklungsstrategien.",
+        "Qualität ist nicht optional. Wir stellen sicher, dass Ihre Software einwandfrei funktioniert durch umfassende manuelle und automatisierte Tests.",
       details:
-        "Manchmal brauchen Sie eine zweite Meinung oder Expertenberatung, bevor Sie sich auf eine Richtung festlegen. Wir bieten Beratungsdienste, um Ihnen bei informierten Entscheidungen über Ihren Technologie-Stack, Ihre Architektur und Ihren Entwicklungsansatz zu helfen.",
-      technologies: [],
+        "Unser Testansatz umfasst Funktionalität, Performance, Sicherheit und User Experience. Wir nutzen branchenübliche Tools wie Selenium, Appium und JMeter, um Probleme zu erkennen, bevor sie Ihre Nutzer erreichen.",
+      technologies: ["Selenium", "Appium", "JMeter", "Postman", "Cypress"],
       subservices: [
         {
-          title: "Architektur-Review",
+          title: "Manuelle Tests",
           description:
-            "Bewertung Ihrer aktuellen Architektur mit Empfehlungen für Skalierbarkeit, Sicherheit und Wartbarkeit.",
+            "Praktische Tests, die UX-Probleme, Edge Cases und reale Szenarien erfassen, die automatisierte Tests übersehen.",
         },
         {
-          title: "Technologieauswahl",
+          title: "Automatisierte Tests",
           description:
-            "Unparteiische Beratung bei der Wahl der richtigen Technologien für Ihre spezifischen Anforderungen und Einschränkungen.",
+            "Selenium, Appium und individuelle Test-Suites für schnelle, wiederholbare Regressionstests über alle Builds hinweg.",
         },
         {
-          title: "Code-Review",
+          title: "Performance-Tests",
           description:
-            "Experten-Review Ihres Codes mit Fokus auf Best Practices, Sicherheitslücken und Performance-Probleme.",
+            "Lasttests, Stresstests und Engpass-Identifizierung. Kennen Sie Ihre Grenzen, bevor Ihre Nutzer sie finden.",
         },
         {
-          title: "DevSecOps-Strategie",
+          title: "Sicherheitstests",
           description:
-            "Integration von Sicherheit in Ihren Entwicklungsprozess. Shift left ohne Verlangsamung.",
+            "Schwachstellen-Scans, Penetrationstests und Risikobewertung integriert in Ihren Entwicklungszyklus.",
         },
       ],
     },

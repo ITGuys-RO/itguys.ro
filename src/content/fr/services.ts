@@ -7,6 +7,37 @@ export const servicesContent = {
 
   services: [
     {
+      id: "ai-ml",
+      title: "IA & Machine Learning",
+      description:
+        "Du traitement du langage naturel à la vision par ordinateur, nous construisons des systèmes intelligents qui apprennent et s'adaptent. Transformez vos données en informations exploitables.",
+      details:
+        "Nous développons des solutions IA personnalisées avec TensorFlow, PyTorch et Scikit-learn. Que ce soit pour des modèles prédictifs, du NLP pour chatbots ou des systèmes de vision par ordinateur pour la reconnaissance d'images, nous nous concentrons sur l'IA pratique qui résout de vrais problèmes business.",
+      technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
+      subservices: [
+        {
+          title: "Traitement du Langage Naturel",
+          description:
+            "Chatbots, analyse de sentiment, classification de texte et traduction automatique. Faites comprendre et répondre vos applications au langage humain.",
+        },
+        {
+          title: "Vision par Ordinateur",
+          description:
+            "Reconnaissance d'images, détection d'objets et analyse vidéo. Du contrôle qualité à la surveillance de sécurité.",
+        },
+        {
+          title: "Deep Learning",
+          description:
+            "Réseaux neuronaux pour la reconnaissance de patterns complexes. Quand les algorithmes traditionnels ne suffisent pas.",
+        },
+        {
+          title: "Analytics Prédictive",
+          description:
+            "Modèles de machine learning qui prévoient les tendances, détectent les anomalies et optimisent les décisions basées sur les données historiques.",
+        },
+      ],
+    },
+    {
       id: "development",
       title: "Applications Web",
       description:
@@ -63,37 +94,6 @@ export const servicesContent = {
       details:
         "MySQL, PostgreSQL, Elastic Search pour les requêtes complexes. Nous gérons la modernisation des systèmes legacy, les intégrations système et les modules autonomes pour les produits plus importants. Si vous avez un défi technique spécifique, nous sommes heureux de l'approfondir.",
       technologies: ["Node.js", "Python", "PHP", "GraphQL", "REST APIs"],
-    },
-    {
-      id: "ai-ml",
-      title: "IA & Machine Learning",
-      description:
-        "Du traitement du langage naturel à la vision par ordinateur, nous construisons des systèmes intelligents qui apprennent et s'adaptent. Transformez vos données en informations exploitables.",
-      details:
-        "Nous développons des solutions IA personnalisées avec TensorFlow, PyTorch et Scikit-learn. Que ce soit pour des modèles prédictifs, du NLP pour chatbots ou des systèmes de vision par ordinateur pour la reconnaissance d'images, nous nous concentrons sur l'IA pratique qui résout de vrais problèmes business.",
-      technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
-      subservices: [
-        {
-          title: "Traitement du Langage Naturel",
-          description:
-            "Chatbots, analyse de sentiment, classification de texte et traduction automatique. Faites comprendre et répondre vos applications au langage humain.",
-        },
-        {
-          title: "Vision par Ordinateur",
-          description:
-            "Reconnaissance d'images, détection d'objets et analyse vidéo. Du contrôle qualité à la surveillance de sécurité.",
-        },
-        {
-          title: "Deep Learning",
-          description:
-            "Réseaux neuronaux pour la reconnaissance de patterns complexes. Quand les algorithmes traditionnels ne suffisent pas.",
-        },
-        {
-          title: "Analytics Prédictive",
-          description:
-            "Modèles de machine learning qui prévoient les tendances, détectent les anomalies et optimisent les décisions basées sur les données historiques.",
-        },
-      ],
     },
     {
       id: "database",

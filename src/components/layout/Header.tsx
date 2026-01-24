@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
 import { type Locale } from "@/i18n/config";
 import {
   WrenchScrewdriverIcon,
@@ -29,11 +30,11 @@ export function Header({ locale }: Props) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-brand-950/80 backdrop-blur-xl border-b border-brand-700/30">
+    <header className="fixed top-0 left-0 right-0 z-50 theme-header border-b border-brand-700/30">
       {/* Neon accent line at bottom */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-400/50 to-transparent" />
 
-      <nav className="max-w-4xl mx-auto px-6 md:px-8">
+      <nav className="max-w-6xl mx-auto px-6 md:px-8">
         <div className="flex items-center justify-between h-16">
           <Link
             href="/"
@@ -54,7 +55,7 @@ export function Header({ locale }: Props) {
           </Link>
 
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-4 lg:gap-6">
             {navigation.map((item) => (
               <Link
                 key={item.name.en}
@@ -65,6 +66,7 @@ export function Header({ locale }: Props) {
                 {item.name[locale]}
               </Link>
             ))}
+            <ThemeSwitcher />
             <LanguageSwitcher locale={locale} />
             <Button href="/contact" variant="primary" className="flex items-center gap-1.5">
               <ChatBubbleLeftRightIcon className="w-4 h-4" />
@@ -127,6 +129,7 @@ export function Header({ locale }: Props) {
                 </Link>
               ))}
               <div className="flex items-center gap-4 mt-2">
+                <ThemeSwitcher />
                 <LanguageSwitcher locale={locale} />
               </div>
               <Button href="/contact" variant="primary" className="mt-2 flex items-center gap-2">

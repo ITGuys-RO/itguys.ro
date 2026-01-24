@@ -7,33 +7,33 @@ export const professionalServicesContent = {
 
   services: [
     {
-      id: "qa-testing",
-      title: "Servicii QA & Testare",
+      id: "consulting",
+      title: "Consultanță Tehnică",
       description:
-        "Calitatea nu este opțională. Ne asigurăm că software-ul tău funcționează impecabil prin testare manuală și automatizată cuprinzătoare.",
+        "Ghidare expertă pentru decizii de arhitectură, alegeri de tehnologie și strategii de dezvoltare.",
       details:
-        "Abordarea noastră de testare acoperă funcționalitatea, performanța, securitatea și experiența utilizatorului. Folosim instrumente standard din industrie precum Selenium, Appium și JMeter pentru a detecta problemele înainte să ajungă la utilizatori.",
-      technologies: ["Selenium", "Appium", "JMeter", "Postman", "Cypress"],
+        "Uneori ai nevoie de o a doua opinie sau ghidare expertă înainte de a te angaja într-o direcție. Oferim servicii de consultanță pentru a te ajuta să iei decizii informate despre stack-ul tău de tehnologie, arhitectură și abordarea dezvoltării.",
+      technologies: [],
       subservices: [
         {
-          title: "Testare Manuală",
+          title: "Revizuire Arhitectură",
           description:
-            "Testare hands-on care surprinde probleme UX, cazuri limită și scenarii din lumea reală pe care testele automate le ratează.",
+            "Evaluarea arhitecturii tale curente cu recomandări pentru scalabilitate, securitate și mentenabilitate.",
         },
         {
-          title: "Testare Automatizată",
+          title: "Selecție Tehnologie",
           description:
-            "Selenium, Appium și suite de teste personalizate pentru testare de regresie rapidă și repetabilă pe toate build-urile.",
+            "Ghidare imparțială pentru alegerea tehnologiilor potrivite pentru cerințele și constrângerile tale specifice.",
         },
         {
-          title: "Testare Performanță",
+          title: "Revizuire Cod",
           description:
-            "Testare de încărcare, testare de stres și identificare blocaje. Cunoaște-ți limitele înainte ca utilizatorii să le găsească.",
+            "Revizuire expertă a codului tău concentrată pe best practices, vulnerabilități de securitate și probleme de performanță.",
         },
         {
-          title: "Testare Securitate",
+          title: "Strategie DevSecOps",
           description:
-            "Scanare vulnerabilități, testare de penetrare și evaluare risc integrate în ciclul tău de dezvoltare.",
+            "Integrarea securității în procesul tău de dezvoltare. Shift left fără încetinire.",
         },
       ],
     },
@@ -111,33 +111,33 @@ export const professionalServicesContent = {
       ],
     },
     {
-      id: "consulting",
-      title: "Consultanță Tehnică",
+      id: "qa-testing",
+      title: "Servicii QA & Testare",
       description:
-        "Ghidare expertă pentru decizii de arhitectură, alegeri de tehnologie și strategii de dezvoltare.",
+        "Calitatea nu este opțională. Ne asigurăm că software-ul tău funcționează impecabil prin testare manuală și automatizată cuprinzătoare.",
       details:
-        "Uneori ai nevoie de o a doua opinie sau ghidare expertă înainte de a te angaja într-o direcție. Oferim servicii de consultanță pentru a te ajuta să iei decizii informate despre stack-ul tău de tehnologie, arhitectură și abordarea dezvoltării.",
-      technologies: [],
+        "Abordarea noastră de testare acoperă funcționalitatea, performanța, securitatea și experiența utilizatorului. Folosim instrumente standard din industrie precum Selenium, Appium și JMeter pentru a detecta problemele înainte să ajungă la utilizatori.",
+      technologies: ["Selenium", "Appium", "JMeter", "Postman", "Cypress"],
       subservices: [
         {
-          title: "Revizuire Arhitectură",
+          title: "Testare Manuală",
           description:
-            "Evaluarea arhitecturii tale curente cu recomandări pentru scalabilitate, securitate și mentenabilitate.",
+            "Testare hands-on care surprinde probleme UX, cazuri limită și scenarii din lumea reală pe care testele automate le ratează.",
         },
         {
-          title: "Selecție Tehnologie",
+          title: "Testare Automatizată",
           description:
-            "Ghidare imparțială pentru alegerea tehnologiilor potrivite pentru cerințele și constrângerile tale specifice.",
+            "Selenium, Appium și suite de teste personalizate pentru testare de regresie rapidă și repetabilă pe toate build-urile.",
         },
         {
-          title: "Revizuire Cod",
+          title: "Testare Performanță",
           description:
-            "Revizuire expertă a codului tău concentrată pe best practices, vulnerabilități de securitate și probleme de performanță.",
+            "Testare de încărcare, testare de stres și identificare blocaje. Cunoaște-ți limitele înainte ca utilizatorii să le găsească.",
         },
         {
-          title: "Strategie DevSecOps",
+          title: "Testare Securitate",
           description:
-            "Integrarea securității în procesul tău de dezvoltare. Shift left fără încetinire.",
+            "Scanare vulnerabilități, testare de penetrare și evaluare risc integrate în ciclul tău de dezvoltare.",
         },
       ],
     },

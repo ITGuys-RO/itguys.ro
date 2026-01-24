@@ -7,6 +7,37 @@ export const servicesContent = {
 
   services: [
     {
+      id: "ai-ml",
+      title: "AI & Machine Learning",
+      description:
+        "From natural language processing to computer vision, we build intelligent systems that learn and adapt. Turn data into actionable insights.",
+      details:
+        "We develop custom AI solutions using TensorFlow, PyTorch, and Scikit-learn. Whether it's building predictive models, implementing NLP for chatbots, or creating computer vision systems for image recognition, we focus on practical AI that solves real business problems.",
+      technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
+      subservices: [
+        {
+          title: "Natural Language Processing",
+          description:
+            "Chatbots, sentiment analysis, text classification, and machine translation. Make your applications understand and respond to human language.",
+        },
+        {
+          title: "Computer Vision",
+          description:
+            "Image recognition, object detection, and video analysis. From quality control to security monitoring.",
+        },
+        {
+          title: "Deep Learning",
+          description:
+            "Neural networks for complex pattern recognition. When traditional algorithms aren't enough.",
+        },
+        {
+          title: "Predictive Analytics",
+          description:
+            "Machine learning models that forecast trends, detect anomalies, and optimize decisions based on historical data.",
+        },
+      ],
+    },
+    {
       id: "development",
       title: "Web Applications",
       description:
@@ -63,37 +94,6 @@ export const servicesContent = {
       details:
         "MySQL, PostgreSQL, Elastic Search for complex queries. We handle legacy modernization, system integrations, and standalone modules for larger products. If you have a specific technical challenge, we're happy to dig in.",
       technologies: ["Node.js", "Python", "PHP", "GraphQL", "REST APIs"],
-    },
-    {
-      id: "ai-ml",
-      title: "AI & Machine Learning",
-      description:
-        "From natural language processing to computer vision, we build intelligent systems that learn and adapt. Turn data into actionable insights.",
-      details:
-        "We develop custom AI solutions using TensorFlow, PyTorch, and Scikit-learn. Whether it's building predictive models, implementing NLP for chatbots, or creating computer vision systems for image recognition, we focus on practical AI that solves real business problems.",
-      technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
-      subservices: [
-        {
-          title: "Natural Language Processing",
-          description:
-            "Chatbots, sentiment analysis, text classification, and machine translation. Make your applications understand and respond to human language.",
-        },
-        {
-          title: "Computer Vision",
-          description:
-            "Image recognition, object detection, and video analysis. From quality control to security monitoring.",
-        },
-        {
-          title: "Deep Learning",
-          description:
-            "Neural networks for complex pattern recognition. When traditional algorithms aren't enough.",
-        },
-        {
-          title: "Predictive Analytics",
-          description:
-            "Machine learning models that forecast trends, detect anomalies, and optimize decisions based on historical data.",
-        },
-      ],
     },
     {
       id: "database",

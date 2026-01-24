@@ -7,6 +7,37 @@ export const servicesContent = {
 
   services: [
     {
+      id: "ai-ml",
+      title: "AI & Machine Learning",
+      description:
+        "De la procesarea limbajului natural la computer vision, construim sisteme inteligente care învață și se adaptează. Transformăm datele în informații acționabile.",
+      details:
+        "Dezvoltăm soluții AI personalizate folosind TensorFlow, PyTorch și Scikit-learn. Fie că e vorba de construirea modelelor predictive, implementarea NLP pentru chatboți sau crearea sistemelor de computer vision pentru recunoașterea imaginilor, ne concentrăm pe AI practic care rezolvă probleme reale de business.",
+      technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
+      subservices: [
+        {
+          title: "Procesare Limbaj Natural",
+          description:
+            "Chatboți, analiză sentimente, clasificare text și traducere automată. Fă aplicațiile tale să înțeleagă și să răspundă la limbajul uman.",
+        },
+        {
+          title: "Computer Vision",
+          description:
+            "Recunoașterea imaginilor, detectarea obiectelor și analiza video. De la controlul calității la monitorizarea securității.",
+        },
+        {
+          title: "Deep Learning",
+          description:
+            "Rețele neuronale pentru recunoașterea tiparelor complexe. Când algoritmii tradiționali nu sunt suficienți.",
+        },
+        {
+          title: "Analiză Predictivă",
+          description:
+            "Modele de machine learning care prezic tendințe, detectează anomalii și optimizează deciziile bazate pe date istorice.",
+        },
+      ],
+    },
+    {
       id: "development",
       title: "Aplicații Web",
       description:
@@ -63,37 +94,6 @@ export const servicesContent = {
       details:
         "MySQL, PostgreSQL, Elastic Search pentru interogări complexe. Ne ocupăm de modernizarea sistemelor vechi, integrări de sistem și module independente pentru produse mai mari. Dacă ai o provocare tehnică specifică, suntem bucuroși să ne aprofundăm.",
       technologies: ["Node.js", "Python", "PHP", "GraphQL", "REST APIs"],
-    },
-    {
-      id: "ai-ml",
-      title: "AI & Machine Learning",
-      description:
-        "De la procesarea limbajului natural la computer vision, construim sisteme inteligente care învață și se adaptează. Transformăm datele în informații acționabile.",
-      details:
-        "Dezvoltăm soluții AI personalizate folosind TensorFlow, PyTorch și Scikit-learn. Fie că e vorba de construirea modelelor predictive, implementarea NLP pentru chatboți sau crearea sistemelor de computer vision pentru recunoașterea imaginilor, ne concentrăm pe AI practic care rezolvă probleme reale de business.",
-      technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
-      subservices: [
-        {
-          title: "Procesare Limbaj Natural",
-          description:
-            "Chatboți, analiză sentimente, clasificare text și traducere automată. Fă aplicațiile tale să înțeleagă și să răspundă la limbajul uman.",
-        },
-        {
-          title: "Computer Vision",
-          description:
-            "Recunoașterea imaginilor, detectarea obiectelor și analiza video. De la controlul calității la monitorizarea securității.",
-        },
-        {
-          title: "Deep Learning",
-          description:
-            "Rețele neuronale pentru recunoașterea tiparelor complexe. Când algoritmii tradiționali nu sunt suficienți.",
-        },
-        {
-          title: "Analiză Predictivă",
-          description:
-            "Modele de machine learning care prezic tendințe, detectează anomalii și optimizează deciziile bazate pe date istorice.",
-        },
-      ],
     },
     {
       id: "database",
