@@ -5,6 +5,7 @@ type TeamMember = {
   role: string;
   bio: string;
   email?: string;
+  gravatarEmail?: string;
   linkedIn?: string;
 };
 
