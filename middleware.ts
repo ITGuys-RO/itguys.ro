@@ -4,11 +4,11 @@ import { locales } from "./src/i18n/config";
 // English pages that exist in the (en) route group - no rewrite needed
 const englishRoutes = [
   "/",
+  "/development",
   "/services",
   "/about",
   "/contact",
   "/portfolio",
-  "/professional-services",
 ];
 
 export function middleware(request: NextRequest) {

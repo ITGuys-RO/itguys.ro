@@ -5,29 +5,25 @@ import { SecurityIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import {
-  CodeBracketIcon,
-  CloudIcon,
-  CpuChipIcon,
-  DevicePhoneMobileIcon,
-  CircleStackIcon,
-  SparklesIcon,
+  ShieldCheckIcon,
+  BeakerIcon,
+  ChartBarIcon,
+  ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 
-const serviceIcons: Record<string, typeof CodeBracketIcon> = {
-  development: CodeBracketIcon,
-  mobile: DevicePhoneMobileIcon,
-  cloud: CloudIcon,
-  backend: CpuChipIcon,
-  "ai-ml": SparklesIcon,
-  database: CircleStackIcon,
+const serviceIcons: Record<string, typeof ShieldCheckIcon> = {
+  "qa-testing": BeakerIcon,
+  security: ShieldCheckIcon,
+  "data-analytics": ChartBarIcon,
+  consulting: ChatBubbleLeftRightIcon,
 };
 
 export const metadata: Metadata = {
-  title: "Development Services - Web, Mobile, Cloud & AI",
-  description: "Custom software development services including web applications, mobile apps, cloud infrastructure, APIs, AI/ML solutions, and database design. Built by experts from EA, TUI, and Nagarro.",
+  title: "Professional Services - QA, Security & Analytics",
+  description: "Professional IT services including quality assurance, security audits, penetration testing, and data analytics. Expert consulting backed by experience at Electronic Arts and TUI.",
   openGraph: {
-    title: "Development Services - ITGuys",
-    description: "Custom software development: web apps, mobile apps, cloud infrastructure, AI/ML, and database solutions.",
+    title: "Professional Services - ITGuys",
+    description: "QA testing, security audits, penetration testing, and analytics services from experts with EA and TUI backgrounds.",
     url: "https://itguys.ro/services",
     type: "website",
   },
@@ -42,38 +38,34 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Development Services - Web, Mobile, Cloud & AI",
-    description: "Custom software development services from experts at EA, TUI, and Nagarro.",
+    title: "Professional Services - QA, Security & Analytics",
+    description: "QA testing, security audits, and analytics from experts with EA and TUI backgrounds.",
     images: ["/og-image.png"],
   },
 };
 
 const faqItems = [
   {
-    question: "What types of software do you develop?",
-    answer: "We develop custom web applications, mobile apps (iOS and Android), APIs, backend systems, and cloud-based solutions. We specialize in React, Next.js, Node.js, and modern JavaScript technologies.",
+    question: "What security testing services do you offer?",
+    answer: "We provide penetration testing, security audits, cloud security reviews, DDoS protection, and incident response services. Our team has backgrounds at Electronic Arts and TUI, bringing enterprise-level security expertise.",
   },
   {
-    question: "Do you offer security testing services?",
-    answer: "Yes, we provide comprehensive security services including security audits, penetration testing, vulnerability assessments, and security consulting to help protect your applications and infrastructure.",
+    question: "Do you offer QA services for existing projects?",
+    answer: "Yes, we can integrate with your existing development team to provide manual testing, automated testing, performance testing, and security testing services. We work with Selenium, Appium, JMeter, and other industry-standard tools.",
   },
   {
-    question: "What is your development process?",
-    answer: "We follow agile methodologies with iterative development cycles. We start with requirements gathering, then move through design, development, testing, and deployment phases with continuous client communication.",
+    question: "What analytics solutions do you provide?",
+    answer: "We implement custom dashboards, real-time monitoring, performance tracking, and competitive analysis. We help you transform raw data into actionable business intelligence using tools like Google Analytics, Mixpanel, and Grafana.",
   },
   {
-    question: "Do you work with clients outside Romania?",
-    answer: "Absolutely. While we're based in Romania, we serve clients worldwide across Europe, UK, and other regions. We're experienced in remote collaboration and working across time zones.",
-  },
-  {
-    question: "What technologies do you specialize in?",
-    answer: "Our core expertise includes React, Next.js, Node.js, TypeScript, PostgreSQL, MongoDB, AWS, and various modern web and mobile frameworks. We choose the right technology stack based on your specific needs.",
+    question: "Can you help with compliance and data privacy?",
+    answer: "Absolutely. We help organizations achieve compliance with GDPR, CCPA, HIPAA, and other regulations. Our security audits include data privacy assessments and recommendations for regulatory compliance.",
   },
 ];
 
-export default function ServicesPage() {
+export default function ProfessionalServicesPage() {
   const content = getContent("en");
-  const { hero, services, cta } = content.servicesContent;
+  const { hero, services, cta } = content.professionalServicesContent;
 
   return (
     <>
@@ -88,53 +80,59 @@ export default function ServicesPage() {
       />
 
       {services.map((service, index) => {
-        const Icon = serviceIcons[service.id] || CodeBracketIcon;
+        const Icon = serviceIcons[service.id] || ShieldCheckIcon;
         return (
-          <Section
-            key={service.id}
-            className={index % 2 === 1 ? "bg-brand-900/50" : ""}
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-brand-800/50 border border-brand-700/30">
-                <Icon className="w-6 h-6 text-neon" />
-              </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white">
-                {service.title}
-              </h2>
+        <Section
+          key={service.id}
+          className={index % 2 === 1 ? "bg-brand-900/50" : ""}
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 rounded-lg bg-brand-800/50 border border-brand-700/30">
+              <Icon className="w-6 h-6 text-neon" />
             </div>
-            <p className="mt-4 text-lg text-brand-200">
-              {service.description}
+            <h2 className="text-2xl md:text-3xl font-bold text-white">
+              {service.title}
+            </h2>
+          </div>
+          <p className="mt-4 text-lg text-brand-200">
+            {service.description}
+          </p>
+          {service.details && (
+            <p className="mt-4 text-brand-200">
+              {service.details}
             </p>
-            {service.details && (
-              <p className="mt-4 text-brand-200">
-                {service.details}
-              </p>
-            )}
+          )}
 
-            {service.subservices && (
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                {service.subservices.map((sub) => (
-                  <Card key={sub.title}>
-                    <CardTitle>{sub.title}</CardTitle>
-                    <CardDescription>{sub.description}</CardDescription>
-                  </Card>
-                ))}
-              </div>
-            )}
+          {service.subservices && (
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {service.subservices.map((sub) => (
+                <Card key={sub.title}>
+                  <CardTitle>{sub.title}</CardTitle>
+                  <CardDescription>{sub.description}</CardDescription>
+                </Card>
+              ))}
+            </div>
+          )}
 
-            {service.technologies && (
-              <div className="mt-6 flex flex-wrap gap-2">
-                {service.technologies.map((tech) => (
-                  <span
-                    key={tech}
-                    className="px-3 py-1 text-sm bg-brand-800/50 border border-brand-700/30 text-brand-200 rounded-full hover:border-neon/30 hover:text-neon transition-colors"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            )}
-          </Section>
+          {service.technologies && service.technologies.length > 0 && (
+            <div className="mt-6 flex flex-wrap gap-2">
+              {service.technologies.map((tech) => (
+                <span
+                  key={tech}
+                  className="px-3 py-1 text-sm bg-brand-800/50 border border-brand-700/30 text-brand-200 rounded-full hover:border-neon/30 hover:text-neon transition-colors"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {service.note && (
+            <p className="mt-6 text-sm text-brand-400 italic">
+              {service.note}
+            </p>
+          )}
+        </Section>
         );
       })}
 

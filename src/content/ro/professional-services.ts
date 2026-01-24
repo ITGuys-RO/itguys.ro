@@ -10,9 +10,9 @@ export const professionalServicesContent = {
       id: "consulting",
       title: "Consultanță tehnică",
       description:
-        "Ghidare expertă pentru decizii de arhitectură, alegeri de tehnologie și strategii de dezvoltare.",
+        "Asistență de specialitate pentru decizii de arhitectură, alegeri de tehnologie și strategii de dezvoltare.",
       details:
-        "Uneori ai nevoie de o a doua opinie sau ghidare expertă înainte de a te angaja într-o direcție. Oferim servicii de consultanță pentru a te ajuta să iei decizii informate despre stack-ul tău de tehnologie, arhitectură și abordarea dezvoltării.",
+        "Uneori ai nevoie de o a doua opinie sau asistență de specialitate înainte de a te angaja într-o direcție. Oferim servicii de consultanță pentru a te ajuta să iei decizii informate despre stack-ul tău de tehnologie, arhitectură și abordarea dezvoltării.",
       technologies: [],
       subservices: [
         {
@@ -23,12 +23,12 @@ export const professionalServicesContent = {
         {
           title: "Selecție tehnologie",
           description:
-            "Ghidare imparțială pentru alegerea tehnologiilor potrivite pentru cerințele și constrângerile tale specifice.",
+            "Îndrumare imparțială pentru alegerea tehnologiilor potrivite pentru cerințele și limitările tale specifice.",
         },
         {
           title: "Revizuire cod",
           description:
-            "Revizuire expertă a codului tău concentrată pe best practices, vulnerabilități de securitate și probleme de performanță.",
+            "Revizuire de specialitate a codului tău concentrată pe cele mai bune practici, vulnerabilități de securitate și probleme de performanță.",
         },
         {
           title: "Strategie DevSecOps",
@@ -48,7 +48,7 @@ export const professionalServicesContent = {
         {
           title: "Testare de penetrare",
           description:
-            "Testare manuală și automatizată a vulnerabilităților împotriva aplicațiilor web, API-urilor și infrastructurii. Aceleași tehnici pe care le-am folosit la EA, acum pentru aplicațiile tale.",
+            "Testare manuală și automatizată a vulnerabilităților împotriva aplicațiilor web, API-urilor și infrastructurii. Aceleași tehnici pe care le-am folosit la EA, disponibile acum și pentru aplicațiile tale.",
         },
         {
           title: "Audituri de securitate",
@@ -144,7 +144,7 @@ export const professionalServicesContent = {
   ],
 
   cta: {
-    headline: "Ai nevoie de ghidare expertă?",
+    headline: "Ai nevoie de asistență de specialitate?",
     body: "Fie că e vorba de asigurarea calității, consolidarea securității sau înțelegerea datelor, suntem aici să ajutăm.",
     buttonText: "Contactează-ne",
     buttonHref: "/contact",

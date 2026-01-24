@@ -53,7 +53,7 @@ export const homeContent = {
     ],
     link: {
       text: "Services ansehen",
-      href: "/services",
+      href: "/development",
     },
   },
 
