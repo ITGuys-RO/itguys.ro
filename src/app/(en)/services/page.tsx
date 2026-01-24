@@ -65,7 +65,7 @@ const faqItems = [
 
 export default function ProfessionalServicesPage() {
   const content = getContent("en");
-  const { hero, services, cta } = content.professionalServicesContent;
+  const { hero, services, cta } = content.servicesContent;
 
   return (
     <>

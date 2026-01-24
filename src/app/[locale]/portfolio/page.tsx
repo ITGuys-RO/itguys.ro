@@ -99,7 +99,7 @@ export default async function PortfolioPage({ params }: Props) {
 
                   <div>
                     <h4 className="text-sm font-semibold text-brand-200 mb-1">
-                      {locale === "ro" ? "Solutie" : "Solution"}
+                      {locale === "ro" ? "Soluție" : "Solution"}
                     </h4>
                     <p className="text-sm text-brand-300">
                       {project.solution}

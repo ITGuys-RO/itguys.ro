@@ -1,137 +1,152 @@
 export const servicesContent = {
   hero: {
-    headline: "Ce construim",
+    headline: "Servicii Profesionale",
     subheadline:
-      "Dezvoltare software personalizată susținută de peste 25 de ani de experiență combinată la EA, TUI și Nagarro. Soluții web, mobile, cloud și AI.",
+      "Asigurarea calității, expertiză în securitate și data analytics. Serviciile care mențin software-ul tău fiabil, sigur și optimizat.",
   },
 
   services: [
     {
-      id: "ai-ml",
-      title: "AI & Machine Learning",
+      id: "consulting",
+      title: "Consultanță tehnică",
       description:
-        "De la procesarea limbajului natural la computer vision, construim sisteme inteligente care învață și se adaptează. Transformăm datele în informații acționabile.",
+        "Asistență de specialitate pentru decizii de arhitectură, alegeri de tehnologie și strategii de dezvoltare.",
       details:
-        "Dezvoltăm soluții AI personalizate folosind TensorFlow, PyTorch și Scikit-learn. Fie că e vorba de construirea modelelor predictive, implementarea NLP pentru chatboți sau crearea sistemelor de computer vision pentru recunoașterea imaginilor, ne concentrăm pe AI practic care rezolvă probleme reale de business.",
-      technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
+        "Uneori ai nevoie de o a doua opinie sau asistență de specialitate înainte de a te angaja într-o direcție. Oferim servicii de consultanță pentru a te ajuta să iei decizii informate despre stack-ul tău de tehnologie, arhitectură și abordarea dezvoltării.",
+      technologies: [],
       subservices: [
         {
-          title: "Procesare limbaj natural",
+          title: "Revizuire arhitectură",
           description:
-            "Chatboți, analiză sentimente, clasificare text și traducere automată. Fă aplicațiile tale să înțeleagă și să răspundă la limbajul uman.",
+            "Evaluarea arhitecturii tale curente cu recomandări pentru scalabilitate, securitate și mentenabilitate.",
         },
         {
-          title: "Computer Vision",
+          title: "Selecție tehnologie",
           description:
-            "Recunoașterea imaginilor, detectarea obiectelor și analiza video. De la controlul calității la monitorizarea securității.",
+            "Îndrumare imparțială pentru alegerea tehnologiilor potrivite pentru cerințele și limitările tale specifice.",
         },
         {
-          title: "Deep learning",
+          title: "Revizuire cod",
           description:
-            "Rețele neuronale pentru recunoașterea tiparelor complexe. Când algoritmii tradiționali nu sunt suficienți.",
+            "Revizuire de specialitate a codului tău concentrată pe cele mai bune practici, vulnerabilități de securitate și probleme de performanță.",
         },
         {
-          title: "Predictive Analytics",
+          title: "Strategie DevSecOps",
           description:
-            "Modele de machine learning care prezic tendințe, detectează anomalii și optimizează deciziile bazate pe date istorice.",
+            "Integrarea securității în procesul tău de dezvoltare. Shift left fără încetinire.",
         },
       ],
     },
     {
-      id: "development",
-      title: "Aplicații web",
+      id: "security",
+      title: "Servicii de securitate",
       description:
-        "De la dashboard-uri interne la platforme pentru clienți. SPA-uri, PWA-uri, panouri de administrare, produse SaaS. Orice au nevoie utilizatorii tăi.",
+        "Cu experiență la Electronic Arts și TUI, nu doar construim software. Știm cum să-l spargem. Această perspectivă modelează tot ce creăm.",
       details:
-        "Lucrăm cu Laravel, Symfony, Drupal, WordPress, CraftCMS și framework-uri JavaScript moderne. Alegem în funcție de cerințele tale, nu de preferințele noastre. Ai nevoie de SEO? Randare pe server. Interactivitate intensă? Un SPA modern. Nevoi simple? Poate deloc framework.",
-      technologies: ["PHP 8", "Laravel", "Drupal", "WordPress", "React", "Next.js"],
-    },
-    {
-      id: "mobile",
-      title: "Aplicații mobile",
-      description:
-        "Aplicații native iOS și Android construite de ingineri cu peste 10 ani de experiență la Nagarro și Enea AB. Nu compromisuri cross-platform, performanță nativă reală.",
-      details:
-        "Ne specializăm în dezvoltare nativă pentru că unele aplicații o cer. Integrări IoT, wearables, sisteme de plată, aplicații medicale. Când performanța și integrarea cu platforma contează, construim nativ. Ne ocupăm și de publicarea în app store, pipeline-uri CI/CD și mentenanță continuă.",
-      technologies: ["Swift", "Kotlin", "iOS SDK", "Android SDK", "Fitbit SDK"],
+        "Securitatea este atributul fundamental al oricărui serviciu recomandabil. Încrederea este ceea ce stabilește loialitatea utilizatorilor. Înțelegem gravitatea protejării sistemelor și datelor tale.",
       subservices: [
         {
-          title: "iOS & Android nativ",
+          title: "Testare de penetrare",
           description:
-            "Aplicații cu adevărat native cu integrare completă a platformei. Nu React Native sau Flutter. Când aplicația ta trebuie să se simtă ca acasă pe dispozitiv.",
+            "Testare manuală și automatizată a vulnerabilităților împotriva aplicațiilor web, API-urilor și infrastructurii. Aceleași tehnici pe care le-am folosit la EA, disponibile acum și pentru aplicațiile tale.",
         },
         {
-          title: "IoT & Wearables",
+          title: "Audituri de securitate",
           description:
-            "Aplicații pentru dispozitive conectate, integrări Fitbit și SDK-uri hardware. Experiență în livrarea produselor IoT la Enea AB.",
+            "Revizuiri de cod și evaluări ale arhitecturii pentru a găsi vulnerabilități înainte ca atacatorii să o facă. Am revizuit binare de jocuri și platforme enterprise.",
         },
         {
-          title: "Plăți & e-commerce",
+          title: "Securitate cloud",
           description:
-            "Stripe, Shopify și integrări de plată personalizate. Tranzacții sigure care îndeplinesc cerințele de conformitate.",
+            "Revizuiri configurație AWS, politici IAM, segmentare rețea, management secrete. Lucrurile plictisitoare care previn breșele.",
         },
         {
-          title: "Sănătate & pharma",
+          title: "Protecție DDoS & boți",
           description:
-            "Aplicații pentru industria veterinară, nutriție și farmaceutică. Înțelegerea cerințelor de reglementare și sensibilitatea datelor.",
+            "Implementare și tuning a apărării Akamai și Cloudflare. Prevenire credential stuffing, scraping, DDoS, preluare cont. Certificat Akamai.",
+        },
+        {
+          title: "Răspuns la incidente",
+          description:
+            "Evaluare rapidă, containment și recuperare când apar breșe. Analiză post-incident și întărirea securității.",
+        },
+        {
+          title: "Implementare Zero Trust",
+          description:
+            "Autentificare multi-factor, controale acces și monitorizare continuă. Fiecare utilizator și dispozitiv verificat înainte de acordarea accesului.",
+        },
+      ],
+      note: "Putem lucra ca echipă de securitate independentă sau alături de echipa ta de dezvoltare. Colaborează cu noi!",
+      technologies: ["Akamai", "Cloudflare", "Kali Linux", "AWS Security", "Burp Suite"],
+    },
+    {
+      id: "data-analytics",
+      title: "Big Data & Analytics",
+      description:
+        "Transformă datele brute în inteligență de business. Dashboard-uri personalizate, metrici și analitice care conduc deciziile.",
+      details:
+        "Performanța este despre tracking. Îmbunătățirea nu se poate face fără măsurători. Implementăm soluții de analytics inteligente care îți oferă o perspectivă asupra comportamentului utilizatorilor, performanței sistemului și metricilor de business.",
+      technologies: ["Google Analytics", "Mixpanel", "Grafana", "Elasticsearch", "Python"],
+      subservices: [
+        {
+          title: "Design dashboard-uri",
+          description:
+            "Date randate în forme și infografice accesibile oricărui cititor. Transformă datele în ceva organic și acționabil.",
+        },
+        {
+          title: "Tracking de performanță",
+          description:
+            "Toleranță zero pentru colectare eronată. Instrumente precise, timing perfect și metrici relevante pentru cazul tău specific.",
+        },
+        {
+          title: "Analiză competitivă",
+          description:
+            "Perspectivă asupra comportamentului utilizatorilor, preferințe, obiceiuri și poziția ta față de concurența directă.",
+        },
+        {
+          title: "Monitorizare în timp real",
+          description:
+            "Viteză și gestionare volum pentru citiri live, mai ales critic atunci când cantitățile de date devin enorme.",
         },
       ],
     },
     {
-      id: "cloud",
-      title: "DevOps & infrastructură cloud",
+      id: "qa-testing",
+      title: "Servicii QA & testare",
       description:
-        "Implementări containerizate, pipeline-uri CI/CD și arhitectură cloud pe AWS. Construim infrastructură care scalează și rămâne sigură.",
+        "Calitatea nu este opțională. Ne asigurăm că software-ul tău funcționează impecabil prin testare manuală și automatizată cuprinzătoare.",
       details:
-        "Docker, Kubernetes, Terraform, CircleCI, GitHub Actions. Configurăm implementări automate, monitorizare și infrastructură ca și cod pentru ca echipa ta să poată livra cu încredere.",
-      technologies: ["AWS", "Docker", "Kubernetes", "Terraform", "CircleCI"],
-    },
-    {
-      id: "backend",
-      title: "Backend, API-uri & integrări",
-      description:
-        "Motorul din spatele aplicației tale. API-uri RESTful, microservicii, optimizare baze de date și integrări third-party.",
-      details:
-        "MySQL, PostgreSQL, Elastic Search pentru interogări complexe. Ne ocupăm de modernizarea sistemelor vechi, integrări de sistem și module independente pentru produse mai mari. Dacă ai o provocare tehnică specifică, suntem bucuroși să ne aprofundăm.",
-      technologies: ["Node.js", "Python", "PHP", "GraphQL", "REST APIs"],
-    },
-    {
-      id: "database",
-      title: "Design & management baze de date",
-      description:
-        "SQL, NoSQL, modelare date și administrare. Proiectăm baze de date care scalează și rămân rapide.",
-      details:
-        "De la design schemă la optimizarea performanței, ne ocupăm de stratul de date. MySQL, PostgreSQL, MongoDB, Redis. Alegem în funcție de tiparele tale de acces, nu de preferințele noastre. Administrare baze de date, migrații și disaster recovery incluse.",
-      technologies: ["MySQL", "PostgreSQL", "MongoDB", "Redis", "Elasticsearch"],
+        "Abordarea noastră de testare acoperă funcționalitatea, performanța, securitatea și experiența utilizatorului. Folosim instrumente standard din industrie precum Selenium, Appium și JMeter pentru a detecta problemele înainte să ajungă la utilizatori.",
+      technologies: ["Selenium", "Appium", "JMeter", "Postman", "Cypress"],
       subservices: [
         {
-          title: "Baze de date SQL",
+          title: "Testare manuală",
           description:
-            "Design, optimizare și management baze de date relaționale. MySQL, PostgreSQL și soluții enterprise.",
+            "Testare hands-on care surprinde probleme UX, cazuri limită și scenarii din lumea reală pe care testele automate le ratează.",
         },
         {
-          title: "Soluții NoSQL",
+          title: "Testare automatizată",
           description:
-            "Document stores, baze de date key-value și graph databases pentru date cu viteză mare și nestructurate.",
+            "Selenium, Appium și suite de teste personalizate pentru testare de regresie rapidă și repetabilă pe toate build-urile.",
         },
         {
-          title: "Modelare date",
+          title: "Testare performanță",
           description:
-            "Design schemă care suportă interogările tale și scalează cu creșterea ta. Construim fundația corect.",
+            "Testare de încărcare, testare de stres și identificare blocaje. Cunoaște-ți limitele înainte ca utilizatorii să le găsească.",
         },
         {
-          title: "Administrare baze de date",
+          title: "Testare securitate",
           description:
-            "Strategii de backup, tuning performanță, securizare și planificare disaster recovery.",
+            "Scanare vulnerabilități, testare de penetrare și evaluare risc integrate în ciclul tău de dezvoltare.",
         },
       ],
     },
   ],
 
   cta: {
-    headline: "Ai un proiect în minte?",
-    body: "Hai să vorbim despre ce construiești. Fără jargon, fără angajament. Doar o conversație.",
-    buttonText: "Începe o conversație",
+    headline: "Ai nevoie de asistență de specialitate?",
+    body: "Fie că e vorba de asigurarea calității, consolidarea securității sau înțelegerea datelor, suntem aici să ajutăm.",
+    buttonText: "Contactează-ne",
     buttonHref: "/contact",
   },
 };

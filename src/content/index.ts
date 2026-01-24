@@ -18,8 +18,8 @@ export function getContent(locale: Locale) {
 
 // Re-export types and default (English) content for backwards compatibility
 export { homeContent } from "./en/home";
+export { developmentContent } from "./en/development";
 export { servicesContent } from "./en/services";
-export { professionalServicesContent } from "./en/professional-services";
 export { aboutContent } from "./en/about";
 export { portfolioContent } from "./en/portfolio";
 export { contactContent } from "./en/contact";

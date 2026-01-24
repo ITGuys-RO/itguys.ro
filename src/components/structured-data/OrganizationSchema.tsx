@@ -3,8 +3,11 @@ export function OrganizationSchema() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "ITGuys",
+    legalName: "ITGUYS SRL",
     alternateName: "ITGuys Romania",
     url: "https://itguys.ro",
+    vatID: "RO34846943",
+    taxID: "RO34846943",
     logo: "https://itguys.ro/itguys_logo.png",
     description:
       "Custom software development and security services. We build web apps, mobile apps, APIs, and provide security audits and penetration testing.",
