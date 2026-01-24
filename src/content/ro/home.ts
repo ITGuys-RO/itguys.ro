@@ -34,7 +34,7 @@ export const homeContent = {
       {
         title: "Startup-uri",
         description:
-          "De la MVP la piață. Aplicații web, mobile sau ambele. Ajutăm fondatorii să transforme ideile în produse funcționale, rapid și gata de scalare.",
+          "De la MVP la primii utilizatori. Aplicații web, mobile sau ambele. Ajutăm fondatorii să transforme ideile în produse funcționale, rapid și pregătite pentru creștere.",
       },
       {
         title: "Echipe Enterprise",
