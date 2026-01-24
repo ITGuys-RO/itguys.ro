@@ -7,6 +7,11 @@ export const homeContent = {
       text: "Parlons-en",
       href: "/contact",
     },
+    secondaryCta: {
+      text: "Voir nos réalisations",
+      href: "/portfolio",
+    },
+    badgeText: "Disponible pour de nouveaux projets",
   },
 
   stats: [

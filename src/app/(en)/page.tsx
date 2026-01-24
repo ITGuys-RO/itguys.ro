@@ -53,6 +53,8 @@ export default function HomePage() {
         headline={hero.headline}
         subheadline={hero.subheadline}
         cta={hero.cta}
+        secondaryCta={hero.secondaryCta}
+        badgeText={hero.badgeText}
         illustration={<HeroIllustration className="w-full h-auto max-w-lg mx-auto" />}
       />
 
