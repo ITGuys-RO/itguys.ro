@@ -68,7 +68,7 @@ export const professionalServicesContent = {
         {
           title: "Răspuns la incidente",
           description:
-            "Evaluare rapidă, containment și recuperare când apar breșe. Analiză post-incident și securizare.",
+            "Evaluare rapidă, containment și recuperare când apar breșe. Analiză post-incident și întărirea securității.",
         },
         {
           title: "Implementare Zero Trust",
