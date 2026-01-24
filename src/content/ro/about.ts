@@ -13,7 +13,7 @@ export const aboutContent = {
   hero: {
     headline: "Suntem ITGuys",
     subheadline:
-      `Peste ${getCombinedYears()} de ani de experiență combinată de la Electronic Arts, TUI, Nagarro și companii elvețiene. Web, mobile și securitate. Bazați în România, lucrăm mondial.`,
+      `Peste ${getCombinedYears()} de ani de experiență combinată de la Electronic Arts, TUI, Nagarro și companii elvețiene. Web, mobile și securitate. Cu sediul în România, lucrăm cu clienți din toată lumea.`,
   },
 
   vision: {
