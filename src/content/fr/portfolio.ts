@@ -71,7 +71,7 @@ export const portfolioContent = {
       clientType: "Enterprise",
       industry: "iGaming",
       challenge:
-        "Une plateforme d'affiliation poker établie avec plus de 250 000 membres devait faire évoluer ses systèmes de tracking rakeback et paiements tout en s'intégrant avec des dizaines de salles de poker et sites de jeux. La sécurité et le tracking financier précis étaient critiques.",
+        "Une plateforme d'affiliation poker active depuis 2004 avec plus de 250 000 membres devait faire évoluer ses systèmes de tracking rakeback et paiements tout en s'intégrant avec des dizaines de salles de poker et sites de jeux. La sécurité et le tracking financier précis étaient critiques.",
       solution:
         "Construction de systèmes robustes de tracking et paiement capables de gérer de gros volumes de transactions. Implémentation d'intégrations sécurisées avec plusieurs plateformes de jeux et calculs automatisés de paiements. Ajout de fonctionnalités communautaires incluant tournois freeroll et classements.",
       tech: ["CraftCMS", "PHP", "MySQL", "Redis", "JavaScript"],

@@ -1,8 +1,10 @@
+import { getCombinedYears } from "@/lib/utils";
+
 export const developmentContent = {
   hero: {
     headline: "Ce construim",
     subheadline:
-      "Dezvoltare software personalizată susținută de peste 25 de ani de experiență combinată la EA, TUI și Nagarro. Soluții web, mobile, cloud și AI.",
+      `Dezvoltare software personalizată susținută de peste ${getCombinedYears()} de ani de experiență combinată la EA, TUI și Nagarro. Soluții web, mobile, cloud și AI.`,
   },
 
   services: [
@@ -81,7 +83,7 @@ export const developmentContent = {
       id: "cloud",
       title: "DevOps & infrastructură cloud",
       description:
-        "Implementări containerizate, pipeline-uri CI/CD și arhitectură cloud pe AWS. Construim infrastructură care scalează și rămâne sigură.",
+        "Implementări containerizate, pipeline-uri CI/CD și arhitectură cloud pe AWS. Construim infrastructură pregătită pentru creștere și care rămâne sigură.",
       details:
         "Docker, Kubernetes, Terraform, CircleCI, GitHub Actions. Configurăm implementări automate, monitorizare și infrastructură ca și cod pentru ca echipa ta să poată livra cu încredere.",
       technologies: ["AWS", "Docker", "Kubernetes", "Terraform", "CircleCI"],
@@ -99,7 +101,7 @@ export const developmentContent = {
       id: "database",
       title: "Design & management baze de date",
       description:
-        "SQL, NoSQL, modelare date și administrare. Proiectăm baze de date care scalează și rămân rapide.",
+        "SQL, NoSQL, modelare date și administrare. Proiectăm baze de date pregătite pentru creștere și care rămân rapide.",
       details:
         "De la design schemă la optimizarea performanței, ne ocupăm de stratul de date. MySQL, PostgreSQL, MongoDB, Redis. Alegem în funcție de tiparele tale de acces, nu de preferințele noastre. Administrare baze de date, migrații și disaster recovery incluse.",
       technologies: ["MySQL", "PostgreSQL", "MongoDB", "Redis", "Elasticsearch"],
@@ -117,7 +119,7 @@ export const developmentContent = {
         {
           title: "Modelare date",
           description:
-            "Design schemă care suportă interogările tale și scalează cu creșterea ta. Construim fundația corect.",
+            "Design schemă care suportă interogările tale și crește odată cu afacerea ta. Construim fundația corect.",
         },
         {
           title: "Administrare baze de date",

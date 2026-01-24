@@ -5,6 +5,7 @@ import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { getGravatarUrl } from "@/lib/gravatar";
+import { getCombinedYearsText } from "@/lib/utils";
 import {
   AcademicCapIcon,
   UserGroupIcon,
@@ -12,12 +13,14 @@ import {
   CheckBadgeIcon,
 } from "@heroicons/react/24/outline";
 
+const years = getCombinedYearsText();
+
 export const metadata: Metadata = {
   title: "About Us - ITGuys",
-  description: "Learn about ITGuys - a team with 25+ years combined experience from EA, TUI, and Nagarro. Web, mobile, and security experts based in Romania.",
+  description: `Learn about ITGuys - a team with ${years} years combined experience from EA, TUI, and Nagarro. Web, mobile, and security experts based in Romania.`,
   openGraph: {
     title: "About Us - ITGuys",
-    description: "Learn about ITGuys - a team with 25+ years combined experience from EA, TUI, and Nagarro.",
+    description: `Learn about ITGuys - a team with ${years} years combined experience from EA, TUI, and Nagarro.`,
     url: "https://itguys.ro/about",
     type: "website",
   },
@@ -33,7 +36,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "About Us - ITGuys",
-    description: "Learn about ITGuys - a team with 25+ years combined experience from EA, TUI, and Nagarro.",
+    description: `Learn about ITGuys - a team with ${years} years combined experience from EA, TUI, and Nagarro.`,
     images: ["/og-image.png"],
   },
 };

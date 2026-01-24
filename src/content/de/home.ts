@@ -1,8 +1,10 @@
+import { getCombinedYears, getCombinedYearsText } from "@/lib/utils";
+
 export const homeContent = {
   hero: {
     headline: "Web, Mobile & Sicherheit. Richtig gemacht.",
     subheadline:
-      "Über 25 Jahre kombinierte Erfahrung bei Electronic Arts, TUI und Nagarro. Wir entwickeln maßgeschneiderte Anwendungen und schützen sie.",
+      `Über ${getCombinedYears()} Jahre kombinierte Erfahrung bei Electronic Arts, TUI und Nagarro. Wir entwickeln maßgeschneiderte Anwendungen und schützen sie.`,
     cta: {
       text: "Lassen Sie uns reden",
       href: "/contact",
@@ -15,7 +17,7 @@ export const homeContent = {
   },
 
   stats: [
-    { value: "25+", label: "Jahre Erfahrung" },
+    { value: getCombinedYearsText(), label: "Jahre Erfahrung" },
     { value: "EA & TUI", label: "Sicherheitserfahrung" },
     { value: "Nagarro", label: "Mobile Expertise" },
   ],

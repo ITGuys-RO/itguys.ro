@@ -5,6 +5,7 @@ import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { getGravatarUrl } from "@/lib/gravatar";
+import { getCombinedYearsText } from "@/lib/utils";
 import { locales, type Locale } from "@/i18n/config";
 import {
   AcademicCapIcon,
@@ -33,11 +34,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     de: "Über Uns - ITGuys",
   };
 
+  const years = getCombinedYearsText();
   const descriptions: Record<string, string> = {
-    en: "Learn about ITGuys - a team with 25+ years combined experience from EA, TUI, and Nagarro. Web, mobile, and security experts based in Romania.",
-    ro: "Află despre ITGuys - o echipă cu peste 25 de ani experiență combinată de la EA, TUI și Nagarro. Experți în web, mobile și securitate din România.",
-    fr: "Découvrez ITGuys - une équipe avec plus de 25 ans d'expérience combinée chez EA, TUI et Nagarro. Experts web, mobile et sécurité basés en Roumanie.",
-    de: "Erfahren Sie mehr über ITGuys - ein Team mit über 25 Jahren kombinierter Erfahrung bei EA, TUI und Nagarro. Web-, Mobile- und Sicherheitsexperten aus Rumänien.",
+    en: `Learn about ITGuys - a team with ${years} years combined experience from EA, TUI, and Nagarro. Web, mobile, and security experts based in Romania.`,
+    ro: `Află despre ITGuys - o echipă cu peste ${years.replace('+', '')} de ani experiență combinată de la EA, TUI și Nagarro. Experți în web, mobile și securitate din România.`,
+    fr: `Découvrez ITGuys - une équipe avec plus de ${years.replace('+', '')} ans d'expérience combinée chez EA, TUI et Nagarro. Experts web, mobile et sécurité basés en Roumanie.`,
+    de: `Erfahren Sie mehr über ITGuys - ein Team mit über ${years.replace('+', '')} Jahren kombinierter Erfahrung bei EA, TUI und Nagarro. Web-, Mobile- und Sicherheitsexperten aus Rumänien.`,
   };
 
   return {

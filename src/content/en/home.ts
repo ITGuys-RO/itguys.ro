@@ -1,8 +1,10 @@
+import { getCombinedYears, getCombinedYearsText } from "@/lib/utils";
+
 export const homeContent = {
   hero: {
     headline: "Web, Mobile & Security. Done Right.",
     subheadline:
-      "25+ combined years from Electronic Arts, TUI, and Nagarro. We build custom applications and keep them protected.",
+      `${getCombinedYearsText()} combined years from Electronic Arts, TUI, and Nagarro. We build custom applications and keep them protected.`,
     cta: {
       text: "Let's Talk",
       href: "/contact",
@@ -15,7 +17,7 @@ export const homeContent = {
   },
 
   stats: [
-    { value: "25+", label: "Combined Years" },
+    { value: getCombinedYearsText(), label: "Combined Years" },
     { value: "EA & TUI", label: "Security Background" },
     { value: "Nagarro", label: "Mobile Expertise" },
   ],

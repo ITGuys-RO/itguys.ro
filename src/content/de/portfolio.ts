@@ -71,7 +71,7 @@ export const portfolioContent = {
       clientType: "Enterprise",
       industry: "iGaming",
       challenge:
-        "Eine etablierte Poker-Affiliate-Plattform mit über 250.000 Mitgliedern musste ihre Rakeback-Tracking- und Auszahlungssysteme skalieren und gleichzeitig mit Dutzenden von Pokerräumen und Gaming-Sites integrieren. Sicherheit und präzises Finanz-Tracking waren kritisch.",
+        "Eine seit 2004 aktive Poker-Affiliate-Plattform mit über 250.000 Mitgliedern musste ihre Rakeback-Tracking- und Auszahlungssysteme skalieren und gleichzeitig mit Dutzenden von Pokerräumen und Gaming-Sites integrieren. Sicherheit und präzises Finanz-Tracking waren kritisch.",
       solution:
         "Aufbau robuster Tracking- und Zahlungssysteme, die hohe Transaktionsvolumen bewältigen können. Implementierung sicherer Integrationen mit mehreren Gaming-Plattformen und automatisierter Auszahlungsberechnungen. Hinzufügen von Community-Funktionen wie Freeroll-Turnieren und Ranglisten.",
       tech: ["CraftCMS", "PHP", "MySQL", "Redis", "JavaScript"],
