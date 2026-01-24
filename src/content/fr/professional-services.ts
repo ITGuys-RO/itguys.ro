@@ -2,7 +2,7 @@ export const professionalServicesContent = {
   hero: {
     headline: "Services professionnels",
     subheadline:
-      "Assurance qualité, expertise sécurité et analyse de données. Les services qui maintiennent votre logiciel fiable, sécurisé et optimisé.",
+      "Assurance qualité, expertise sécurité et data analytics. Les services qui maintiennent votre logiciel fiable, sécurisé et optimisé.",
   },
 
   services: [
@@ -76,7 +76,7 @@ export const professionalServicesContent = {
             "Authentification multi-facteur, contrôles d'accès et surveillance continue. Chaque utilisateur et appareil vérifié avant l'accès.",
         },
       ],
-      note: "Nous pouvons travailler comme équipe de sécurité autonome ou aux côtés de votre travail de développement avec nous.",
+      note: "Nous pouvons travailler comme équipe de sécurité autonome ou aux côtés de votre équipe de développement. Collaborez avec nous !",
       technologies: ["Akamai", "Cloudflare", "Kali Linux", "AWS Security", "Burp Suite"],
     },
     {

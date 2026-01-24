@@ -2,7 +2,7 @@ export const professionalServicesContent = {
   hero: {
     headline: "Servicii Profesionale",
     subheadline:
-      "Asigurarea calității, expertiză în securitate și analiză date. Serviciile care mențin software-ul tău fiabil, sigur și optimizat.",
+      "Asigurarea calității, expertiză în securitate și data analytics. Serviciile care mențin software-ul tău fiabil, sigur și optimizat.",
   },
 
   services: [
@@ -76,7 +76,7 @@ export const professionalServicesContent = {
             "Autentificare multi-factor, controale acces și monitorizare continuă. Fiecare utilizator și dispozitiv verificat înainte de acordarea accesului.",
         },
       ],
-      note: "Putem lucra ca echipă de securitate independentă sau alături de munca de dezvoltare cu noi.",
+      note: "Putem lucra ca echipă de securitate independentă sau alături de echipa ta de dezvoltare. Colaborează cu noi!",
       technologies: ["Akamai", "Cloudflare", "Kali Linux", "AWS Security", "Burp Suite"],
     },
     {
@@ -85,7 +85,7 @@ export const professionalServicesContent = {
       description:
         "Transformă datele brute în inteligență de business. Dashboard-uri personalizate, metrici și analitice care conduc deciziile.",
       details:
-        "Performanța este despre tracking. Îmbunătățirea nu se poate face fără măsurători. Implementăm soluții de analytics inteligente care îți oferă insight în comportamentul utilizatorilor, performanța sistemului și metrici de business.",
+        "Performanța este despre tracking. Îmbunătățirea nu se poate face fără măsurători. Implementăm soluții de analytics inteligente care îți oferă o perspectivă asupra comportamentului utilizatorilor, performanței sistemului și metricilor de business.",
       technologies: ["Google Analytics", "Mixpanel", "Grafana", "Elasticsearch", "Python"],
       subservices: [
         {
@@ -101,7 +101,7 @@ export const professionalServicesContent = {
         {
           title: "Analiză competitivă",
           description:
-            "Insight în comportamentul utilizatorilor, preferințe, obiceiuri și cum te compari cu competiția imediată.",
+            "Perspectivă asupra comportamentului utilizatorilor, preferințe, obiceiuri și cum te compari cu competiția imediată.",
         },
         {
           title: "Monitorizare real-time",

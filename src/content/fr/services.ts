@@ -31,7 +31,7 @@ export const servicesContent = {
             "Réseaux neuronaux pour la reconnaissance de patterns complexes. Quand les algorithmes traditionnels ne suffisent pas.",
         },
         {
-          title: "Analytics prédictive",
+          title: "Predictive Analytics",
           description:
             "Modèles de machine learning qui prévoient les tendances, détectent les anomalies et optimisent les décisions basées sur les données historiques.",
         },
