@@ -19,11 +19,11 @@ export const aboutContent = {
   vision: {
     title: "Our Vision",
     body: [
-      "It's not enough for us to deliver a service. We strive to forge real bonds with our clients, understand their concept, see their vision, and then make it our own.",
-      "As team members, we push our limits and never shy away from learning something new. For us, each client is a new opportunity to improve our skills and a new chance to test our creativity and determination.",
-      "We are ready to lend you our strength and give birth to something unique, tailored to your purpose and needs, incredibly simple, highly reliable, and above all, extremely adaptive.",
+      "We don't just deliver a service. We build real relationships with our clients, understand what they're trying to do, and make their goals our own.",
+      "We're always learning. Each project teaches us something new and lets us test what we can do.",
+      "We build software that fits your specific problem. Simple where it can be, robust where it needs to be.",
     ],
-    highlight: "Our vision is your success.",
+    highlight: "We succeed when you succeed.",
   },
 
   ourStory: {
@@ -38,9 +38,9 @@ export const aboutContent = {
   mission: {
     title: "Our Mission",
     body: [
-      "At ITGuys it's all about compelling structure and deep functionality. Our goal is to create a unique and feature-rich experience that is reliable for the provider and simple for the customer.",
-      "Our work must gather people together, provide them with a safe environment, enabling them to benefit from the product, service or concept. We ensure our work is recommendable and constantly engaging.",
-      "We understand the importance of our work, the gravity of it. We are fully prepared for that. We take every project very seriously.",
+      "At ITGuys, we care about two things: code that's organized and features that actually work. Reliable for you, simple for your users.",
+      "We build things that bring people together and keep them safe. Things people actually want to use and recommend.",
+      "We take the work seriously. Every project gets our full attention.",
     ],
   },
 
@@ -57,7 +57,7 @@ export const aboutContent = {
   whatWeBelieve: {
     title: "Our Principles",
     intro:
-      "We deal with code, yes, but with a deeper meaning. We find pride in our work, excitement and trust. To address this, we employ a code of ethics that shapes every project.",
+      "We write code, but that's not all we care about. We take pride in what we build. These principles shape how we work.",
     values: [
       {
         title: "Simplicity",
@@ -98,13 +98,13 @@ export const aboutContent = {
       {
         title: "Team Augmentation",
         description:
-          "Suitable for ongoing projects or specific tasks requiring a competent professional. Be it one developer, one department, or the whole team, we provide skilled, experienced workforce trained to respect your objectives and integrate with your existing team.",
+          "For ongoing projects or specific tasks. One developer or a whole team. Experienced people who work on your terms and fit in with your existing setup.",
         ideal: "Ideal for: Existing teams needing extra capacity or specialized skills.",
       },
       {
         title: "Fixed Price Projects",
         description:
-          "The option for complete commitment of the ITGuys team. Bring your concept to reality with professional implementation, complete design, reliable structure, and adaptable performance. Not only do we make your idea tangible but we safeguard it, making it secure for both provider and user.",
+          "Full commitment from the ITGuys team. We take your concept from idea to working product, handle the design and architecture, and make sure it's secure from day one.",
         ideal: "Ideal for: New products, MVPs, or complete system builds.",
       },
     ],

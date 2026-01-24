@@ -43,7 +43,7 @@ export const servicesContent = {
       description:
         "Cu experiență la Electronic Arts și TUI, nu doar construim software. Știm cum să-l spargem. Această perspectivă modelează tot ce creăm.",
       details:
-        "Securitatea este atributul fundamental al oricărui serviciu recomandabil. Încrederea este ceea ce stabilește loialitatea utilizatorilor. Înțelegem gravitatea protejării sistemelor și datelor tale.",
+        "Dacă utilizatorii nu au încredere în securitatea ta, nu vor rămâne. Protejarea sistemelor și datelor tale este fundația pe care se construiește tot restul.",
       subservices: [
         {
           title: "Testare de penetrare",
@@ -83,30 +83,30 @@ export const servicesContent = {
       id: "data-analytics",
       title: "Big Data & Analytics",
       description:
-        "Transformă datele brute în inteligență de business. Dashboard-uri personalizate, metrici și analitice care conduc deciziile.",
+        "Transformă datele brute în ceva util. Dashboard-uri personalizate, metrici și analitice care te ajută să iei decizii.",
       details:
-        "Performanța este despre tracking. Îmbunătățirea nu se poate face fără măsurători. Implementăm soluții de analytics inteligente care îți oferă o perspectivă asupra comportamentului utilizatorilor, performanței sistemului și metricilor de business.",
+        "Nu poți îmbunătăți ce nu măsori. Configurăm analitice care îți arată ce se întâmplă cu utilizatorii, sistemul și afacerea ta.",
       technologies: ["Google Analytics", "Mixpanel", "Grafana", "Elasticsearch", "Python"],
       subservices: [
         {
           title: "Design dashboard-uri",
           description:
-            "Date randate în forme și infografice accesibile oricărui cititor. Transformă datele în ceva organic și acționabil.",
+            "Date prezentate în grafice și vizualizări pe care oricine le poate înțelege. Numere care spun o poveste.",
         },
         {
           title: "Tracking de performanță",
           description:
-            "Toleranță zero pentru colectare eronată. Instrumente precise, timing perfect și metrici relevante pentru cazul tău specific.",
+            "Tracking precis cu metricile potrivite pentru situația ta. Fără date de proastă calitate.",
         },
         {
           title: "Analiză competitivă",
           description:
-            "Descoperă comportamentul, preferințele și obiceiurile utilizatorilor, precum și cum te poziționezi față de concurență.",
+            "Vezi cum se comportă utilizatorii, ce preferă și cum te compari cu concurența.",
         },
         {
           title: "Monitorizare în timp real",
           description:
-            "Viteză și gestionare volum pentru citiri live, mai ales critic atunci când cantitățile de date devin enorme.",
+            "Date live când ai nevoie de ele, chiar și la volum mare.",
         },
       ],
     },
@@ -114,7 +114,7 @@ export const servicesContent = {
       id: "qa-testing",
       title: "Servicii QA & testare",
       description:
-        "Calitatea nu este opțională. Ne asigurăm că software-ul tău funcționează impecabil prin testare manuală și automatizată cuprinzătoare.",
+        "Ne asigurăm că software-ul tău chiar funcționează. Testare manuală și automatizată care prinde problemele înainte să le găsească utilizatorii.",
       details:
         "Abordarea noastră de testare acoperă funcționalitatea, performanța, securitatea și experiența utilizatorului. Folosim instrumente standard din industrie precum Selenium, Appium și JMeter pentru a detecta problemele înainte să ajungă la utilizatori.",
       technologies: ["Selenium", "Appium", "JMeter", "Postman", "Cypress"],

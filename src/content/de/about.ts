@@ -19,11 +19,11 @@ export const aboutContent = {
   vision: {
     title: "Unsere Vision",
     body: [
-      "Es reicht uns nicht, einen Service zu liefern. Wir streben danach, echte Verbindungen mit unseren Kunden aufzubauen, ihr Konzept zu verstehen, ihre Vision zu sehen und sie dann zu unserer eigenen zu machen.",
-      "Als Teammitglieder überschreiten wir unsere Grenzen und scheuen nie davor zurück, etwas Neues zu lernen. Für uns ist jeder Kunde eine neue Gelegenheit, unsere Fähigkeiten zu verbessern und eine neue Chance, unsere Kreativität und Entschlossenheit zu testen.",
-      "Wir sind bereit, Ihnen unsere Stärke zu leihen und etwas Einzigartiges zu erschaffen, angepasst an Ihren Zweck und Ihre Bedürfnisse, unglaublich einfach, sehr zuverlässig und vor allem extrem anpassungsfähig.",
+      "Wir liefern nicht nur einen Service. Wir bauen echte Beziehungen zu unseren Kunden auf, verstehen was sie erreichen wollen und machen ihre Ziele zu unseren.",
+      "Wir lernen ständig dazu. Jedes Projekt lehrt uns etwas Neues und lässt uns testen, was wir können.",
+      "Wir bauen Software, die zu Ihrem spezifischen Problem passt. Einfach wo möglich, robust wo nötig.",
     ],
-    highlight: "Unsere Vision ist Ihr Erfolg.",
+    highlight: "Wir sind erfolgreich, wenn Sie erfolgreich sind.",
   },
 
   ourStory: {
@@ -38,9 +38,9 @@ export const aboutContent = {
   mission: {
     title: "Unsere Mission",
     body: [
-      "Bei ITGuys geht es um überzeugende Struktur und tiefe Funktionalität. Unser Ziel ist es, eine einzigartige und funktionsreiche Erfahrung zu schaffen, die für den Anbieter zuverlässig und für den Kunden einfach ist.",
-      "Unsere Arbeit muss Menschen zusammenbringen, ihnen eine sichere Umgebung bieten und es ihnen ermöglichen, vom Produkt, Service oder Konzept zu profitieren. Wir stellen sicher, dass unsere Arbeit empfehlenswert und konstant ansprechend ist.",
-      "Wir verstehen die Bedeutung unserer Arbeit, ihre Tragweite. Wir sind voll darauf vorbereitet. Wir nehmen jedes Projekt sehr ernst.",
+      "Bei ITGuys kümmern wir uns um zwei Dinge: organisierten Code und Funktionen, die wirklich funktionieren. Zuverlässig für Sie, einfach für Ihre Nutzer.",
+      "Wir bauen Dinge, die Menschen zusammenbringen und sicher halten. Dinge, die Menschen wirklich nutzen und weiterempfehlen wollen.",
+      "Wir nehmen die Arbeit ernst. Jedes Projekt bekommt unsere volle Aufmerksamkeit.",
     ],
   },
 
@@ -57,7 +57,7 @@ export const aboutContent = {
   whatWeBelieve: {
     title: "Unsere Prinzipien",
     intro:
-      "Wir arbeiten mit Code, ja, aber mit einer tieferen Bedeutung. Wir finden Stolz in unserer Arbeit, Begeisterung und Vertrauen. Um dies anzugehen, verwenden wir einen Ethikkodex, der jedes Projekt prägt.",
+      "Wir schreiben Code, aber das ist nicht alles, was uns wichtig ist. Wir sind stolz auf das, was wir bauen. Diese Prinzipien prägen unsere Arbeitsweise.",
     values: [
       {
         title: "Einfachheit",
@@ -98,13 +98,13 @@ export const aboutContent = {
       {
         title: "Team-Erweiterung",
         description:
-          "Geeignet für laufende Projekte oder spezifische Aufgaben, die einen kompetenten Fachmann erfordern. Ob ein Entwickler, eine Abteilung oder das ganze Team - wir liefern qualifizierte, erfahrene Arbeitskräfte, trainiert, um Ihre Ziele zu respektieren und sich in Ihr bestehendes Team zu integrieren.",
+          "Für laufende Projekte oder spezifische Aufgaben. Ein Entwickler oder ein ganzes Team. Erfahrene Leute, die zu Ihren Bedingungen arbeiten und sich in Ihr bestehendes Setup einfügen.",
         ideal: "Ideal für: Bestehende Teams, die zusätzliche Kapazität oder spezialisierte Fähigkeiten benötigen.",
       },
       {
         title: "Festpreisprojekte",
         description:
-          "Die Option für das vollständige Engagement des ITGuys-Teams. Bringen Sie Ihr Konzept mit professioneller Umsetzung, vollständigem Design, zuverlässiger Struktur und anpassungsfähiger Performance zur Realität. Wir machen Ihre Idee nicht nur greifbar, sondern schützen sie auch und machen sie sicher für Anbieter und Nutzer.",
+          "Volles Engagement vom ITGuys-Team. Wir bringen Ihr Konzept von der Idee zum funktionierenden Produkt, kümmern uns um Design und Architektur und stellen sicher, dass es vom ersten Tag an sicher ist.",
         ideal: "Ideal für: Neue Produkte, MVPs oder komplette Systementwicklungen.",
       },
     ],

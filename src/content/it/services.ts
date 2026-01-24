@@ -43,7 +43,7 @@ export const servicesContent = {
       description:
         "Con background in Electronic Arts e TUI, non costruiamo solo software. Sappiamo come romperlo. Questa prospettiva plasma tutto cio che creiamo.",
       details:
-        "La sicurezza e l'attributo fondamentale di qualsiasi servizio raccomandabile. La fiducia e cio che stabilisce la fedelta degli utenti. Comprendiamo la gravita di proteggere i tuoi sistemi e dati.",
+        "Se i tuoi utenti non si fidano della tua sicurezza, non resteranno. Proteggere i tuoi sistemi e dati e la base su cui si costruisce tutto il resto.",
       subservices: [
         {
           title: "Penetration Testing",
@@ -83,30 +83,30 @@ export const servicesContent = {
       id: "data-analytics",
       title: "Big Data & Analytics",
       description:
-        "Trasforma i dati grezzi in business intelligence. Dashboard personalizzate, metriche e analytics che guidano le decisioni.",
+        "Trasforma i dati grezzi in qualcosa di utile. Dashboard personalizzate, metriche e analytics che ti aiutano a prendere decisioni.",
       details:
-        "La performance e tutta una questione di tracking. Il miglioramento non puo essere fatto senza misurazioni. Implementiamo soluzioni di analytics intelligenti che ti danno insight sul comportamento degli utenti, performance del sistema e metriche di business.",
+        "Non puoi migliorare quello che non misuri. Configuriamo analytics che ti mostrano cosa succede con i tuoi utenti, il tuo sistema e il tuo business.",
       technologies: ["Google Analytics", "Mixpanel", "Grafana", "Elasticsearch", "Python"],
       subservices: [
         {
           title: "Design delle Dashboard",
           description:
-            "Dati renderizzati in forme e infografiche accessibili a qualsiasi lettore. Trasforma i dati in qualcosa di organico e azionabile.",
+            "Dati presentati in grafici e visualizzazioni che chiunque puo capire. Numeri che raccontano una storia.",
         },
         {
           title: "Tracking delle Performance",
           description:
-            "Zero tolleranza per raccolta erronea. Strumenti precisi, tempistica perfetta e metriche rilevanti per il tuo caso specifico.",
+            "Tracking preciso con le metriche giuste per la tua situazione. Niente dati spazzatura.",
         },
         {
           title: "Analisi Competitiva",
           description:
-            "Insight sul comportamento degli utenti, preferenze, abitudini e come ti posizioni rispetto alla concorrenza immediata.",
+            "Guarda come si comportano gli utenti, cosa preferiscono e come ti confronti con la concorrenza.",
         },
         {
           title: "Monitoraggio Real-time",
           description:
-            "Gestione velocita e volume per letture live, particolarmente critico quando le quantita di dati diventano enormi.",
+            "Dati live quando ne hai bisogno, anche ad alto volume.",
         },
       ],
     },
@@ -114,7 +114,7 @@ export const servicesContent = {
       id: "qa-testing",
       title: "Servizi QA & Testing",
       description:
-        "La qualita non e opzionale. Ci assicuriamo che il tuo software funzioni perfettamente attraverso testing manuale e automatizzato completo.",
+        "Ci assicuriamo che il tuo software funzioni davvero. Test manuali e automatizzati che trovano problemi prima dei tuoi utenti.",
       details:
         "Il nostro approccio al testing copre funzionalita, performance, sicurezza e user experience. Usiamo strumenti standard del settore come Selenium, Appium e JMeter per rilevare problemi prima che raggiungano i tuoi utenti.",
       technologies: ["Selenium", "Appium", "JMeter", "Postman", "Cypress"],

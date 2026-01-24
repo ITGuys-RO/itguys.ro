@@ -12,9 +12,9 @@ export const developmentContent = {
       id: "ai-ml",
       title: "AI & Machine Learning",
       description:
-        "De la procesarea limbajului natural la computer vision, construim sisteme inteligente care învață și se adaptează. Transformăm datele în informații acționabile.",
+        "De la procesarea limbajului natural la computer vision, construim sisteme care învață și se adaptează. Transformăm datele în ceva util.",
       details:
-        "Dezvoltăm soluții AI personalizate folosind TensorFlow, PyTorch și Scikit-learn. Fie că e vorba de construirea modelelor predictive, implementarea NLP pentru chatboți sau crearea sistemelor de computer vision pentru recunoașterea imaginilor, ne concentrăm pe AI practic care rezolvă probleme reale de business.",
+        "Construim soluții AI personalizate folosind TensorFlow, PyTorch și Scikit-learn. Modele predictive, chatboți cu NLP, recunoaștere de imagini. Ne concentrăm pe AI care rezolvă probleme reale, nu demo-uri.",
       technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
       subservices: [
         {

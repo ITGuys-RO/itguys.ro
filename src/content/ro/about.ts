@@ -19,11 +19,11 @@ export const aboutContent = {
   vision: {
     title: "Viziunea noastră",
     body: [
-      "Nu ne este suficient să livrăm un serviciu. Ne străduim să construim legături reale cu clienții noștri, să le înțelegem conceptul, să le vedem viziunea și apoi să o facem a noastră.",
-      "Ca membri ai echipei, ne depășim limitele și nu ne ferim niciodată să învățăm ceva nou. Pentru noi, fiecare client este o nouă oportunitate de a ne îmbunătăți abilitățile și o nouă șansă de a ne testa creativitatea și determinarea.",
-      "Suntem gata să îți împrumutăm forța noastră și să dăm naștere la ceva unic, adaptat scopului și nevoilor tale, incredibil de simplu, foarte fiabil și mai presus de toate, extrem de adaptabil.",
+      "Nu doar livrăm un serviciu. Construim relații reale cu clienții noștri, înțelegem ce vor să realizeze și facem obiectivele lor ale noastre.",
+      "Învățăm mereu. Fiecare proiect ne învață ceva nou și ne permite să testăm ce putem face.",
+      "Construim software care se potrivește problemei tale specifice. Simplu unde poate fi, solid unde trebuie să fie.",
     ],
-    highlight: "Viziunea noastră este succesul tău.",
+    highlight: "Noi reușim când tu reușești.",
   },
 
   ourStory: {
@@ -38,9 +38,9 @@ export const aboutContent = {
   mission: {
     title: "Misiunea noastră",
     body: [
-      "La ITGuys, totul este despre structură convingătoare și funcționalitate profundă. Scopul nostru este să creăm o experiență unică și bogată în funcționalități care este fiabilă pentru furnizor și simplă pentru client.",
-      "Munca noastră trebuie să adune oamenii împreună, să le ofere un mediu sigur, permițându-le să beneficieze de produs, serviciu sau concept. Ne asigurăm că munca noastră este recomandabilă și constant captivantă.",
-      "Înțelegem importanța muncii noastre, gravitatea ei. Suntem pe deplin pregătiți pentru asta. Luăm fiecare proiect foarte în serios.",
+      "La ITGuys, ne pasă de două lucruri: cod organizat și funcționalități care chiar funcționează. Fiabil pentru tine, simplu pentru utilizatorii tăi.",
+      "Construim lucruri care aduc oamenii împreună și îi păstrează în siguranță. Lucruri pe care oamenii chiar vor să le folosească și să le recomande.",
+      "Luăm munca în serios. Fiecare proiect primește toată atenția noastră.",
     ],
   },
 
@@ -57,7 +57,7 @@ export const aboutContent = {
   whatWeBelieve: {
     title: "Principiile noastre",
     intro:
-      "Scriem cod, da, dar cu un sens mai profund. Găsim mândrie în munca noastră, entuziasm și încredere. Pentru a aborda acest lucru, folosim un cod de etică ce modelează fiecare proiect.",
+      "Scriem cod, dar nu doar asta ne preocupă. Suntem mândri de ce construim. Aceste principii definesc cum lucrăm.",
     values: [
       {
         title: "Simplitate",
@@ -98,13 +98,13 @@ export const aboutContent = {
       {
         title: "Augmentare echipă",
         description:
-          "Potrivit pentru proiecte în desfășurare sau sarcini specifice care necesită un profesionist competent. Fie că e vorba de un dezvoltator, un departament sau întreaga echipă, oferim oameni pasionați, calificați, experimentați, antrenați să respecte obiectivele tale și să se integreze cu echipa ta existentă.",
+          "Pentru proiecte în desfășurare sau sarcini specifice. Un dezvoltator sau o echipă întreagă. Oameni cu experiență care lucrează în condițiile tale și se integrează în setup-ul tău existent.",
         ideal: "Ideal pentru: Echipe existente care au nevoie de capacitate suplimentară sau abilități specializate.",
       },
       {
         title: "Proiecte cu preț fix",
         description:
-          "Opțiunea pentru angajamentul complet al echipei ITGuys. Adu-ți conceptul la realitate cu implementare profesională, design complet, structură fiabilă și performanță adaptabilă. Nu doar că îți materializăm ideea, ci o și protejăm, făcând-o sigură atât pentru furnizor, cât și pentru utilizator.",
+          "Angajament complet din partea echipei ITGuys. Îți luăm conceptul de la idee la produs funcțional, ne ocupăm de design și arhitectură, și ne asigurăm că e securizat din prima zi.",
         ideal: "Ideal pentru: Produse noi, MVP-uri sau construcții complete de sistem.",
       },
     ],

@@ -12,9 +12,9 @@ export const developmentContent = {
       id: "ai-ml",
       title: "IA & Machine Learning",
       description:
-        "Desde procesamiento de lenguaje natural hasta vision por computadora, construimos sistemas inteligentes que aprenden y se adaptan. Convierte datos en insights accionables.",
+        "Desde procesamiento de lenguaje natural hasta vision por computadora, construimos sistemas que aprenden y se adaptan. Convierte datos en algo util.",
       details:
-        "Desarrollamos soluciones de IA personalizadas usando TensorFlow, PyTorch y Scikit-learn. Ya sea construyendo modelos predictivos, implementando NLP para chatbots o creando sistemas de vision por computadora para reconocimiento de imagenes, nos enfocamos en IA practica que resuelve problemas empresariales reales.",
+        "Desarrollamos soluciones de IA personalizadas usando TensorFlow, PyTorch y Scikit-learn. Modelos predictivos, chatbots con NLP, reconocimiento de imagenes. Nos enfocamos en IA que resuelve problemas reales, no demos.",
       technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
       subservices: [
         {

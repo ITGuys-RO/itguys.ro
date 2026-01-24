@@ -12,9 +12,9 @@ export const developmentContent = {
       id: "ai-ml",
       title: "KI & Machine Learning",
       description:
-        "Von Natural Language Processing bis Computer Vision - wir bauen intelligente Systeme, die lernen und sich anpassen. Verwandeln Sie Daten in umsetzbare Erkenntnisse.",
+        "Von Natural Language Processing bis Computer Vision - wir bauen Systeme, die lernen und sich anpassen. Verwandeln Sie Daten in etwas Nützliches.",
       details:
-        "Wir entwickeln maßgeschneiderte KI-Lösungen mit TensorFlow, PyTorch und Scikit-learn. Ob prädiktive Modelle, NLP für Chatbots oder Computer-Vision-Systeme zur Bilderkennung - wir konzentrieren uns auf praktische KI, die echte Geschäftsprobleme löst.",
+        "Wir bauen maßgeschneiderte KI-Lösungen mit TensorFlow, PyTorch und Scikit-learn. Prädiktive Modelle, Chatbots mit NLP, Bilderkennung. Wir konzentrieren uns auf KI, die echte Probleme löst, nicht auf Demos.",
       technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
       subservices: [
         {

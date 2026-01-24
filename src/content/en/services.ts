@@ -43,7 +43,7 @@ export const servicesContent = {
       description:
         "With backgrounds at Electronic Arts and TUI, we don't just build software. We know how to break it. That perspective shapes everything we create.",
       details:
-        "Security is the fundamental attribute of any recommendable service. Trust is what establishes user loyalty. We understand the gravity of protecting your systems and data.",
+        "If your users don't trust your security, they won't stick around. Protecting your systems and data is the foundation everything else is built on.",
       subservices: [
         {
           title: "Penetration Testing",
@@ -83,30 +83,30 @@ export const servicesContent = {
       id: "data-analytics",
       title: "Big Data & Analytics",
       description:
-        "Transform raw data into business intelligence. Custom dashboards, metrics, and analytics that drive decisions.",
+        "Turn raw data into something useful. Custom dashboards, metrics, and analytics that help you make decisions.",
       details:
-        "Performance is all about tracking. Improvement cannot be done without measurements. We implement smart analytics solutions that give you insight into user behavior, system performance, and business metrics.",
+        "You can't improve what you don't measure. We set up analytics that show you what's happening with your users, your system, and your business.",
       technologies: ["Google Analytics", "Mixpanel", "Grafana", "Elasticsearch", "Python"],
       subservices: [
         {
           title: "Dashboard Design",
           description:
-            "Data rendered into shapes, forms, and infographics that are accessible to any reader. Transform data into something organic and actionable.",
+            "Data presented in charts and visualizations anyone can understand. Numbers that tell a story.",
         },
         {
           title: "Performance Tracking",
           description:
-            "Zero tolerance for erroneous collection. Precise tools, perfect timing, and metrics relevant to your specific case.",
+            "Accurate tracking with the right metrics for your situation. No garbage data.",
         },
         {
           title: "Competitive Analysis",
           description:
-            "Insight into user behavior, preferences, habits, and how you fare against immediate competition.",
+            "See how users behave, what they prefer, and how you compare to competitors.",
         },
         {
           title: "Real-time Monitoring",
           description:
-            "Speed and volume handling for live readings, especially critical when data amounts become enormous.",
+            "Live data when you need it, even at high volume.",
         },
       ],
     },
@@ -114,7 +114,7 @@ export const servicesContent = {
       id: "qa-testing",
       title: "QA & Testing Services",
       description:
-        "Quality is not optional. We ensure your software works flawlessly through comprehensive manual and automated testing.",
+        "We make sure your software actually works. Manual and automated testing that catches problems before your users do.",
       details:
         "Our testing approach covers functionality, performance, security, and user experience. We use industry-standard tools like Selenium, Appium, and JMeter to detect issues before they reach your users.",
       technologies: ["Selenium", "Appium", "JMeter", "Postman", "Cypress"],
