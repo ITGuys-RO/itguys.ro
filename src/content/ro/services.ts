@@ -31,7 +31,7 @@ export const servicesContent = {
             "Rețele neuronale pentru recunoașterea tiparelor complexe. Când algoritmii tradiționali nu sunt suficienți.",
         },
         {
-          title: "Analiză predictivă",
+          title: "Predictive Analytics",
           description:
             "Modele de machine learning care prezic tendințe, detectează anomalii și optimizează deciziile bazate pe date istorice.",
         },

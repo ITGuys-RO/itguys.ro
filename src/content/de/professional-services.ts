@@ -2,7 +2,7 @@ export const professionalServicesContent = {
   hero: {
     headline: "Professionelle Dienstleistungen",
     subheadline:
-      "Qualitätssicherung, Sicherheitsexpertise und Datenanalyse. Die Dienstleistungen, die Ihre Software zuverlässig, sicher und optimiert halten.",
+      "Qualitätssicherung, Sicherheitsexpertise und Data Analytics. Die Dienstleistungen, die Ihre Software zuverlässig, sicher und optimiert halten.",
   },
 
   services: [
@@ -28,7 +28,7 @@ export const professionalServicesContent = {
         {
           title: "Code-Review",
           description:
-            "Experten-Review Ihres Codes mit Fokus auf Best Practices, Sicherheitslücken und Performance-Probleme.",
+            "Experten-Review Ihres Codes mit Fokus auf bewährte Praktiken, Sicherheitslücken und Performance-Probleme.",
         },
         {
           title: "DevSecOps-Strategie",
@@ -76,7 +76,7 @@ export const professionalServicesContent = {
             "Multi-Faktor-Authentifizierung, Zugriffskontrollen und kontinuierliches Monitoring. Jeder Nutzer und jedes Gerät wird vor dem Zugang verifiziert.",
         },
       ],
-      note: "Wir können als eigenständiges Sicherheitsteam arbeiten oder neben Ihrer Entwicklungsarbeit mit uns.",
+      note: "Wir können als eigenständiges Sicherheitsteam oder zusammen mit Ihrem Entwicklungsteam arbeiten. Arbeiten Sie mit uns!",
       technologies: ["Akamai", "Cloudflare", "Kali Linux", "AWS Security", "Burp Suite"],
     },
     {

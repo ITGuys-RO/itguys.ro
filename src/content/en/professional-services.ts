@@ -76,7 +76,7 @@ export const professionalServicesContent = {
             "Multi-factor authentication, access controls, and continuous monitoring. Every user and device verified before access is granted.",
         },
       ],
-      note: "We can work as a standalone security team or alongside your development work with us.",
+      note: "We can work as a standalone security team or alongside your development, work with us!",
       technologies: ["Akamai", "Cloudflare", "Kali Linux", "AWS Security", "Burp Suite"],
     },
     {
