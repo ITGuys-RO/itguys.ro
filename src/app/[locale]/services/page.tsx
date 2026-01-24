@@ -3,7 +3,8 @@ import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { SecurityIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, FAQSchema } from "@/components/structured-data";
-import { servicesContent } from "@/content";
+import { getContent } from "@/content";
+import { locales, type Locale } from "@/i18n/config";
 import {
   CodeBracketIcon,
   CloudIcon,
@@ -22,24 +23,48 @@ const serviceIcons: Record<string, typeof CodeBracketIcon> = {
   database: CircleStackIcon,
 };
 
-export const metadata: Metadata = {
-  title: "Development Services - Web, Mobile, Cloud & AI",
-  description:
-    "Custom software development services including web applications, mobile apps, cloud infrastructure, APIs, AI/ML solutions, and database design. Built by experts from EA, TUI, and Nagarro.",
-  openGraph: {
-    title: "Development Services - ITGuys",
-    description:
-      "Custom software development: web apps, mobile apps, cloud infrastructure, AI/ML, and database solutions.",
-    url: "https://itguys.ro/services",
-    type: "website",
-  },
-  alternates: {
-    canonical: "/services",
-  },
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
-export default function ServicesPage() {
-  const { hero, services, cta } = servicesContent;
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const isRomanian = locale === "ro";
+
+  return {
+    title: isRomanian
+      ? "Servicii Dezvoltare - Web, Mobile, Cloud & AI"
+      : "Development Services - Web, Mobile, Cloud & AI",
+    description: isRomanian
+      ? "Servicii de dezvoltare software personalizate incluzand aplicatii web, aplicatii mobile, infrastructura cloud, API-uri, solutii AI/ML si design baze de date. Construite de experti de la EA, TUI si Nagarro."
+      : "Custom software development services including web applications, mobile apps, cloud infrastructure, APIs, AI/ML solutions, and database design. Built by experts from EA, TUI, and Nagarro.",
+    openGraph: {
+      title: isRomanian ? "Servicii Dezvoltare - ITGuys" : "Development Services - ITGuys",
+      description: isRomanian
+        ? "Dezvoltare software personalizata: aplicatii web, aplicatii mobile, infrastructura cloud, AI/ML si solutii baze de date."
+        : "Custom software development: web apps, mobile apps, cloud infrastructure, AI/ML, and database solutions.",
+      url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/services`,
+      type: "website",
+    },
+    alternates: {
+      canonical: locale === "en" ? "/services" : `/${locale}/services`,
+      languages: {
+        en: "/services",
+        ro: "/ro/services",
+      },
+    },
+  };
+}
+
+export default async function ServicesPage({ params }: Props) {
+  const { locale } = await params;
+
+  const content = getContent(locale as Locale);
+  const { hero, services, cta } = content.servicesContent;
 
   const faqItems = [
     {
@@ -66,7 +91,7 @@ export default function ServicesPage() {
 
   return (
     <>
-      <BreadcrumbSchema items={[{ name: "Services", url: "https://itguys.ro/services" }]} />
+      <BreadcrumbSchema items={[{ name: "Services", url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/services` }]} />
       <FAQSchema items={faqItems} />
       <Hero
         headline={hero.headline}

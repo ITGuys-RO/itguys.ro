@@ -1,15 +1,35 @@
-import Link from "next/link";
 import Image from "next/image";
+import { Link } from "@/i18n/navigation";
+import { type Locale } from "@/i18n/config";
 
 const navigation = [
-  { name: "Development", href: "/services" },
-  { name: "Services", href: "/professional-services" },
-  { name: "Portfolio", href: "/portfolio" },
-  { name: "About", href: "/about" },
-  { name: "Contact", href: "/contact" },
+  { name: { en: "Development", ro: "Dezvoltare", fr: "Développement", de: "Entwicklung" }, href: "/services" },
+  { name: { en: "Services", ro: "Servicii", fr: "Services", de: "Dienstleistungen" }, href: "/professional-services" },
+  { name: { en: "Portfolio", ro: "Portofoliu", fr: "Portfolio", de: "Portfolio" }, href: "/portfolio" },
+  { name: { en: "About", ro: "Despre", fr: "À propos", de: "Über uns" }, href: "/about" },
+  { name: { en: "Contact", ro: "Contact", fr: "Contact", de: "Kontakt" }, href: "/contact" },
 ];
 
-export function Footer() {
+const footerText = {
+  tagline: {
+    en: "Custom software development and security services.",
+    ro: "Dezvoltare software personalizată și servicii de securitate.",
+    fr: "Développement logiciel sur mesure et services de sécurité.",
+    de: "Maßgeschneiderte Softwareentwicklung und Sicherheitsdienste.",
+  },
+  rights: {
+    en: "All rights reserved.",
+    ro: "Toate drepturile rezervate.",
+    fr: "Tous droits réservés.",
+    de: "Alle Rechte vorbehalten.",
+  },
+};
+
+type Props = {
+  locale: Locale;
+};
+
+export function Footer({ locale }: Props) {
   return (
     <footer className="relative border-t border-brand-700/30 bg-brand-950">
       {/* Grid pattern overlay */}
@@ -46,18 +66,18 @@ export function Footer() {
               <span className="transition-colors group-hover:text-brand-300">ITGuys</span>
             </Link>
             <p className="mt-2 text-sm text-brand-300">
-              Custom software development and security services.
+              {footerText.tagline[locale]}
             </p>
           </div>
 
           <nav className="flex flex-wrap gap-6">
             {navigation.map((item) => (
               <Link
-                key={item.name}
+                key={item.name.en}
                 href={item.href}
                 className="text-sm text-brand-300 hover:text-neon transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.4)]"
               >
-                {item.name}
+                {item.name[locale]}
               </Link>
             ))}
           </nav>
@@ -65,7 +85,7 @@ export function Footer() {
 
         <div className="mt-8 pt-8 border-t border-brand-700/30 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <p className="text-sm text-brand-400">
-            &copy; {new Date().getFullYear()} ITGuys. All rights reserved.
+            &copy; {new Date().getFullYear()} ITGuys. {footerText.rights[locale]}
           </p>
           <div className="flex flex-wrap gap-4 md:gap-6">
             <a

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Hero, CTA } from "@/components/sections";
 import { WebPageSchema } from "@/components/structured-data";
 import { Section, Card, CardTitle, CardDescription, AnimateOnScroll } from "@/components/ui";
 import { HeroIllustration } from "@/components/illustrations";
-import { homeContent } from "@/content";
+import { getContent } from "@/content";
+import { Link } from "@/i18n/navigation";
+import { locales, type Locale } from "@/i18n/config";
 import {
   SparklesIcon,
   RocketLaunchIcon,
@@ -25,24 +26,43 @@ const buildIcons = [
   { icon: ShieldCheckIcon, label: "Security" },
 ];
 
-export const metadata: Metadata = {
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    url: "https://itguys.ro",
-  },
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
-export default function HomePage() {
-  const { hero, stats, whatSetsUsApart, whoWeWorkWith, whatWeBuild, cta } = homeContent;
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+
+  return {
+    alternates: {
+      canonical: locale === "en" ? "/" : `/${locale}`,
+      languages: {
+        en: "/",
+        ro: "/ro",
+      },
+    },
+    openGraph: {
+      url: locale === "en" ? "https://itguys.ro" : `https://itguys.ro/${locale}`,
+    },
+  };
+}
+
+export default async function HomePage({ params }: Props) {
+  const { locale } = await params;
+
+  const content = getContent(locale as Locale);
+  const { hero, stats, whatSetsUsApart, whoWeWorkWith, whatWeBuild, cta } = content.homeContent;
 
   return (
     <>
       <WebPageSchema
         title="ITGuys - Custom Software Development & Security Services"
         description="Custom web and mobile apps, plus security services. We build software with the right technology for your problem."
-        url="https://itguys.ro"
+        url={locale === "en" ? "https://itguys.ro" : `https://itguys.ro/${locale}`}
       />
       <Hero
         headline={hero.headline}
