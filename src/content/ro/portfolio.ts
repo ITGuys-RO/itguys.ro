@@ -59,7 +59,7 @@ export const portfolioContent = {
       clientType: "Non-Profit",
       industry: "Mediu",
       challenge:
-        "Organizația lider mondială de certificare a pădurilor avea nevoie de instrumente digitale pentru a susține misiunea de protejare a pădurilor la nivel global. Erau necesare sisteme pentru managementul certificării, trasabilitatea lanțului de aprovizionare și coordonarea stakeholderilor în mai multe țări.",
+        "Organizația lider mondială de certificare a pădurilor avea nevoie de instrumente digitale pentru a susține misiunea de protejare a pădurilor la nivel global. Erau necesare sisteme pentru managementul certificării, trasabilitatea lanțului de aprovizionare și coordonarea actionarilor în mai multe țări.",
       solution:
         "Am contribuit la dezvoltarea sistemelor de certificare și trasabilitate care ajută la verificarea practicilor de silvicultură durabilă în lanțurile de aprovizionare globale. Am implementat gestionare sigură a datelor pentru informații sensibile de conformitate.",
       tech: ["PHP", "Drupal", "PostgreSQL", "Docker", "REST APIs"],
