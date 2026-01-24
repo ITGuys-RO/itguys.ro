@@ -1,7 +1,7 @@
 name: Submit to IndexNow
 
 permissions:
-  actions: read
+  actions: write
   contents: read
 
 on:
@@ -14,6 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
+      - name: Checkout (for gh CLI)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github
+          sparse-checkout-cone-mode: false
+
       - name: Download sitemap URLs
         uses: actions/download-artifact@v4
         with:
@@ -21,20 +28,57 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
 
-      - name: Submit to IndexNow
+      - name: Restore previously submitted URLs cache
+        id: cache-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: submitted-urls.txt
+          key: indexnow-submitted-urls-v1
+          restore-keys: |
+            indexnow-submitted-
+
+      - name: Find new URLs to submit
+        id: find-new
+        run: |
+          # Create empty file if no cache exists
+          touch submitted-urls.txt
+
+          echo "=== Current sitemap URLs ==="
+          cat sitemap-urls.txt
+          echo ""
+
+          echo "=== Previously submitted URLs ==="
+          cat submitted-urls.txt
+          echo ""
+
+          # Find URLs that haven't been submitted yet
+          sort sitemap-urls.txt > sorted-current.txt
+          sort submitted-urls.txt > sorted-submitted.txt
+          comm -23 sorted-current.txt sorted-submitted.txt > new-urls.txt
+
+          NEW_COUNT=$(wc -l < new-urls.txt | tr -d ' ')
+
+          if [ "$NEW_COUNT" -eq 0 ] || [ ! -s new-urls.txt ]; then
+            echo "No new URLs to submit"
+            echo "has_new=false" >> $GITHUB_OUTPUT
+          else
+            echo "=== New URLs to submit ($NEW_COUNT) ==="
+            cat new-urls.txt
+            echo "has_new=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Submit new URLs to IndexNow
+        if: steps.find-new.outputs.has_new == 'true'
+        id: submit
         env:
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
         run: |
           set -e
 
-          echo "URLs to submit:"
-          cat sitemap-urls.txt
+          URL_COUNT=$(wc -l < new-urls.txt | tr -d ' ')
+          echo "Submitting $URL_COUNT new URLs to IndexNow..."
 
-          URL_COUNT=$(wc -l < sitemap-urls.txt)
-          echo ""
-          echo "Total: $URL_COUNT URLs"
-
-          URL_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0))' < sitemap-urls.txt)
+          URL_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0))' < new-urls.txt)
 
           JSON_PAYLOAD=$(jq -n \
             --arg host "itguys.ro" \
@@ -43,12 +87,8 @@ jobs:
             --argjson urlList "$URL_ARRAY" \
             '{host: $host, key: $key, keyLocation: $keyLocation, urlList: $urlList}')
 
-          echo ""
           echo "Payload:"
           echo "$JSON_PAYLOAD" | jq .
-
-          echo ""
-          echo "Submitting to IndexNow..."
 
           HTTP_CODE=$(curl -s -w "%{http_code}" -o response.txt -X POST "https://api.indexnow.org/IndexNow" \
             -H "Content-Type: application/json; charset=utf-8" \
@@ -61,11 +101,40 @@ jobs:
           fi
 
           case $HTTP_CODE in
-            200) echo "OK - URLs submitted successfully" ;;
-            202) echo "Accepted - URLs accepted, key validation pending" ;;
+            200|202)
+              echo "Success - URLs submitted"
+              echo "success=true" >> $GITHUB_OUTPUT
+              ;;
             400) echo "Bad Request - Invalid format"; exit 1 ;;
             403) echo "Forbidden - Invalid key"; exit 1 ;;
             422) echo "Unprocessable Entity - Invalid URLs"; exit 1 ;;
             429) echo "Too Many Requests - Rate limited"; exit 1 ;;
             *) echo "Unexpected response code: $HTTP_CODE"; exit 1 ;;
           esac
+
+      - name: Update submitted URLs list
+        if: steps.find-new.outputs.has_new == 'true' && steps.submit.outputs.success == 'true'
+        run: |
+          cat new-urls.txt >> submitted-urls.txt
+          sort -u submitted-urls.txt -o submitted-urls.txt
+          echo "Updated submitted URLs list:"
+          cat submitted-urls.txt
+
+      - name: Delete old cache
+        if: steps.find-new.outputs.has_new == 'true' && steps.submit.outputs.success == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Clearing old IndexNow caches..."
+          gh cache list --json key -q '.[].key' | grep -E '^indexnow-submitted-' | while read key; do
+            echo "Deleting cache: $key"
+            gh cache delete "$key" || true
+          done
+        continue-on-error: true
+
+      - name: Save updated cache
+        if: steps.find-new.outputs.has_new == 'true' && steps.submit.outputs.success == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: submitted-urls.txt
+          key: indexnow-submitted-urls-v1

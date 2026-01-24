@@ -13,3 +13,8 @@ directory = ".open-next/assets"
 TELEGRAM_BOT_TOKEN = "your_bot_token_here"
 TELEGRAM_CHAT_ID = "your_chat_id_here"
 TURNSTILE_SECRET_KEY = "your_turnstile_secret_key_here"
+
+[d1_databases]
+binding = "DB"
+database_name = "your_database_name"
+database_id = "your_database_id"
