@@ -87,7 +87,7 @@ export const portfolioContent = {
       solution:
         "Am dezvoltat o platformă completă de management al practicii legale cu pontaj integrat, facturare automatizată, tracking audiențe în instanță și dashboard-uri de performanță. Am implementat criptare SSL și controale de acces bazate pe roluri pentru protecția datelor.",
       tech: ["PHP", "Laravel", "Angular", "MySQL", "AWS"],
-      result: "Servind firme de avocatură de la practicieni individuali la practici mari cu mai multe echipe în Europa.",
+      result: "Servirea firmelor de avocatură, de la practicieni individuali la practici mari cu mai multe echipe în Europa.",
       url: "https://www.keyvision.eu/",
     },
   ] as Project[],

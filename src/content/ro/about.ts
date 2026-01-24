@@ -38,7 +38,7 @@ export const aboutContent = {
   mission: {
     title: "Misiunea noastră",
     body: [
-      "La ITGuys totul este despre structură convingătoare și funcționalitate profundă. Scopul nostru este să creăm o experiență unică și bogată în funcționalități care este fiabilă pentru furnizor și simplă pentru client.",
+      "La ITGuys, totul este despre structură convingătoare și funcționalitate profundă. Scopul nostru este să creăm o experiență unică și bogată în funcționalități care este fiabilă pentru furnizor și simplă pentru client.",
       "Munca noastră trebuie să adune oamenii împreună, să le ofere un mediu sigur, permițându-le să beneficieze de produs, serviciu sau concept. Ne asigurăm că munca noastră este recomandabilă și constant captivantă.",
       "Înțelegem importanța muncii noastre, gravitatea ei. Suntem pe deplin pregătiți pentru asta. Luăm fiecare proiect foarte în serios.",
     ],

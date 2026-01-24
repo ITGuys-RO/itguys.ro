@@ -52,7 +52,7 @@ export const developmentContent = {
       id: "mobile",
       title: "Aplicații mobile",
       description:
-        "Aplicații native iOS și Android construite de ingineri cu peste 10 ani de experiență la Nagarro și Enea AB. Nu compromisuri cross-platform, performanță nativă reală.",
+        "Aplicații native iOS și Android construite de ingineri cu peste 10 ani de experiență la Nagarro și Enea AB. Fără compromisuri cross-platform, performanță nativă reală.",
       details:
         "Ne specializăm în dezvoltare nativă pentru că unele aplicații o cer. Integrări IoT, wearables, sisteme de plată, aplicații medicale. Când performanța și integrarea cu platforma contează, construim nativ. Ne ocupăm și de publicarea în app store, pipeline-uri CI/CD și mentenanță continuă.",
       technologies: ["Swift", "Kotlin", "iOS SDK", "Android SDK", "Fitbit SDK"],

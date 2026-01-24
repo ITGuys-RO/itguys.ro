@@ -31,7 +31,7 @@ export const contactContent = {
   },
 
   cta: {
-    headline: "Pregătiți când ești tu",
+    headline: "Pregătit când ești tu",
     body: "Fără discurs de vânzări. Doar o conversație despre ce construiești.",
     buttonText: "Trimite mesaj",
     buttonHref: "#contact-form",
