@@ -10,39 +10,27 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - name: Wait for deployment to propagate
-        run: sleep 15
+      - name: Download sitemap URLs
+        uses: actions/download-artifact@v4
+        with:
+          name: sitemap-urls
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
 
-      - name: Fetch sitemap and submit to IndexNow
+      - name: Submit to IndexNow
         env:
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
         run: |
           set -e
 
-          SITEMAP_URL="https://itguys.ro/sitemap.xml"
+          echo "URLs to submit:"
+          cat sitemap-urls.txt
 
-          echo "Fetching sitemap from $SITEMAP_URL"
-          curl -s "$SITEMAP_URL" -o sitemap.xml
-
-          echo "Sitemap content (first 20 lines):"
-          head -20 sitemap.xml
-
+          URL_COUNT=$(wc -l < sitemap-urls.txt)
           echo ""
-          echo "Extracting URLs..."
-          grep -o '<loc>[^<]*</loc>' sitemap.xml | sed 's/<loc>//g;s/<\/loc>//g' > urls.txt
+          echo "Total: $URL_COUNT URLs"
 
-          echo "Extracted URLs:"
-          cat urls.txt
-
-          URL_COUNT=$(wc -l < urls.txt)
-          echo "Found $URL_COUNT URLs"
-
-          if [ "$URL_COUNT" -eq 0 ]; then
-            echo "ERROR: No URLs found in sitemap"
-            exit 1
-          fi
-
-          URL_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0))' < urls.txt)
+          URL_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0))' < sitemap-urls.txt)
 
           JSON_PAYLOAD=$(jq -n \
             --arg host "itguys.ro" \
@@ -51,9 +39,11 @@ jobs:
             --argjson urlList "$URL_ARRAY" \
             '{host: $host, key: $key, keyLocation: $keyLocation, urlList: $urlList}')
 
+          echo ""
           echo "Payload:"
           echo "$JSON_PAYLOAD" | jq .
 
+          echo ""
           echo "Submitting to IndexNow..."
 
           HTTP_CODE=$(curl -s -w "%{http_code}" -o response.txt -X POST "https://api.indexnow.org/IndexNow" \

@@ -71,7 +71,33 @@ jobs:
         env:
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
 
+      - name: Generate sitemap URLs
+        run: |
+          BASE_URL="https://itguys.ro"
+          LOCALES=("en" "ro" "fr" "de" "it" "es")
+          PAGES=("" "/development" "/services" "/about" "/portfolio" "/contact")
+
+          for page in "${PAGES[@]}"; do
+            for locale in "${LOCALES[@]}"; do
+              if [ "$locale" = "en" ]; then
+                echo "${BASE_URL}${page}"
+              else
+                echo "${BASE_URL}/${locale}${page}"
+              fi
+            done
+          done > sitemap-urls.txt
+
+          echo "Generated $(wc -l < sitemap-urls.txt) URLs:"
+          cat sitemap-urls.txt
+
       - name: Deploy to Cloudflare
         run: pnpm wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: Upload sitemap URLs
+        uses: actions/upload-artifact@v4
+        with:
+          name: sitemap-urls
+          path: sitemap-urls.txt
+          retention-days: 1
