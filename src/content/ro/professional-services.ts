@@ -106,7 +106,7 @@ export const professionalServicesContent = {
         {
           title: "Monitorizare în timp real",
           description:
-            "Viteză și gestionare volum pentru citiri live, mai ales critic când cantitățile de date devin enorme.",
+            "Viteză și gestionare volum pentru citiri live, mai ales critic atunci când cantitățile de date devin enorme.",
         },
       ],
     },
