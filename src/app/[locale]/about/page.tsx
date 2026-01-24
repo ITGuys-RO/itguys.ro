@@ -238,9 +238,9 @@ export default async function AboutPage({ params }: Props) {
               className="p-6 rounded-xl bg-brand-800/30 border border-brand-700/30"
             >
               <div className="flex items-start gap-4">
-                {member.email && (
+                {(member.gravatarEmail || member.email) && (
                   <Image
-                    src={getGravatarUrl(member.email, 160)}
+                    src={getGravatarUrl(member.gravatarEmail || member.email!, 160)}
                     alt={member.name}
                     width={80}
                     height={80}

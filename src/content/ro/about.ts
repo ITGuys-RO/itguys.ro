@@ -5,6 +5,7 @@ type TeamMember = {
   role: string;
   bio: string;
   email?: string;
+  gravatarEmail?: string;
   linkedIn?: string;
 };
 
@@ -56,7 +57,7 @@ export const aboutContent = {
   whatWeBelieve: {
     title: "Principiile noastre",
     intro:
-      "Lucrăm cu cod, da, dar cu un sens mai profund. Găsim mândrie în munca noastră, entuziasm și încredere. Pentru a aborda acest lucru, folosim un cod de etică care modelează fiecare proiect.",
+      "Scriem cod, da, dar cu un sens mai profund. Găsim mândrie în munca noastră, entuziasm și încredere. Pentru a aborda acest lucru, folosim un cod de etică ce modelează fiecare proiect.",
     values: [
       {
         title: "Simplitate",
@@ -66,7 +67,7 @@ export const aboutContent = {
       {
         title: "Fiabilitate",
         description:
-          "Îmbunătățiri și actualizări constante, adaptare disponibilă pentru trafic imens. Sisteme care rezistă testului timpului și stresului.",
+          "Îmbunătățiri și actualizări constante, adaptare disponibilă pentru trafic imens. Sisteme ce rezistă testului timpului și stresului.",
       },
       {
         title: "Adaptabilitate",
@@ -97,13 +98,13 @@ export const aboutContent = {
       {
         title: "Augmentare echipă",
         description:
-          "Potrivit pentru proiecte în desfășurare sau sarcini specifice care necesită un profesionist competent. Fie că e un dezvoltator, un departament sau întreaga echipă, oferim forță de muncă calificată, experimentată, antrenată să respecte obiectivele tale și să se integreze cu echipa ta existentă.",
+          "Potrivit pentru proiecte în desfășurare sau sarcini specifice care necesită un profesionist competent. Fie că e vorba de un dezvoltator, un departament sau întreaga echipă, oferim oameni pasionați, calificați, experimentați, antrenați să respecte obiectivele tale și să se integreze cu echipa ta existentă.",
         ideal: "Ideal pentru: Echipe existente care au nevoie de capacitate suplimentară sau abilități specializate.",
       },
       {
-        title: "Proiecte preț fix",
+        title: "Proiecte cu preț fix",
         description:
-          "Opțiunea pentru angajamentul complet al echipei ITGuys. Adu-ți conceptul la realitate cu implementare profesională, design complet, structură fiabilă și performanță adaptabilă. Nu doar că facem ideea ta tangibilă, ci o protejăm, făcând-o sigură atât pentru furnizor cât și pentru utilizator.",
+          "Opțiunea pentru angajamentul complet al echipei ITGuys. Adu-ți conceptul la realitate cu implementare profesională, design complet, structură fiabilă și performanță adaptabilă. Nu doar că îți materializăm ideea, ci o și protejăm, făcând-o sigură atât pentru furnizor, cât și pentru utilizator.",
         ideal: "Ideal pentru: Produse noi, MVP-uri sau construcții complete de sistem.",
       },
     ],
@@ -126,12 +127,13 @@ export const aboutContent = {
         role: "Fondator & Lead Engineer",
         bio: "Peste 15 ani în dezvoltare software și cybersecurity. Anterior la TUI, Electronic Arts și Team Extension AG. Specializat în arhitectură sigură, DevOps și securitatea aplicațiilor web.",
         linkedIn: "https://www.linkedin.com/in/dustfeather/",
-        email: "dustfeather@gmail.com",
+        email: "contact@itguys.ro",
+        gravatarEmail: "dustfeather@gmail.com",
       },
       {
         name: "Cristian-Marian Mincu",
         role: "Senior Mobile Developer",
-        bio: "Peste 10 ani construind aplicații native iOS și Android. Anterior la Nagarro și Enea AB. Expert în arhitectură mobile, integrări IoT și pipeline-uri CI/CD. Master în Securitatea Informației de la Politehnica București.",
+        bio: "Peste 10 ani construind aplicații native iOS și Android. Anterior la Nagarro și Enea AB. Expert în arhitectură mobile, integrări IoT și pipeline-uri CI/CD. Master în Securitatea Informației de la Universitatea Politehnica din București.",
         linkedIn: "https://www.linkedin.com/in/cristian-marian-mincu-44849690/",
       },
     ] as TeamMember[],
