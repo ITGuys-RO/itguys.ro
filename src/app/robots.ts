@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/', '/_next/', '/admin/', '/*.json$'],
+        disallow: ['/api/', '/_next/', '/admin/'],
         crawlDelay: 1,
       },
       // Specific rules for good bots
@@ -23,6 +23,5 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl,
   };
 }
