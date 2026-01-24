@@ -27,22 +27,33 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
+const titles: Record<string, string> = {
+  en: "Professional Services - QA, Security & Analytics",
+  ro: "Servicii Profesionale - QA, Securitate & Analytics",
+  fr: "Services Professionnels - QA, Securite & Analytics",
+  de: "Professionelle Dienste - QA, Sicherheit & Analytics",
+  it: "Servizi Professionali - QA, Sicurezza & Analytics",
+  es: "Servicios Profesionales - QA, Seguridad & Analytics",
+};
+
+const servicesDescriptions: Record<string, string> = {
+  en: "QA testing, security audits, penetration testing, and data analytics. Expert services from EA and TUI veterans.",
+  ro: "Testare QA, audituri de securitate, teste de penetrare si analiza datelor. Servicii de la experti EA si TUI.",
+  fr: "Tests QA, audits de securite, tests de penetration et analyse de donnees. Services d'experts EA et TUI.",
+  de: "QA-Tests, Sicherheitsaudits, Penetrationstests und Datenanalyse. Expertendienste von EA- und TUI-Veteranen.",
+  it: "Test QA, audit di sicurezza, penetration test e analisi dati. Servizi esperti da veterani EA e TUI.",
+  es: "Pruebas QA, auditorias de seguridad, pentesting y analisis de datos. Servicios de expertos de EA y TUI.",
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const isRomanian = locale === "ro";
 
   return {
-    title: isRomanian
-      ? "Servicii Profesionale - QA, Securitate & Analytics"
-      : "Professional Services - QA, Security & Analytics",
-    description: isRomanian
-      ? "Servicii IT profesionale incluzând asigurarea calității, audituri de securitate, teste de penetrare și analiza datelor. Consultanță de expert susținută de experiența la Electronic Arts și TUI."
-      : "Professional IT services including quality assurance, security audits, penetration testing, and data analytics. Expert consulting backed by experience at Electronic Arts and TUI.",
+    title: titles[locale] || titles.en,
+    description: servicesDescriptions[locale] || servicesDescriptions.en,
     openGraph: {
-      title: isRomanian ? "Servicii Profesionale - ITGuys" : "Professional Services - ITGuys",
-      description: isRomanian
-        ? "Testare QA, audituri de securitate, teste de penetrare și servicii analytics de la experți cu background la EA și TUI."
-        : "QA testing, security audits, penetration testing, and analytics services from experts with EA and TUI backgrounds.",
+      title: titles[locale] || titles.en,
+      description: servicesDescriptions[locale] || servicesDescriptions.en,
       url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/services`,
       type: "website",
     },
@@ -53,10 +64,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ro: "/ro/services",
         fr: "/fr/services",
         de: "/de/services",
+        it: "/it/services",
+        es: "/es/services",
       },
     },
     twitter: {
       card: "summary_large_image",
+      description: servicesDescriptions[locale] || servicesDescriptions.en,
       images: ["/og-image.png"],
     },
   };

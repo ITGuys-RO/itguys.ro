@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/sections";
 import { ContactForm } from "@/components/sections";
+import { ContactIllustration } from "@/components/illustrations";
 import { Section } from "@/components/ui";
 import { BreadcrumbSchema, OrganizationSchema, LocalBusinessSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 
 export const metadata: Metadata = {
-  title: "Contact Us - Get a Free Project Consultation",
-  description: "Have a project in mind? Tell us about your software development or security needs. We'll respond within 1-2 business days with a consultation. Based in Romania, serving clients worldwide.",
+  title: "Contact Us - Free Project Consultation",
+  description: "Have a project in mind? Tell us about it. We respond within 1-2 business days. Based in Romania, serving worldwide.",
   openGraph: {
     title: "Contact ITGuys - Free Consultation",
-    description: "Have a project in mind? Tell us about it. We'll respond within 1-2 business days.",
+    description: "Have a project in mind? Tell us about it. We respond within 1-2 business days. Based in Romania, serving worldwide.",
     url: "https://itguys.ro/contact",
     type: "website",
   },
@@ -21,12 +22,14 @@ export const metadata: Metadata = {
       ro: "/ro/contact",
       fr: "/fr/contact",
       de: "/de/contact",
+      it: "/it/contact",
+      es: "/es/contact",
     },
   },
   twitter: {
     card: "summary_large_image",
     title: "Contact ITGuys - Free Consultation",
-    description: "Have a project in mind? We'll respond within 1-2 business days.",
+    description: "Have a project in mind? Tell us about it. We respond within 1-2 business days. Based in Romania, serving worldwide.",
     images: ["/og-image.png"],
   },
 };
@@ -41,7 +44,12 @@ export default function ContactPage() {
       <OrganizationSchema />
       <LocalBusinessSchema />
       <BreadcrumbSchema items={[{ name: "Contact", url: "https://itguys.ro/contact" }]} />
-      <Hero headline={hero.headline} subheadline={hero.subheadline} badgeText={homeHero.badgeText} />
+      <Hero
+        headline={hero.headline}
+        subheadline={hero.subheadline}
+        badgeText={homeHero.badgeText}
+        illustration={<ContactIllustration className="w-full h-auto max-w-sm mx-auto" />}
+      />
 
       <Section id="contact-form">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">

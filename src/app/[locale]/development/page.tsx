@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
-import { SecurityIllustration } from "@/components/illustrations";
+import { DevelopmentIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { locales, type Locale } from "@/i18n/config";
@@ -31,22 +31,33 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
+const devTitles: Record<string, string> = {
+  en: "Development Services - Web, Mobile, Cloud & AI",
+  ro: "Servicii Dezvoltare - Web, Mobile, Cloud & AI",
+  fr: "Services de Developpement - Web, Mobile, Cloud & IA",
+  de: "Entwicklungsdienste - Web, Mobile, Cloud & KI",
+  it: "Servizi di Sviluppo - Web, Mobile, Cloud & IA",
+  es: "Servicios de Desarrollo - Web, Movil, Cloud & IA",
+};
+
+const devDescriptions: Record<string, string> = {
+  en: "Web apps, mobile apps, cloud infrastructure, and AI solutions. Custom software built by EA, TUI, and Nagarro experts.",
+  ro: "Aplicatii web, mobile, infrastructura cloud si solutii AI. Software personalizat de experti EA, TUI si Nagarro.",
+  fr: "Apps web, mobiles, infrastructure cloud et solutions IA. Logiciels sur mesure par des experts EA, TUI et Nagarro.",
+  de: "Web-Apps, Mobile Apps, Cloud-Infrastruktur und KI-Losungen. Software von EA-, TUI- und Nagarro-Experten.",
+  it: "App web, mobile, infrastruttura cloud e soluzioni IA. Software personalizzato da esperti EA, TUI e Nagarro.",
+  es: "Apps web, moviles, infraestructura cloud y soluciones IA. Software a medida de expertos EA, TUI y Nagarro.",
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const isRomanian = locale === "ro";
 
   return {
-    title: isRomanian
-      ? "Servicii Dezvoltare - Web, Mobile, Cloud & AI"
-      : "Development Services - Web, Mobile, Cloud & AI",
-    description: isRomanian
-      ? "Servicii de dezvoltare software personalizate incluzând aplicații web, aplicații mobile, infrastructură cloud, API-uri, soluții AI/ML și design baze de date. Construite de experți de la EA, TUI și Nagarro."
-      : "Custom software development services including web applications, mobile apps, cloud infrastructure, APIs, AI/ML solutions, and database design. Built by experts from EA, TUI, and Nagarro.",
+    title: devTitles[locale] || devTitles.en,
+    description: devDescriptions[locale] || devDescriptions.en,
     openGraph: {
-      title: isRomanian ? "Servicii Dezvoltare - ITGuys" : "Development Services - ITGuys",
-      description: isRomanian
-        ? "Dezvoltare software personalizată: aplicații web, aplicații mobile, infrastructură cloud, AI/ML și soluții baze de date."
-        : "Custom software development: web apps, mobile apps, cloud infrastructure, AI/ML, and database solutions.",
+      title: devTitles[locale] || devTitles.en,
+      description: devDescriptions[locale] || devDescriptions.en,
       url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/development`,
       type: "website",
     },
@@ -57,10 +68,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ro: "/ro/development",
         fr: "/fr/development",
         de: "/de/development",
+        it: "/it/development",
+        es: "/es/development",
       },
     },
     twitter: {
       card: "summary_large_image",
+      description: devDescriptions[locale] || devDescriptions.en,
       images: ["/og-image.png"],
     },
   };
@@ -104,7 +118,7 @@ export default async function ServicesPage({ params }: Props) {
         headline={hero.headline}
         subheadline={hero.subheadline}
         showBadge={false}
-        illustration={<SecurityIllustration className="w-full h-auto max-w-sm mx-auto" />}
+        illustration={<DevelopmentIllustration className="w-full h-auto max-w-sm mx-auto" />}
       />
 
       {services.map((service, index) => {

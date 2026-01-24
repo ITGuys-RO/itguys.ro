@@ -7,10 +7,10 @@ import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 
 export const metadata: Metadata = {
   title: "Portfolio - Our Software Development Projects",
-  description: "Explore successful projects we've delivered across events, audio technology, legal tech, iGaming, and more. Real-world solutions for XtendLive, AudioMovers, FSC, and other innovative companies. See how we solve complex technical challenges.",
+  description: "Projects we've built across events, audio tech, legal tech, and iGaming. Work for XtendLive, AudioMovers, and more.",
   openGraph: {
     title: "Our Portfolio - ITGuys Projects",
-    description: "Projects we've built across events, audio, legal tech, iGaming, and more. See our work for XtendLive, AudioMovers, FSC, and others.",
+    description: "Projects we've built across events, audio tech, legal tech, and iGaming. Work for XtendLive, AudioMovers, and more.",
     url: "https://itguys.ro/portfolio",
     type: "website",
   },
@@ -21,12 +21,14 @@ export const metadata: Metadata = {
       ro: "/ro/portfolio",
       fr: "/fr/portfolio",
       de: "/de/portfolio",
+      it: "/it/portfolio",
+      es: "/es/portfolio",
     },
   },
   twitter: {
     card: "summary_large_image",
     title: "Our Portfolio - ITGuys Projects",
-    description: "Projects we've built across events, audio, legal tech, iGaming, and more.",
+    description: "Projects we've built across events, audio tech, legal tech, and iGaming. Work for XtendLive, AudioMovers, and more.",
     images: ["/og-image.png"],
   },
 };

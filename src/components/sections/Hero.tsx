@@ -58,7 +58,7 @@ export function Hero({ headline, subheadline, cta, secondaryCta, badgeText = "Av
                 {badgeText}
               </div>
             )}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight animate-fade-in-up">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
               {headline}
             </h1>
             <p className="mt-6 text-lg md:text-xl text-brand-200 animate-fade-in-up stagger-1">

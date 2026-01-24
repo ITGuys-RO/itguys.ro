@@ -3,9 +3,9 @@ import Image from "next/image";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-data";
+import { AboutIllustration } from "@/components/illustrations";
 import { getContent } from "@/content";
 import { getGravatarUrl } from "@/lib/gravatar";
-import { getCombinedYearsText } from "@/lib/utils";
 import {
   AcademicCapIcon,
   UserGroupIcon,
@@ -13,14 +13,12 @@ import {
   CheckBadgeIcon,
 } from "@heroicons/react/24/outline";
 
-const years = getCombinedYearsText();
-
 export const metadata: Metadata = {
   title: "About Us - ITGuys",
-  description: `Learn about ITGuys - a team with ${years} years combined experience from EA, TUI, and Nagarro. Web, mobile, and security experts based in Romania.`,
+  description: "Meet our team of software experts from EA, TUI, and Nagarro. Web, mobile, and security specialists based in Romania.",
   openGraph: {
     title: "About Us - ITGuys",
-    description: `Learn about ITGuys - a team with ${years} years combined experience from EA, TUI, and Nagarro.`,
+    description: "Meet our team of software experts from EA, TUI, and Nagarro. Web, mobile, and security specialists based in Romania.",
     url: "https://itguys.ro/about",
     type: "website",
   },
@@ -31,12 +29,14 @@ export const metadata: Metadata = {
       ro: "/ro/about",
       fr: "/fr/about",
       de: "/de/about",
+      it: "/it/about",
+      es: "/es/about",
     },
   },
   twitter: {
     card: "summary_large_image",
     title: "About Us - ITGuys",
-    description: `Learn about ITGuys - a team with ${years} years combined experience from EA, TUI, and Nagarro.`,
+    description: "Meet our team of software experts from EA, TUI, and Nagarro. Web, mobile, and security specialists based in Romania.",
     images: ["/og-image.png"],
   },
 };
@@ -72,6 +72,7 @@ export default function AboutPage() {
         headline={hero.headline}
         subheadline={hero.subheadline}
         showBadge={false}
+        illustration={<AboutIllustration className="w-full h-auto max-w-sm mx-auto" />}
       />
 
       {/* Vision */}

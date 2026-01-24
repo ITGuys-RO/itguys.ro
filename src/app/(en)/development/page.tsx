@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
-import { SecurityIllustration } from "@/components/illustrations";
+import { DevelopmentIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import {
@@ -24,10 +24,10 @@ const serviceIcons: Record<string, typeof CodeBracketIcon> = {
 
 export const metadata: Metadata = {
   title: "Development Services - Web, Mobile, Cloud & AI",
-  description: "Custom software development services including web applications, mobile apps, cloud infrastructure, APIs, AI/ML solutions, and database design. Built by experts from EA, TUI, and Nagarro.",
+  description: "Web apps, mobile apps, cloud infrastructure, and AI solutions. Custom software built by EA, TUI, and Nagarro experts.",
   openGraph: {
     title: "Development Services - ITGuys",
-    description: "Custom software development: web apps, mobile apps, cloud infrastructure, AI/ML, and database solutions.",
+    description: "Web apps, mobile apps, cloud infrastructure, and AI solutions. Custom software built by EA, TUI, and Nagarro experts.",
     url: "https://itguys.ro/development",
     type: "website",
   },
@@ -38,12 +38,14 @@ export const metadata: Metadata = {
       ro: "/ro/development",
       fr: "/fr/development",
       de: "/de/development",
+      it: "/it/development",
+      es: "/es/development",
     },
   },
   twitter: {
     card: "summary_large_image",
     title: "Development Services - Web, Mobile, Cloud & AI",
-    description: "Custom software development services from experts at EA, TUI, and Nagarro.",
+    description: "Web apps, mobile apps, cloud infrastructure, and AI solutions. Custom software built by EA, TUI, and Nagarro experts.",
     images: ["/og-image.png"],
   },
 };
@@ -84,7 +86,7 @@ export default function ServicesPage() {
         headline={hero.headline}
         subheadline={hero.subheadline}
         showBadge={false}
-        illustration={<SecurityIllustration className="w-full h-auto max-w-sm mx-auto" />}
+        illustration={<DevelopmentIllustration className="w-full h-auto max-w-sm mx-auto" />}
       />
 
       {services.map((service, index) => {

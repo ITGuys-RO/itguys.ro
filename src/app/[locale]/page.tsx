@@ -29,10 +29,20 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
+const descriptions: Record<string, string> = {
+  en: "Custom web and mobile apps with security services. Expert development team from EA, TUI, and Nagarro.",
+  ro: "Aplicatii web si mobile personalizate cu servicii de securitate. Echipa de experti de la EA, TUI si Nagarro.",
+  fr: "Applications web et mobiles sur mesure avec services de securite. Equipe d'experts issus d'EA, TUI et Nagarro.",
+  de: "Web- und Mobile-Apps mit Sicherheitsdiensten. Expertenteam von EA, TUI und Nagarro.",
+  it: "App web e mobile personalizzate con servizi di sicurezza. Team di esperti da EA, TUI e Nagarro.",
+  es: "Aplicaciones web y moviles personalizadas con servicios de seguridad. Equipo de expertos de EA, TUI y Nagarro.",
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
 
   return {
+    description: descriptions[locale] || descriptions.en,
     alternates: {
       canonical: locale === "en" ? "/" : `/${locale}`,
       languages: {
@@ -40,10 +50,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ro: "/ro",
         fr: "/fr",
         de: "/de",
+        it: "/it",
+        es: "/es",
       },
     },
     openGraph: {
       url: locale === "en" ? "https://itguys.ro" : `https://itguys.ro/${locale}`,
+      description: descriptions[locale] || descriptions.en,
       images: [
         {
           url: "/og-image.png",
@@ -55,6 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
+      description: descriptions[locale] || descriptions.en,
       images: ["/og-image.png"],
     },
   };

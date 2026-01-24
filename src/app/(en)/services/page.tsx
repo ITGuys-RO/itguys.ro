@@ -20,10 +20,10 @@ const serviceIcons: Record<string, typeof ShieldCheckIcon> = {
 
 export const metadata: Metadata = {
   title: "Professional Services - QA, Security & Analytics",
-  description: "Professional IT services including quality assurance, security audits, penetration testing, and data analytics. Expert consulting backed by experience at Electronic Arts and TUI.",
+  description: "QA testing, security audits, penetration testing, and data analytics. Expert services from EA and TUI veterans.",
   openGraph: {
     title: "Professional Services - ITGuys",
-    description: "QA testing, security audits, penetration testing, and analytics services from experts with EA and TUI backgrounds.",
+    description: "QA testing, security audits, penetration testing, and data analytics. Expert services from EA and TUI veterans.",
     url: "https://itguys.ro/services",
     type: "website",
   },
@@ -34,12 +34,14 @@ export const metadata: Metadata = {
       ro: "/ro/services",
       fr: "/fr/services",
       de: "/de/services",
+      it: "/it/services",
+      es: "/es/services",
     },
   },
   twitter: {
     card: "summary_large_image",
     title: "Professional Services - QA, Security & Analytics",
-    description: "QA testing, security audits, and analytics from experts with EA and TUI backgrounds.",
+    description: "QA testing, security audits, penetration testing, and data analytics. Expert services from EA and TUI veterans.",
     images: ["/og-image.png"],
   },
 };

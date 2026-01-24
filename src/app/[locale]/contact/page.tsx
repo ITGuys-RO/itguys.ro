@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/sections";
 import { ContactForm } from "@/components/sections";
+import { ContactIllustration } from "@/components/illustrations";
 import { Section } from "@/components/ui";
 import { BreadcrumbSchema, OrganizationSchema, LocalBusinessSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
@@ -14,22 +15,33 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
+const contactTitles: Record<string, string> = {
+  en: "Contact Us - Free Project Consultation",
+  ro: "Contacteaza-ne - Consultatie Gratuita",
+  fr: "Contactez-nous - Consultation Gratuite",
+  de: "Kontakt - Kostenlose Projektberatung",
+  it: "Contattaci - Consulenza Gratuita",
+  es: "Contactanos - Consulta Gratuita",
+};
+
+const contactDescriptions: Record<string, string> = {
+  en: "Have a project in mind? Tell us about it. We respond within 1-2 business days. Based in Romania, serving worldwide.",
+  ro: "Ai un proiect in minte? Spune-ne despre el. Raspundem in 1-2 zile lucratoare. Din Romania, pentru toata lumea.",
+  fr: "Un projet en tete? Parlez-nous en. Reponse sous 1-2 jours ouvrables. Bases en Roumanie, clients mondiaux.",
+  de: "Ein Projekt im Sinn? Erzahlen Sie uns davon. Antwort in 1-2 Werktagen. Aus Rumanien, weltweit tatig.",
+  it: "Hai un progetto in mente? Raccontacelo. Rispondiamo in 1-2 giorni lavorativi. Dalla Romania, per tutto il mondo.",
+  es: "Tienes un proyecto en mente? Cuentanos. Respondemos en 1-2 dias habiles. Desde Rumania, servicio mundial.",
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const isRomanian = locale === "ro";
 
   return {
-    title: isRomanian
-      ? "Contactează-ne - Obține o consultație gratuită pentru proiect"
-      : "Contact Us - Get a Free Project Consultation",
-    description: isRomanian
-      ? "Ai un proiect în minte? Spune-ne despre nevoile tale de dezvoltare software sau securitate. Vom răspunde în 1-2 zile lucrătoare cu o consultație. Bazați în România, servind clienți din toată lumea."
-      : "Have a project in mind? Tell us about your software development or security needs. We'll respond within 1-2 business days with a consultation. Based in Romania, serving clients worldwide.",
+    title: contactTitles[locale] || contactTitles.en,
+    description: contactDescriptions[locale] || contactDescriptions.en,
     openGraph: {
-      title: isRomanian ? "Contactează ITGuys - Consultație gratuită" : "Contact ITGuys - Free Consultation",
-      description: isRomanian
-        ? "Ai un proiect în minte? Spune-ne despre el. Vom răspunde în 1-2 zile lucrătoare."
-        : "Have a project in mind? Tell us about it. We'll respond within 1-2 business days.",
+      title: contactTitles[locale] || contactTitles.en,
+      description: contactDescriptions[locale] || contactDescriptions.en,
       url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/contact`,
       type: "website",
     },
@@ -40,10 +52,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ro: "/ro/contact",
         fr: "/fr/contact",
         de: "/de/contact",
+        it: "/it/contact",
+        es: "/es/contact",
       },
     },
     twitter: {
       card: "summary_large_image",
+      description: contactDescriptions[locale] || contactDescriptions.en,
       images: ["/og-image.png"],
     },
   };
@@ -61,7 +76,12 @@ export default async function ContactPage({ params }: Props) {
       <OrganizationSchema />
       <LocalBusinessSchema />
       <BreadcrumbSchema items={[{ name: "Contact", url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/contact` }]} />
-      <Hero headline={hero.headline} subheadline={hero.subheadline} badgeText={homeHero.badgeText} />
+      <Hero
+        headline={hero.headline}
+        subheadline={hero.subheadline}
+        badgeText={homeHero.badgeText}
+        illustration={<ContactIllustration className="w-full h-auto max-w-sm mx-auto" />}
+      />
 
       <Section id="contact-form">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">

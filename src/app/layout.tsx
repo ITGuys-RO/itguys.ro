@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
-import { getCombinedYearsText } from "@/lib/utils";
 import "./globals.css";
 
 const inter = Inter({
@@ -15,7 +14,7 @@ export const metadata: Metadata = {
     default: "ITGuys - Custom Software Development & Security Services",
     template: "%s | ITGuys"
   },
-  description: `Custom web & mobile apps with security expertise. ${getCombinedYearsText()} years combined experience from EA, TUI, Nagarro. Based in Romania, working worldwide.`,
+  description: "Custom web and mobile apps with security services. Expert development team from EA, TUI, and Nagarro.",
   keywords: ["software development", "web development", "mobile apps", "security services", "penetration testing", "custom software", "React", "Next.js", "Node.js", "cloud infrastructure", "Romania software company"],
   authors: [{ name: "ITGuys Team" }],
   creator: "ITGuys",

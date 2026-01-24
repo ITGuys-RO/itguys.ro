@@ -14,22 +14,33 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
+const portfolioTitles: Record<string, string> = {
+  en: "Portfolio - Our Software Development Projects",
+  ro: "Portofoliu - Proiectele Noastre Software",
+  fr: "Portfolio - Nos Projets de Developpement",
+  de: "Portfolio - Unsere Softwareprojekte",
+  it: "Portfolio - I Nostri Progetti Software",
+  es: "Portafolio - Nuestros Proyectos de Software",
+};
+
+const portfolioDescriptions: Record<string, string> = {
+  en: "Projects we've built across events, audio tech, legal tech, and iGaming. Work for XtendLive, AudioMovers, and more.",
+  ro: "Proiecte in evenimente, audio tech, legal tech si iGaming. Lucram pentru XtendLive, AudioMovers si altii.",
+  fr: "Projets realises dans l'evenementiel, audio tech, legal tech et iGaming. Pour XtendLive, AudioMovers et plus.",
+  de: "Projekte in Events, Audio-Tech, Legal-Tech und iGaming. Fur XtendLive, AudioMovers und weitere Kunden.",
+  it: "Progetti in eventi, audio tech, legal tech e iGaming. Lavori per XtendLive, AudioMovers e altri clienti.",
+  es: "Proyectos en eventos, audio tech, legal tech e iGaming. Trabajo para XtendLive, AudioMovers y mas.",
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const isRomanian = locale === "ro";
 
   return {
-    title: isRomanian
-      ? "Portofoliu - Proiectele Noastre de Dezvoltare Software"
-      : "Portfolio - Our Software Development Projects",
-    description: isRomanian
-      ? "Explorează proiectele de succes pe care le-am livrat în evenimente, tehnologie audio, legal tech, iGaming și altele. Soluții din lumea reală pentru XtendLive, AudioMovers, FSC și alte companii inovatoare. Vezi cum rezolvăm provocări tehnice complexe."
-      : "Explore successful projects we've delivered across events, audio technology, legal tech, iGaming, and more. Real-world solutions for XtendLive, AudioMovers, FSC, and other innovative companies. See how we solve complex technical challenges.",
+    title: portfolioTitles[locale] || portfolioTitles.en,
+    description: portfolioDescriptions[locale] || portfolioDescriptions.en,
     openGraph: {
-      title: isRomanian ? "Portofoliul Nostru - Proiecte ITGuys" : "Our Portfolio - ITGuys Projects",
-      description: isRomanian
-        ? "Proiecte pe care le-am construit în evenimente, audio, legal tech, iGaming și altele. Vezi munca noastră pentru XtendLive, AudioMovers, FSC și alții."
-        : "Projects we've built across events, audio, legal tech, iGaming, and more. See our work for XtendLive, AudioMovers, FSC, and others.",
+      title: portfolioTitles[locale] || portfolioTitles.en,
+      description: portfolioDescriptions[locale] || portfolioDescriptions.en,
       url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/portfolio`,
       type: "website",
     },
@@ -40,10 +51,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ro: "/ro/portfolio",
         fr: "/fr/portfolio",
         de: "/de/portfolio",
+        it: "/it/portfolio",
+        es: "/es/portfolio",
       },
     },
     twitter: {
       card: "summary_large_image",
+      description: portfolioDescriptions[locale] || portfolioDescriptions.en,
       images: ["/og-image.png"],
     },
   };
