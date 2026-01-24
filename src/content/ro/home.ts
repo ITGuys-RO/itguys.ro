@@ -46,6 +46,7 @@ export const homeContent = {
 
   whatWeBuild: {
     title: "Ce construim",
+    categories: ["Aplicații web", "Aplicații mobile", "API-uri & Backend", "Securitate"],
     body: [
       "Aplicații web, aplicații mobile native, API-uri, infrastructură cloud. PHP, Swift, Kotlin, Docker, AWS. Alegem abordarea care se potrivește utilizatorilor și bugetului tău, nu preferințelor noastre.",
       "Securitatea este integrată, nu adăugată ulterior. Teste de penetrare, configurare Akamai și Cloudflare, audituri de securitate cloud. Aceleași standarde pe care le-am aplicat la EA și TUI.",

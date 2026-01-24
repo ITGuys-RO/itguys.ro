@@ -19,12 +19,7 @@ import {
 
 const clientIcons = [RocketLaunchIcon, BuildingOffice2Icon];
 
-const buildIcons = [
-  { icon: CodeBracketIcon, label: "Web Apps" },
-  { icon: DevicePhoneMobileIcon, label: "Mobile Apps" },
-  { icon: ServerStackIcon, label: "APIs & Backends" },
-  { icon: ShieldCheckIcon, label: "Security" },
-];
+const buildIcons = [CodeBracketIcon, DevicePhoneMobileIcon, ServerStackIcon, ShieldCheckIcon];
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -156,18 +151,21 @@ export default async function HomePage({ params }: Props) {
           </h2>
         </AnimateOnScroll>
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-          {buildIcons.map(({ icon: Icon, label }, index) => (
-            <AnimateOnScroll key={label} animation="scale-in" delay={index * 100}>
-              <div className="flex flex-col items-center gap-3 p-4 rounded-xl bg-brand-900/60 backdrop-blur-sm border border-brand-700/30 hover:border-brand-400/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(81,116,161,0.15)] h-full group">
-                <div className="p-3 rounded-full bg-brand-800/50 border border-brand-700/30 group-hover:border-neon/30 transition-colors">
-                  <Icon className="w-6 h-6 text-brand-300 group-hover:text-neon transition-colors" />
+          {whatWeBuild.categories.map((label, index) => {
+            const Icon = buildIcons[index];
+            return (
+              <AnimateOnScroll key={label} animation="scale-in" delay={index * 100}>
+                <div className="flex flex-col items-center gap-3 p-4 rounded-xl bg-brand-900/60 backdrop-blur-sm border border-brand-700/30 hover:border-brand-400/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(81,116,161,0.15)] h-full group">
+                  <div className="p-3 rounded-full bg-brand-800/50 border border-brand-700/30 group-hover:border-neon/30 transition-colors">
+                    <Icon className="w-6 h-6 text-brand-300 group-hover:text-neon transition-colors" />
+                  </div>
+                  <span className="text-sm font-medium text-brand-200">
+                    {label}
+                  </span>
                 </div>
-                <span className="text-sm font-medium text-brand-200">
-                  {label}
-                </span>
-              </div>
-            </AnimateOnScroll>
-          ))}
+              </AnimateOnScroll>
+            );
+          })}
         </div>
         <div className="mt-8 space-y-4">
           {whatWeBuild.body.map((paragraph, i) => (

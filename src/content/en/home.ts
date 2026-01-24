@@ -46,6 +46,7 @@ export const homeContent = {
 
   whatWeBuild: {
     title: "What we build",
+    categories: ["Web Apps", "Mobile Apps", "APIs & Backends", "Security"],
     body: [
       "Web apps, native mobile apps, APIs, cloud infrastructure. PHP, Swift, Kotlin, Docker, AWS. We choose the approach that fits your users and budget, not our preferences.",
       "Security is built in, not bolted on. Penetration testing, Akamai and Cloudflare configuration, cloud security reviews. The same standards we applied at EA and TUI.",
