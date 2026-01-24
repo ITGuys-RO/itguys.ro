@@ -48,7 +48,7 @@ export function LanguageSwitcher({ locale }: Props) {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-2 py-1 text-sm font-medium text-brand-200 hover:text-neon transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.5)] rounded-md"
+        className="flex items-center gap-1.5 px-2 py-1 text-sm font-medium text-brand-200 hover:text-neon transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.5)] rounded-md cursor-pointer"
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >

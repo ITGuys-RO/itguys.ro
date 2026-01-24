@@ -42,7 +42,7 @@ export function ThemeSwitcher({ locale = "en" }: Props) {
   return (
     <button
       onClick={toggleTheme}
-      className="relative p-2 rounded-lg text-brand-200 hover:text-neon transition-all duration-300 hover:bg-brand-800/50 dark:hover:bg-brand-800/50"
+      className="relative p-2 rounded-lg text-brand-200 hover:text-neon transition-all duration-300 hover:bg-brand-800/50 dark:hover:bg-brand-800/50 cursor-pointer"
       aria-label={tooltip}
       title={tooltip}
     >
