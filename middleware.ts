@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { locales, defaultLocale } from "./i18n/config";
+import { locales, defaultLocale } from "./src/i18n/config";
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Check if the pathname already has a locale prefix
@@ -35,3 +35,6 @@ export const config = {
     "/((?!api|_next|_vercel|.*\\..*).*)",
   ],
 };
+
+// Configure for Edge Runtime (required for Cloudflare)
+export const runtime = 'edge';
