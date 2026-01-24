@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     default: "ITGuys - Custom Software Development & Security Services",
     template: "%s | ITGuys"
   },
-  description: `Custom web and mobile apps, plus security services. We build software with the right technology for your problem. Expert team with ${getCombinedYearsText()} years combined experience from EA, TUI, and Nagarro.`,
+  description: `Custom web & mobile apps with security expertise. ${getCombinedYearsText()} years combined experience from EA, TUI, Nagarro. Based in Romania, working worldwide.`,
   keywords: ["software development", "web development", "mobile apps", "security services", "penetration testing", "custom software", "React", "Next.js", "Node.js", "cloud infrastructure", "Romania software company"],
   authors: [{ name: "ITGuys Team" }],
   creator: "ITGuys",
