@@ -21,6 +21,14 @@ const tooltips = {
     light: "Zum hellen Modus wechseln",
     dark: "Zum dunklen Modus wechseln",
   },
+  it: {
+    light: "Passa alla modalita chiara",
+    dark: "Passa alla modalita scura",
+  },
+  es: {
+    light: "Cambiar a modo claro",
+    dark: "Cambiar a modo oscuro",
+  },
 };
 
 type Props = {

@@ -16,10 +16,10 @@ import {
 } from "@heroicons/react/24/outline";
 
 const navigation = [
-  { name: { en: "Development", ro: "Dezvoltare", fr: "Développement", de: "Entwicklung" }, href: "/development", icon: WrenchScrewdriverIcon },
-  { name: { en: "Services", ro: "Servicii", fr: "Services", de: "Dienstleistungen" }, href: "/services", icon: ShieldCheckIcon },
-  { name: { en: "Portfolio", ro: "Portofoliu", fr: "Portfolio", de: "Portfolio" }, href: "/portfolio", icon: BriefcaseIcon },
-  { name: { en: "About", ro: "Despre", fr: "À propos", de: "Über uns" }, href: "/about", icon: UserGroupIcon },
+  { name: { en: "Development", ro: "Dezvoltare", fr: "Développement", de: "Entwicklung", it: "Sviluppo", es: "Desarrollo" }, href: "/development", icon: WrenchScrewdriverIcon },
+  { name: { en: "Services", ro: "Servicii", fr: "Services", de: "Dienstleistungen", it: "Servizi", es: "Servicios" }, href: "/services", icon: ShieldCheckIcon },
+  { name: { en: "Portfolio", ro: "Portofoliu", fr: "Portfolio", de: "Portfolio", it: "Portfolio", es: "Portafolio" }, href: "/portfolio", icon: BriefcaseIcon },
+  { name: { en: "About", ro: "Despre", fr: "À propos", de: "Über uns", it: "Chi Siamo", es: "Nosotros" }, href: "/about", icon: UserGroupIcon },
 ];
 
 type Props = {

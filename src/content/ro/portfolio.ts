@@ -23,11 +23,11 @@ export const portfolioContent = {
       clientType: "Enterprise",
       industry: "Evenimente & Media",
       challenge:
-        "Construirea unei platforme de evenimente virtuale suficient de puternică pentru conferințe enterprise, dar suficient de simplă pentru oricine să o folosească. Platforma trebuia să gestioneze streaming live la scară mare, engagement în timp real și analytics detaliate.",
+        "Construirea unei platforme de evenimente virtuale suficient de puternică pentru conferințe enterprise, dar suficient de simplă pentru oricine să o folosească. Platforma trebuia să gestioneze transmisiuni în direct la scară mare, interacțiune în timp real cu participanții și analytics detaliate.",
       solution:
-        "Am dezvoltat un sistem de management al evenimentelor scalabil cu instrumente intuitive de creare evenimente, funcții de engagement interactive și un dashboard de analytics cuprinzător. Ne-am concentrat pe fiabilitate și ușurință în utilizare fără a sacrifica capabilitățile.",
+        "Am dezvoltat un sistem extensibil de management al evenimentelor cu instrumente intuitive de creare evenimente, funcții interactive de implicare a participanților și un dashboard cuprinzător de analytics. Ne-am concentrat pe fiabilitate și ușurință în utilizare fără a sacrifica capabilitățile.",
       tech: ["React", "Node.js", "WebRTC", "AWS", "PostgreSQL"],
-      result: "Platforma alimentează acum evenimente virtuale pentru organizații din întreaga lume.",
+      result: "În prezent, platforma susține evenimente virtuale pentru organizații din întreaga lume.",
       url: "https://xtendlive.com/",
     },
     {

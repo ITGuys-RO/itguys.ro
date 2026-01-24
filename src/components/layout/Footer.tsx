@@ -3,11 +3,11 @@ import { Link } from "@/i18n/navigation";
 import { type Locale } from "@/i18n/config";
 
 const navigation = [
-  { name: { en: "Development", ro: "Dezvoltare", fr: "Développement", de: "Entwicklung" }, href: "/development" },
-  { name: { en: "Services", ro: "Servicii", fr: "Services", de: "Dienstleistungen" }, href: "/services" },
-  { name: { en: "Portfolio", ro: "Portofoliu", fr: "Portfolio", de: "Portfolio" }, href: "/portfolio" },
-  { name: { en: "About", ro: "Despre", fr: "À propos", de: "Über uns" }, href: "/about" },
-  { name: { en: "Contact", ro: "Contact", fr: "Contact", de: "Kontakt" }, href: "/contact" },
+  { name: { en: "Development", ro: "Dezvoltare", fr: "Développement", de: "Entwicklung", it: "Sviluppo", es: "Desarrollo" }, href: "/development" },
+  { name: { en: "Services", ro: "Servicii", fr: "Services", de: "Dienstleistungen", it: "Servizi", es: "Servicios" }, href: "/services" },
+  { name: { en: "Portfolio", ro: "Portofoliu", fr: "Portfolio", de: "Portfolio", it: "Portfolio", es: "Portafolio" }, href: "/portfolio" },
+  { name: { en: "About", ro: "Despre", fr: "À propos", de: "Über uns", it: "Chi Siamo", es: "Nosotros" }, href: "/about" },
+  { name: { en: "Contact", ro: "Contact", fr: "Contact", de: "Kontakt", it: "Contatti", es: "Contacto" }, href: "/contact" },
 ];
 
 const footerText = {
@@ -16,12 +16,16 @@ const footerText = {
     ro: "Dezvoltare software personalizată și servicii de securitate.",
     fr: "Développement logiciel sur mesure et services de sécurité.",
     de: "Maßgeschneiderte Softwareentwicklung und Sicherheitsdienste.",
+    it: "Sviluppo software personalizzato e servizi di sicurezza.",
+    es: "Desarrollo de software personalizado y servicios de seguridad.",
   },
   rights: {
     en: "All rights reserved.",
     ro: "Toate drepturile rezervate.",
     fr: "Tous droits réservés.",
     de: "Alle Rechte vorbehalten.",
+    it: "Tutti i diritti riservati.",
+    es: "Todos los derechos reservados.",
   },
 };
 
