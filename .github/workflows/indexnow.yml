@@ -1,5 +1,9 @@
 name: Submit to IndexNow
 
+permissions:
+  actions: read
+  contents: read
+
 on:
   workflow_run:
     workflows: ["Deploy to Cloudflare"]
