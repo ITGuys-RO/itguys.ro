@@ -94,7 +94,7 @@ export const professionalServicesContent = {
             "Date randate în forme și infografice accesibile oricărui cititor. Transformă datele în ceva organic și acționabil.",
         },
         {
-          title: "Tracking performanță",
+          title: "Tracking de performanță",
           description:
             "Toleranță zero pentru colectare eronată. Instrumente precise, timing perfect și metrici relevante pentru cazul tău specific.",
         },
@@ -104,7 +104,7 @@ export const professionalServicesContent = {
             "Perspectivă asupra comportamentului utilizatorilor, preferințe, obiceiuri și cum te compari cu competiția imediată.",
         },
         {
-          title: "Monitorizare real-time",
+          title: "Monitorizare în timp real",
           description:
             "Viteză și gestionare volum pentru citiri live, mai ales critic când cantitățile de date devin enorme.",
         },
