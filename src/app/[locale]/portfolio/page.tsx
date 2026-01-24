@@ -23,12 +23,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? "Portofoliu - Proiectele Noastre de Dezvoltare Software"
       : "Portfolio - Our Software Development Projects",
     description: isRomanian
-      ? "Exploreaza proiectele de succes pe care le-am livrat in evenimente, tehnologie audio, legal tech, iGaming si altele. Solutii din lumea reala pentru XtendLive, AudioMovers, FSC si alte companii inovatoare. Vezi cum rezolvam provocari tehnice complexe."
+      ? "Explorează proiectele de succes pe care le-am livrat în evenimente, tehnologie audio, legal tech, iGaming și altele. Soluții din lumea reală pentru XtendLive, AudioMovers, FSC și alte companii inovatoare. Vezi cum rezolvăm provocări tehnice complexe."
       : "Explore successful projects we've delivered across events, audio technology, legal tech, iGaming, and more. Real-world solutions for XtendLive, AudioMovers, FSC, and other innovative companies. See how we solve complex technical challenges.",
     openGraph: {
       title: isRomanian ? "Portofoliul Nostru - Proiecte ITGuys" : "Our Portfolio - ITGuys Projects",
       description: isRomanian
-        ? "Proiecte pe care le-am construit in evenimente, audio, legal tech, iGaming si altele. Vezi munca noastra pentru XtendLive, AudioMovers, FSC si altii."
+        ? "Proiecte pe care le-am construit în evenimente, audio, legal tech, iGaming și altele. Vezi munca noastră pentru XtendLive, AudioMovers, FSC și alții."
         : "Projects we've built across events, audio, legal tech, iGaming, and more. See our work for XtendLive, AudioMovers, FSC, and others.",
       url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/portfolio`,
       type: "website",
@@ -54,12 +54,13 @@ export default async function PortfolioPage({ params }: Props) {
 
   const content = getContent(locale as Locale);
   const { hero, projects, cta } = content.portfolioContent;
+  const { hero: homeHero } = content.homeContent;
 
   return (
     <>
       <OrganizationSchema />
       <BreadcrumbSchema items={[{ name: "Portfolio", url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/portfolio` }]} />
-      <Hero headline={hero.headline} subheadline={hero.subheadline} />
+      <Hero headline={hero.headline} subheadline={hero.subheadline} badgeText={homeHero.badgeText} />
 
       <Section wide>
         {projects.length > 0 ? (

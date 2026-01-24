@@ -34,12 +34,13 @@ export const metadata: Metadata = {
 export default function PortfolioPage() {
   const content = getContent("en");
   const { hero, projects, cta } = content.portfolioContent;
+  const { hero: homeHero } = content.homeContent;
 
   return (
     <>
       <OrganizationSchema />
       <BreadcrumbSchema items={[{ name: "Portfolio", url: "https://itguys.ro/portfolio" }]} />
-      <Hero headline={hero.headline} subheadline={hero.subheadline} />
+      <Hero headline={hero.headline} subheadline={hero.subheadline} badgeText={homeHero.badgeText} />
 
       <Section wide>
         {projects.length > 0 ? (

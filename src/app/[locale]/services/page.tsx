@@ -36,12 +36,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? "Servicii Profesionale - QA, Securitate & Analytics"
       : "Professional Services - QA, Security & Analytics",
     description: isRomanian
-      ? "Servicii IT profesionale incluzand asigurarea calitatii, audituri de securitate, teste de penetrare si analiza datelor. Consultanta de expert sustinuta de experienta la Electronic Arts si TUI."
+      ? "Servicii IT profesionale incluzând asigurarea calității, audituri de securitate, teste de penetrare și analiza datelor. Consultanță de expert susținută de experiența la Electronic Arts și TUI."
       : "Professional IT services including quality assurance, security audits, penetration testing, and data analytics. Expert consulting backed by experience at Electronic Arts and TUI.",
     openGraph: {
       title: isRomanian ? "Servicii Profesionale - ITGuys" : "Professional Services - ITGuys",
       description: isRomanian
-        ? "Testare QA, audituri de securitate, teste de penetrare si servicii analytics de la experti cu background la EA si TUI."
+        ? "Testare QA, audituri de securitate, teste de penetrare și servicii analytics de la experți cu background la EA și TUI."
         : "QA testing, security audits, penetration testing, and analytics services from experts with EA and TUI backgrounds.",
       url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/services`,
       type: "website",

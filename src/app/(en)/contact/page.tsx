@@ -34,13 +34,14 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   const content = getContent("en");
   const { hero, directEmail, phone, whatHappensNext } = content.contactContent;
+  const { hero: homeHero } = content.homeContent;
 
   return (
     <>
       <OrganizationSchema />
       <LocalBusinessSchema />
       <BreadcrumbSchema items={[{ name: "Contact", url: "https://itguys.ro/contact" }]} />
-      <Hero headline={hero.headline} subheadline={hero.subheadline} />
+      <Hero headline={hero.headline} subheadline={hero.subheadline} badgeText={homeHero.badgeText} />
 
       <Section id="contact-form">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">

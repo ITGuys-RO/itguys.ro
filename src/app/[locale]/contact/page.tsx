@@ -20,15 +20,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: isRomanian
-      ? "Contacteaza-ne - Obtine o Consultatie Gratuita pentru Proiect"
+      ? "Contactează-ne - Obține o consultație gratuită pentru proiect"
       : "Contact Us - Get a Free Project Consultation",
     description: isRomanian
-      ? "Ai un proiect in minte? Spune-ne despre nevoile tale de dezvoltare software sau securitate. Vom raspunde in 1-2 zile lucratoare cu o consultatie. Bazati in Romania, servind clienti din toata lumea."
+      ? "Ai un proiect în minte? Spune-ne despre nevoile tale de dezvoltare software sau securitate. Vom răspunde în 1-2 zile lucrătoare cu o consultație. Bazați în România, servind clienți din toată lumea."
       : "Have a project in mind? Tell us about your software development or security needs. We'll respond within 1-2 business days with a consultation. Based in Romania, serving clients worldwide.",
     openGraph: {
-      title: isRomanian ? "Contacteaza ITGuys - Consultatie Gratuita" : "Contact ITGuys - Free Consultation",
+      title: isRomanian ? "Contactează ITGuys - Consultație gratuită" : "Contact ITGuys - Free Consultation",
       description: isRomanian
-        ? "Ai un proiect in minte? Spune-ne despre el. Vom raspunde in 1-2 zile lucratoare."
+        ? "Ai un proiect în minte? Spune-ne despre el. Vom răspunde în 1-2 zile lucrătoare."
         : "Have a project in mind? Tell us about it. We'll respond within 1-2 business days.",
       url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/contact`,
       type: "website",
@@ -54,13 +54,14 @@ export default async function ContactPage({ params }: Props) {
 
   const content = getContent(locale as Locale);
   const { hero, directEmail, phone, whatHappensNext } = content.contactContent;
+  const { hero: homeHero } = content.homeContent;
 
   return (
     <>
       <OrganizationSchema />
       <LocalBusinessSchema />
       <BreadcrumbSchema items={[{ name: "Contact", url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/contact` }]} />
-      <Hero headline={hero.headline} subheadline={hero.subheadline} />
+      <Hero headline={hero.headline} subheadline={hero.subheadline} badgeText={homeHero.badgeText} />
 
       <Section id="contact-form">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
@@ -72,7 +73,7 @@ export default async function ContactPage({ params }: Props) {
             <div className="sticky top-24">
               <div className="space-y-3 mb-6">
                 <p className="text-brand-200">
-                  {locale === "ro" ? "Sau contacteaza-ne direct:" : "Or reach out directly:"}
+                  {locale === "ro" ? "Sau contactează-ne direct:" : "Or reach out directly:"}
                 </p>
                 <p>
                   <a

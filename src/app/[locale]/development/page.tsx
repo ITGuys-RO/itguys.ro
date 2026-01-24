@@ -40,12 +40,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? "Servicii Dezvoltare - Web, Mobile, Cloud & AI"
       : "Development Services - Web, Mobile, Cloud & AI",
     description: isRomanian
-      ? "Servicii de dezvoltare software personalizate incluzand aplicatii web, aplicatii mobile, infrastructura cloud, API-uri, solutii AI/ML si design baze de date. Construite de experti de la EA, TUI si Nagarro."
+      ? "Servicii de dezvoltare software personalizate incluzând aplicații web, aplicații mobile, infrastructură cloud, API-uri, soluții AI/ML și design baze de date. Construite de experți de la EA, TUI și Nagarro."
       : "Custom software development services including web applications, mobile apps, cloud infrastructure, APIs, AI/ML solutions, and database design. Built by experts from EA, TUI, and Nagarro.",
     openGraph: {
       title: isRomanian ? "Servicii Dezvoltare - ITGuys" : "Development Services - ITGuys",
       description: isRomanian
-        ? "Dezvoltare software personalizata: aplicatii web, aplicatii mobile, infrastructura cloud, AI/ML si solutii baze de date."
+        ? "Dezvoltare software personalizată: aplicații web, aplicații mobile, infrastructură cloud, AI/ML și soluții baze de date."
         : "Custom software development: web apps, mobile apps, cloud infrastructure, AI/ML, and database solutions.",
       url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/development`,
       type: "website",
