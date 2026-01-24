@@ -345,6 +345,16 @@ html.light .focus\:ring-offset-brand-950 {
   --tw-ring-offset-color: #f8fafc;
 }
 
+/* Primary button - keep white text on dark background in light mode */
+html.light .btn-primary {
+  color: #ffffff !important;
+}
+
+/* Neon button - keep neon text color in light mode */
+html.light .btn-neon {
+  color: #0099bb !important;
+}
+
 /* Secondary button text in light mode */
 html.light .text-brand-200 {
   color: #3d5a82;
