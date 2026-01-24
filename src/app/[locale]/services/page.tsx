@@ -66,7 +66,7 @@ export default async function ProfessionalServicesPage({ params }: Props) {
   const { locale } = await params;
 
   const content = getContent(locale as Locale);
-  const { hero, services, cta } = content.professionalServicesContent;
+  const { hero, services, cta } = content.servicesContent;
 
   const faqItems = [
     {

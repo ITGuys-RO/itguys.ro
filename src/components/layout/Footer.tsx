@@ -84,9 +84,12 @@ export function Footer({ locale }: Props) {
         </div>
 
         <div className="mt-8 pt-8 border-t border-brand-700/30 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <p className="text-sm text-brand-400">
-            &copy; {new Date().getFullYear()} ITGuys. {footerText.rights[locale]}
-          </p>
+          <div className="text-sm text-brand-400">
+            <p>&copy; {new Date().getFullYear()} ITGuys. {footerText.rights[locale]}</p>
+            <p className="mt-1 text-xs text-brand-500">
+              ITGUYS SRL · CUI: RO34846943 · Reg. Com.: J40/9521/2015
+            </p>
+          </div>
           <div className="flex flex-wrap gap-4 md:gap-6">
             <a
               href="mailto:contact@itguys.ro"

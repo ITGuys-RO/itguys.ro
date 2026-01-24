@@ -70,7 +70,7 @@ export default async function ServicesPage({ params }: Props) {
   const { locale } = await params;
 
   const content = getContent(locale as Locale);
-  const { hero, services, cta } = content.servicesContent;
+  const { hero, services, cta } = content.developmentContent;
 
   const faqItems = [
     {

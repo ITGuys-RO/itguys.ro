@@ -1,137 +1,152 @@
 export const servicesContent = {
   hero: {
-    headline: "Ce que nous construisons",
+    headline: "Services professionnels",
     subheadline:
-      "Développement logiciel sur mesure soutenu par plus de 25 ans d'expérience combinée chez EA, TUI et Nagarro. Solutions web, mobile, cloud et IA.",
+      "Assurance qualité, expertise sécurité et data analytics. Les services qui maintiennent votre logiciel fiable, sécurisé et optimisé.",
   },
 
   services: [
     {
-      id: "ai-ml",
-      title: "IA & Machine Learning",
+      id: "consulting",
+      title: "Conseil technique",
       description:
-        "Du traitement du langage naturel à la vision par ordinateur, nous construisons des systèmes intelligents qui apprennent et s'adaptent. Transformez vos données en informations exploitables.",
+        "Conseils d'experts sur les décisions d'architecture, les choix technologiques et les stratégies de développement.",
       details:
-        "Nous développons des solutions IA personnalisées avec TensorFlow, PyTorch et Scikit-learn. Que ce soit pour des modèles prédictifs, du NLP pour chatbots ou des systèmes de vision par ordinateur pour la reconnaissance d'images, nous nous concentrons sur l'IA pratique qui résout de vrais problèmes business.",
-      technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
+        "Parfois vous avez besoin d'un second avis ou d'un accompagnement expert avant de vous engager dans une direction. Nous offrons des services de conseil pour vous aider à prendre des décisions éclairées sur votre stack technologique, votre architecture et votre approche de développement.",
+      technologies: [],
       subservices: [
         {
-          title: "Traitement du langage naturel",
+          title: "Revue d'architecture",
           description:
-            "Chatbots, analyse de sentiment, classification de texte et traduction automatique. Faites comprendre et répondre vos applications au langage humain.",
+            "Évaluation de votre architecture actuelle avec recommandations pour la scalabilité, la sécurité et la maintenabilité.",
         },
         {
-          title: "Vision par ordinateur",
+          title: "Sélection technologique",
           description:
-            "Reconnaissance d'images, détection d'objets et analyse vidéo. Du contrôle qualité à la surveillance de sécurité.",
+            "Guidance impartiale pour choisir les bonnes technologies pour vos besoins et contraintes spécifiques.",
         },
         {
-          title: "Deep learning",
+          title: "Revue de code",
           description:
-            "Réseaux neuronaux pour la reconnaissance de patterns complexes. Quand les algorithmes traditionnels ne suffisent pas.",
+            "Revue experte de votre code axée sur les bonnes pratiques, les failles de sécurité et les problèmes de performance.",
         },
         {
-          title: "Predictive Analytics",
+          title: "Stratégie DevSecOps",
           description:
-            "Modèles de machine learning qui prévoient les tendances, détectent les anomalies et optimisent les décisions basées sur les données historiques.",
+            "Intégration de la sécurité dans votre processus de développement. Shift left sans ralentir.",
         },
       ],
     },
     {
-      id: "development",
-      title: "Applications Web",
+      id: "security",
+      title: "Services de sécurité",
       description:
-        "Des tableaux de bord internes aux plateformes client. SPA, PWA, panneaux d'administration, produits SaaS. Tout ce dont vos utilisateurs ont besoin.",
+        "Avec notre expérience chez Electronic Arts et TUI, nous ne faisons pas que construire des logiciels. Nous savons comment les casser. Cette perspective façonne tout ce que nous créons.",
       details:
-        "Nous travaillons avec Laravel, Symfony, Drupal, WordPress, CraftCMS et les frameworks JavaScript modernes. Nous choisissons en fonction de vos besoins, pas de nos préférences. Besoin de SEO ? Rendu côté serveur. Forte interactivité ? Un SPA moderne. Besoins simples ? Peut-être pas de framework du tout.",
-      technologies: ["PHP 8", "Laravel", "Drupal", "WordPress", "React", "Next.js"],
-    },
-    {
-      id: "mobile",
-      title: "Applications mobiles",
-      description:
-        "Applications natives iOS et Android développées par des ingénieurs avec plus de 10 ans chez Nagarro et Enea AB. Pas de compromis cross-platform, vraie performance native.",
-      details:
-        "Nous nous spécialisons dans le développement natif parce que certaines applications l'exigent. Intégrations IoT, wearables, systèmes de paiement, applications santé. Quand la performance et l'intégration plateforme comptent, nous construisons natif. Nous gérons aussi la publication app store, les pipelines CI/CD et la maintenance continue.",
-      technologies: ["Swift", "Kotlin", "iOS SDK", "Android SDK", "Fitbit SDK"],
+        "La sécurité est l'attribut fondamental de tout service recommandable. La confiance est ce qui établit la fidélité des utilisateurs. Nous comprenons la gravité de la protection de vos systèmes et données.",
       subservices: [
         {
-          title: "iOS & Android Natif",
+          title: "Tests d'intrusion",
           description:
-            "Applications vraiment natives avec intégration plateforme complète. Pas React Native ou Flutter. Quand votre app doit se sentir chez elle sur l'appareil.",
+            "Tests de vulnérabilités manuels et automatisés contre les applications web, APIs et infrastructure. Les mêmes techniques utilisées chez EA, maintenant pour vos applications.",
         },
         {
-          title: "IoT & Wearables",
+          title: "Audits de sécurité",
           description:
-            "Applications pour appareils connectés, intégrations Fitbit et SDKs hardware. Expérience en livraison de produits IoT chez Enea AB.",
+            "Revues de code et évaluations d'architecture pour trouver les vulnérabilités avant les attaquants. Nous avons audité des binaires de jeux et des plateformes enterprise.",
         },
         {
-          title: "Paiements & e-commerce",
+          title: "Sécurité cloud",
           description:
-            "Intégrations Stripe, Shopify et paiements personnalisés. Transactions sécurisées conformes aux exigences réglementaires.",
+            "Revues de configuration AWS, politiques IAM, segmentation réseau, gestion des secrets. Les choses ennuyeuses qui préviennent les brèches.",
         },
         {
-          title: "Santé & pharma",
+          title: "Protection DDoS & Bots",
           description:
-            "Applications pour les industries vétérinaire, nutrition et pharmaceutique. Compréhension des exigences réglementaires et de la sensibilité des données.",
+            "Implémentation et tuning des défenses Akamai et Cloudflare. Prévention du credential stuffing, scraping, DDoS, prise de contrôle de compte. Certifié Akamai.",
+        },
+        {
+          title: "Réponse aux incidents",
+          description:
+            "Évaluation rapide, confinement et récupération lors de brèches. Analyse post-incident et renforcement de la sécurité.",
+        },
+        {
+          title: "Implémentation Zero Trust",
+          description:
+            "Authentification multi-facteur, contrôles d'accès et surveillance continue. Chaque utilisateur et appareil vérifié avant l'accès.",
+        },
+      ],
+      note: "Nous pouvons travailler comme équipe de sécurité autonome ou aux côtés de votre équipe de développement. Collaborez avec nous !",
+      technologies: ["Akamai", "Cloudflare", "Kali Linux", "AWS Security", "Burp Suite"],
+    },
+    {
+      id: "data-analytics",
+      title: "Big Data & Analytics",
+      description:
+        "Transformez les données brutes en intelligence business. Tableaux de bord personnalisés, métriques et analytics qui orientent les décisions.",
+      details:
+        "La performance est une question de tracking. L'amélioration ne peut se faire sans mesures. Nous implémentons des solutions analytics intelligentes qui vous donnent un aperçu du comportement utilisateur, de la performance système et des métriques business.",
+      technologies: ["Google Analytics", "Mixpanel", "Grafana", "Elasticsearch", "Python"],
+      subservices: [
+        {
+          title: "Conception de tableaux de bord",
+          description:
+            "Données rendues en formes et infographies accessibles à tous. Transformez les données en quelque chose de concret et exploitable.",
+        },
+        {
+          title: "Tracking de performance",
+          description:
+            "Tolérance zéro pour la collecte erronée. Outils précis, timing parfait et métriques pertinentes pour votre cas spécifique.",
+        },
+        {
+          title: "Analyse concurrentielle",
+          description:
+            "Aperçu du comportement utilisateur, préférences, habitudes et comment vous vous situez face à la concurrence immédiate.",
+        },
+        {
+          title: "Surveillance en temps réel",
+          description:
+            "Vitesse et gestion du volume pour les lectures en direct, particulièrement critique quand les volumes de données deviennent énormes.",
         },
       ],
     },
     {
-      id: "cloud",
-      title: "DevOps & infrastructure cloud",
+      id: "qa-testing",
+      title: "Services QA & tests",
       description:
-        "Déploiements conteneurisés, pipelines CI/CD et architecture cloud sur AWS. Nous construisons une infrastructure qui évolue et reste sécurisée.",
+        "La qualité n'est pas optionnelle. Nous assurons que votre logiciel fonctionne parfaitement grâce à des tests manuels et automatisés complets.",
       details:
-        "Docker, Kubernetes, Terraform, CircleCI, GitHub Actions. Nous configurons des déploiements automatisés, la surveillance et l'infrastructure as code pour que votre équipe puisse livrer en toute confiance.",
-      technologies: ["AWS", "Docker", "Kubernetes", "Terraform", "CircleCI"],
-    },
-    {
-      id: "backend",
-      title: "Backend, APIs & intégrations",
-      description:
-        "Le moteur derrière votre application. APIs RESTful, microservices, optimisation de bases de données et intégrations tierces.",
-      details:
-        "MySQL, PostgreSQL, Elastic Search pour les requêtes complexes. Nous gérons la modernisation des systèmes legacy, les intégrations système et les modules autonomes pour les produits plus importants. Si vous avez un défi technique spécifique, nous sommes heureux de l'approfondir.",
-      technologies: ["Node.js", "Python", "PHP", "GraphQL", "REST APIs"],
-    },
-    {
-      id: "database",
-      title: "Conception & gestion de bases de données",
-      description:
-        "SQL, NoSQL, modélisation de données et administration. Nous concevons des bases de données qui évoluent et restent rapides.",
-      details:
-        "De la conception de schéma à l'optimisation des performances, nous gérons la couche données. MySQL, PostgreSQL, MongoDB, Redis. Nous choisissons en fonction de vos modes d'accès, pas de nos préférences. Administration de bases de données, migrations et reprise après sinistre inclus.",
-      technologies: ["MySQL", "PostgreSQL", "MongoDB", "Redis", "Elasticsearch"],
+        "Notre approche de test couvre la fonctionnalité, la performance, la sécurité et l'expérience utilisateur. Nous utilisons des outils standard de l'industrie comme Selenium, Appium et JMeter pour détecter les problèmes avant qu'ils n'atteignent vos utilisateurs.",
+      technologies: ["Selenium", "Appium", "JMeter", "Postman", "Cypress"],
       subservices: [
         {
-          title: "Bases de données SQL",
+          title: "Tests manuels",
           description:
-            "Conception, optimisation et gestion de bases de données relationnelles. MySQL, PostgreSQL et solutions enterprise.",
+            "Tests pratiques qui détectent les problèmes UX, les cas limites et les scénarios réels que les tests automatisés manquent.",
         },
         {
-          title: "Solutions NoSQL",
+          title: "Tests automatisés",
           description:
-            "Document stores, bases de données clé-valeur et bases de données graphes pour données à haut débit et non structurées.",
+            "Selenium, Appium et suites de tests personnalisées pour des tests de régression rapides et répétables sur tous les builds.",
         },
         {
-          title: "Modélisation de données",
+          title: "Tests de performance",
           description:
-            "Conception de schéma qui supporte vos requêtes et évolue avec votre croissance. Bien poser les fondations.",
+            "Tests de charge, tests de stress et identification des goulots d'étranglement. Connaissez vos limites avant que vos utilisateurs ne les trouvent.",
         },
         {
-          title: "Administration de bases de données",
+          title: "Tests de sécurité",
           description:
-            "Stratégies de backup, tuning de performance, sécurisation et planification de disaster recovery.",
+            "Scan de vulnérabilités, tests d'intrusion et évaluation des risques intégrés à votre cycle de développement.",
         },
       ],
     },
   ],
 
   cta: {
-    headline: "Vous avez un projet en tête ?",
-    body: "Parlons de ce que vous construisez. Sans jargon, sans engagement. Juste une conversation.",
-    buttonText: "Démarrer une conversation",
+    headline: "Besoin de conseils d'experts ?",
+    body: "Que ce soit pour assurer la qualité, renforcer la sécurité ou comprendre vos données, nous sommes là pour aider.",
+    buttonText: "Contactez-nous",
     buttonHref: "/contact",
   },
 };

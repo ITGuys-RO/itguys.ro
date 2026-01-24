@@ -47,9 +47,9 @@ export const portfolioContent = {
       clientType: "Companie Produs",
       industry: "Audio & Muzică",
       challenge:
-        "Crearea unui plugin de streaming audio de calitate profesională care permite producătorilor de muzică și inginerilor audio să streamuiască audio de înaltă calitate din DAW-ul lor către clienți oriunde în lume. Era necesară suportarea a până la 128 canale de audio lossless cu latență minimă.",
+        "Crearea unui plugin de redare audio de calitate profesională care permite producătorilor de muzică și inginerilor audio să redea audio de înaltă calitate din DAW-ul lor către clienți oriunde în lume. Era necesară suportarea a până la 128 canale de audio lossless cu latență minimă.",
       solution:
-        "Am dezvoltat un plugin cross-platform (VST, AU, AAX) cu streaming adaptive bitrate, suportând totul de la AAC comprimat la PCM 32-bit lossless la 192kHz. Am construit aplicații receptor pentru web, iOS și Android pentru ca clienții să poată asculta fără a instala software.",
+        "Am dezvoltat un plugin cross-platform (VST, AU, AAX) cu transmisie adaptivă, suportând totul de la AAC comprimat la PCM 32-bit lossless la 192kHz. Am construit aplicații receptor pentru web, iOS și Android astfel încât clienții să poată asculta fără a instala aplicații.",
       tech: ["C++", "JUCE", "WebRTC", "React", "iOS", "Android"],
       result: "Instrument standard în industrie folosit de profesioniști audio și studiouri global.",
       url: "https://audiomovers.com/products/listento",
