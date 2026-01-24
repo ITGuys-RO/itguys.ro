@@ -35,9 +35,9 @@ export const portfolioContent = {
       clientType: "Enterprise",
       industry: "Experiența Clienților",
       challenge:
-        "O agenție de mystery shopping de top din UK trebuia să își modernizeze platforma pentru a gestiona mii de evaluări lunare în retail, hospitality, sănătate și sectorul legal. Sistemul trebuia să coordoneze 800+ mystery shopperi și să livreze feedback în 48 de ore.",
+        "O agenție de mystery shopping de top din UK trebuia să își modernizeze platforma pentru a gestiona mii de evaluări lunare în retail, HoReCa, sănătate și sectorul legal. Sistemul trebuia să coordoneze 800+ mystery shopperi și să livreze feedback în 48 de ore.",
       solution:
-        "Am construit un sistem cuprinzător de management al evaluărilor cu colectare de date prietenoasă pentru mobile, rutare automată a workflow-ului și un portal pentru clienți pentru acces în timp real la rezultate. Am integrat capabilități de evaluare video, telefon și chat.",
+        "Am construit un sistem cuprinzător de management al evaluărilor ce conțin colectare de date prietenoasă pentru mobile, rutare automată a workflow-ului și un portal pentru clienți pentru acces în timp real la rezultate. Am integrat capabilități de evaluare video, telefon și chat.",
       tech: ["PHP", "Laravel", "MySQL", "Vue.js", "AWS"],
       result: "Sistemul procesează peste 23.000 de mystery shops anual pentru 500+ branduri din UK.",
       url: "https://www.insight6.com/",
