@@ -1,0 +1,72 @@
+name: Submit to IndexNow
+
+on:
+  workflow_run:
+    workflows: ["Deploy to Cloudflare"]
+    types: [completed]
+
+jobs:
+  indexnow:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Wait for deployment to propagate
+        run: sleep 15
+
+      - name: Fetch sitemap and submit to IndexNow
+        run: |
+          SITEMAP_URL="https://itguys.ro/sitemap.xml"
+
+          echo "Fetching sitemap from $SITEMAP_URL"
+          SITEMAP_CONTENT=$(curl -s "$SITEMAP_URL")
+
+          if [ -z "$SITEMAP_CONTENT" ]; then
+            echo "Failed to fetch sitemap"
+            exit 1
+          fi
+
+          URLS=$(echo "$SITEMAP_CONTENT" | grep -oP '(?<=<loc>)[^<]+' || true)
+
+          if [ -z "$URLS" ]; then
+            echo "No URLs found in sitemap"
+            exit 0
+          fi
+
+          URL_COUNT=$(echo "$URLS" | wc -l)
+          echo "Found $URL_COUNT URLs in sitemap"
+
+          URL_ARRAY=$(echo "$URLS" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+
+          JSON_PAYLOAD=$(jq -n \
+            --arg host "itguys.ro" \
+            --arg key "${{ secrets.INDEXNOW_KEY }}" \
+            --arg keyLocation "https://itguys.ro/${{ secrets.INDEXNOW_KEY }}.txt" \
+            --argjson urlList "$URL_ARRAY" \
+            '{host: $host, key: $key, keyLocation: $keyLocation, urlList: $urlList}')
+
+          echo "Payload:"
+          echo "$JSON_PAYLOAD" | jq .
+
+          echo "Submitting to IndexNow..."
+
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "https://api.indexnow.org/IndexNow" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d "$JSON_PAYLOAD")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          echo "Response code: $HTTP_CODE"
+          if [ -n "$BODY" ]; then
+            echo "Response body: $BODY"
+          fi
+
+          case $HTTP_CODE in
+            200) echo "OK - URLs submitted successfully" ;;
+            202) echo "Accepted - URLs accepted, key validation pending" ;;
+            400) echo "Bad Request - Invalid format"; exit 1 ;;
+            403) echo "Forbidden - Invalid key"; exit 1 ;;
+            422) echo "Unprocessable Entity - Invalid URLs"; exit 1 ;;
+            429) echo "Too Many Requests - Rate limited"; exit 1 ;;
+            *) echo "Unexpected response code: $HTTP_CODE"; exit 1 ;;
+          esac
