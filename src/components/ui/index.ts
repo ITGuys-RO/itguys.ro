@@ -5,3 +5,4 @@ export { Input, Textarea, Select } from "./Input";
 export { GridPattern, DotPattern, GradientBlob, CyberGrid, ScanlineOverlay, HexPattern, CornerAccents } from "./BackgroundPattern";
 export { AnimateOnScroll, StaggerChildren } from "./AnimateOnScroll";
 export { Carousel } from "./Carousel";
+export { LanguageSwitcher } from "./LanguageSwitcher";

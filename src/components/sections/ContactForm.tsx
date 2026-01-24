@@ -4,20 +4,126 @@ import { useState, useRef } from "react";
 import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
 import { Button, Input, Textarea, Select } from "@/components/ui";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
+import { type Locale } from "@/i18n/config";
 
-const projectTypes = [
-  { value: "web", label: "Web Application" },
-  { value: "mobile", label: "Mobile Application" },
-  { value: "both", label: "Both Web and Mobile" },
-  { value: "security", label: "Security Services" },
-  { value: "other", label: "Other" },
-];
+const projectTypes = {
+  en: [
+    { value: "web", label: "Web Application" },
+    { value: "mobile", label: "Mobile Application" },
+    { value: "both", label: "Both Web and Mobile" },
+    { value: "security", label: "Security Services" },
+    { value: "other", label: "Other" },
+  ],
+  ro: [
+    { value: "web", label: "Aplicație Web" },
+    { value: "mobile", label: "Aplicație Mobile" },
+    { value: "both", label: "Ambele Web și Mobile" },
+    { value: "security", label: "Servicii Securitate" },
+    { value: "other", label: "Altele" },
+  ],
+  fr: [
+    { value: "web", label: "Application Web" },
+    { value: "mobile", label: "Application Mobile" },
+    { value: "both", label: "Web et Mobile" },
+    { value: "security", label: "Services de Sécurité" },
+    { value: "other", label: "Autre" },
+  ],
+  de: [
+    { value: "web", label: "Web-Anwendung" },
+    { value: "mobile", label: "Mobile Anwendung" },
+    { value: "both", label: "Web und Mobile" },
+    { value: "security", label: "Sicherheitsdienste" },
+    { value: "other", label: "Andere" },
+  ],
+};
 
-export function ContactForm() {
+const labels = {
+  en: {
+    name: "Name",
+    namePlaceholder: "Your name",
+    email: "Email",
+    emailPlaceholder: "you@company.com",
+    company: "Company",
+    companyPlaceholder: "Your company (optional)",
+    projectType: "Project Type",
+    description: "Project Description",
+    descriptionPlaceholder: "What are you building? What problem does it solve?",
+    securityCheck: "Please complete the security check.",
+    submitLoading: "Sending...",
+    submit: "Send Message",
+    successTitle: "Message sent!",
+    successMessage: "We'll get back to you within 1-2 business days.",
+    sendAnother: "Send another message",
+    genericError: "Something went wrong. Please try again or email us directly.",
+  },
+  ro: {
+    name: "Nume",
+    namePlaceholder: "Numele tău",
+    email: "Email",
+    emailPlaceholder: "tu@companie.com",
+    company: "Companie",
+    companyPlaceholder: "Compania ta (opțional)",
+    projectType: "Tip Proiect",
+    description: "Descriere Proiect",
+    descriptionPlaceholder: "Ce construiești? Ce problemă rezolvă?",
+    securityCheck: "Te rugăm completează verificarea de securitate.",
+    submitLoading: "Se trimite...",
+    submit: "Trimite Mesaj",
+    successTitle: "Mesaj trimis!",
+    successMessage: "Te vom contacta în 1-2 zile lucrătoare.",
+    sendAnother: "Trimite alt mesaj",
+    genericError: "Ceva nu a mers bine. Te rugăm încearcă din nou sau trimite-ne email direct.",
+  },
+  fr: {
+    name: "Nom",
+    namePlaceholder: "Votre nom",
+    email: "Email",
+    emailPlaceholder: "vous@entreprise.com",
+    company: "Entreprise",
+    companyPlaceholder: "Votre entreprise (optionnel)",
+    projectType: "Type de Projet",
+    description: "Description du Projet",
+    descriptionPlaceholder: "Que construisez-vous ? Quel problème résout-il ?",
+    securityCheck: "Veuillez compléter la vérification de sécurité.",
+    submitLoading: "Envoi en cours...",
+    submit: "Envoyer le Message",
+    successTitle: "Message envoyé !",
+    successMessage: "Nous vous répondrons sous 1-2 jours ouvrables.",
+    sendAnother: "Envoyer un autre message",
+    genericError: "Une erreur s'est produite. Veuillez réessayer ou nous contacter directement par email.",
+  },
+  de: {
+    name: "Name",
+    namePlaceholder: "Ihr Name",
+    email: "E-Mail",
+    emailPlaceholder: "sie@unternehmen.com",
+    company: "Unternehmen",
+    companyPlaceholder: "Ihr Unternehmen (optional)",
+    projectType: "Projekttyp",
+    description: "Projektbeschreibung",
+    descriptionPlaceholder: "Was bauen Sie? Welches Problem löst es?",
+    securityCheck: "Bitte führen Sie die Sicherheitsprüfung durch.",
+    submitLoading: "Wird gesendet...",
+    submit: "Nachricht Senden",
+    successTitle: "Nachricht gesendet!",
+    successMessage: "Wir melden uns innerhalb von 1-2 Werktagen bei Ihnen.",
+    sendAnother: "Weitere Nachricht senden",
+    genericError: "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut oder kontaktieren Sie uns direkt per E-Mail.",
+  },
+};
+
+type Props = {
+  locale?: Locale;
+};
+
+export function ContactForm({ locale = "en" }: Props) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(null);
+
+  const t = labels[locale];
+  const types = projectTypes[locale];
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -26,7 +132,7 @@ export function ContactForm() {
 
     if (!turnstileToken) {
       setStatus("error");
-      setErrorMessage("Please complete the security check.");
+      setErrorMessage(t.securityCheck);
       return;
     }
 
@@ -58,7 +164,7 @@ export function ContactForm() {
       (e.target as HTMLFormElement).reset();
     } catch (err) {
       setStatus("error");
-      setErrorMessage(err instanceof Error ? err.message : "Something went wrong. Please try again or email us directly.");
+      setErrorMessage(err instanceof Error ? err.message : t.genericError);
       turnstileRef.current?.reset();
       setTurnstileToken(null);
     }
@@ -68,17 +174,17 @@ export function ContactForm() {
     return (
       <div className="p-8 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-center">
         <h3 className="text-xl font-semibold text-green-800 dark:text-green-200">
-          Message sent!
+          {t.successTitle}
         </h3>
         <p className="mt-2 text-green-700 dark:text-green-300">
-          We&apos;ll get back to you within 1-2 business days.
+          {t.successMessage}
         </p>
         <Button
           variant="secondary"
           className="mt-4"
           onClick={() => setStatus("idle")}
         >
-          Send another message
+          {t.sendAnother}
         </Button>
       </div>
     );
@@ -88,37 +194,37 @@ export function ContactForm() {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Input
-          label="Name"
+          label={t.name}
           name="name"
-          placeholder="Your name"
+          placeholder={t.namePlaceholder}
           required
         />
         <Input
-          label="Email"
+          label={t.email}
           name="email"
           type="email"
-          placeholder="you@company.com"
+          placeholder={t.emailPlaceholder}
           required
         />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Input
-          label="Company"
+          label={t.company}
           name="company"
-          placeholder="Your company (optional)"
+          placeholder={t.companyPlaceholder}
         />
         <Select
-          label="Project Type"
+          label={t.projectType}
           name="projectType"
-          options={projectTypes}
+          options={types}
         />
       </div>
 
       <Textarea
-        label="Project Description"
+        label={t.description}
         name="description"
-        placeholder="What are you building? What problem does it solve?"
+        placeholder={t.descriptionPlaceholder}
         required
         rows={5}
       />
@@ -143,7 +249,7 @@ export function ContactForm() {
         disabled={status === "loading"}
         className="w-full md:w-auto flex items-center justify-center gap-2"
       >
-        {status === "loading" ? "Sending..." : "Send Message"}
+        {status === "loading" ? t.submitLoading : t.submit}
         <PaperAirplaneIcon className="w-4 h-4" />
       </Button>
     </form>

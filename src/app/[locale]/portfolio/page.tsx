@@ -2,31 +2,56 @@ import type { Metadata } from "next";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, Carousel } from "@/components/ui";
 import { BreadcrumbSchema } from "@/components/structured-data";
-import { portfolioContent } from "@/content";
+import { getContent } from "@/content";
+import { locales, type Locale } from "@/i18n/config";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 
-export const metadata: Metadata = {
-  title: "Portfolio - Our Software Development Projects",
-  description:
-    "Explore successful projects we've delivered across events, audio technology, legal tech, iGaming, and more. Real-world solutions for XtendLive, AudioMovers, FSC, and other innovative companies. See how we solve complex technical challenges.",
-  openGraph: {
-    title: "Our Portfolio - ITGuys Projects",
-    description:
-      "Projects we've built across events, audio, legal tech, iGaming, and more. See our work for XtendLive, AudioMovers, FSC, and others.",
-    url: "https://itguys.ro/portfolio",
-    type: "website",
-  },
-  alternates: {
-    canonical: "/portfolio",
-  },
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
-export default function PortfolioPage() {
-  const { hero, projects, cta } = portfolioContent;
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const isRomanian = locale === "ro";
+
+  return {
+    title: isRomanian
+      ? "Portofoliu - Proiectele Noastre de Dezvoltare Software"
+      : "Portfolio - Our Software Development Projects",
+    description: isRomanian
+      ? "Exploreaza proiectele de succes pe care le-am livrat in evenimente, tehnologie audio, legal tech, iGaming si altele. Solutii din lumea reala pentru XtendLive, AudioMovers, FSC si alte companii inovatoare. Vezi cum rezolvam provocari tehnice complexe."
+      : "Explore successful projects we've delivered across events, audio technology, legal tech, iGaming, and more. Real-world solutions for XtendLive, AudioMovers, FSC, and other innovative companies. See how we solve complex technical challenges.",
+    openGraph: {
+      title: isRomanian ? "Portofoliul Nostru - Proiecte ITGuys" : "Our Portfolio - ITGuys Projects",
+      description: isRomanian
+        ? "Proiecte pe care le-am construit in evenimente, audio, legal tech, iGaming si altele. Vezi munca noastra pentru XtendLive, AudioMovers, FSC si altii."
+        : "Projects we've built across events, audio, legal tech, iGaming, and more. See our work for XtendLive, AudioMovers, FSC, and others.",
+      url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/portfolio`,
+      type: "website",
+    },
+    alternates: {
+      canonical: locale === "en" ? "/portfolio" : `/${locale}/portfolio`,
+      languages: {
+        en: "/portfolio",
+        ro: "/ro/portfolio",
+      },
+    },
+  };
+}
+
+export default async function PortfolioPage({ params }: Props) {
+  const { locale } = await params;
+
+  const content = getContent(locale as Locale);
+  const { hero, projects, cta } = content.portfolioContent;
 
   return (
     <>
-      <BreadcrumbSchema items={[{ name: "Portfolio", url: "https://itguys.ro/portfolio" }]} />
+      <BreadcrumbSchema items={[{ name: "Portfolio", url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/portfolio` }]} />
       <Hero headline={hero.headline} subheadline={hero.subheadline} />
 
       <Section wide>
@@ -58,7 +83,7 @@ export default function PortfolioPage() {
                 <div className="space-y-4 flex-1">
                   <div>
                     <h4 className="text-sm font-semibold text-brand-200 mb-1">
-                      Challenge
+                      {locale === "ro" ? "Provocare" : "Challenge"}
                     </h4>
                     <p className="text-sm text-brand-300">
                       {project.challenge}
@@ -67,7 +92,7 @@ export default function PortfolioPage() {
 
                   <div>
                     <h4 className="text-sm font-semibold text-brand-200 mb-1">
-                      Solution
+                      {locale === "ro" ? "Solutie" : "Solution"}
                     </h4>
                     <p className="text-sm text-brand-300">
                       {project.solution}
@@ -89,7 +114,7 @@ export default function PortfolioPage() {
                 {project.result && (
                   <div className="pt-4 mt-4 border-t border-brand-700/30">
                     <span className="text-sm font-medium text-white">
-                      Result:
+                      {locale === "ro" ? "Rezultat:" : "Result:"}
                     </span>{" "}
                     <span className="text-sm text-brand-200">
                       {project.result}
@@ -102,8 +127,9 @@ export default function PortfolioPage() {
         ) : (
           <div className="text-center py-12">
             <p className="text-lg text-brand-200">
-              Case studies coming soon. In the meantime, get in touch to discuss
-              your project.
+              {locale === "ro"
+                ? "Studii de caz in curand. Intre timp, ia legatura pentru a discuta proiectul tau."
+                : "Case studies coming soon. In the meantime, get in touch to discuss your project."}
             </p>
           </div>
         )}

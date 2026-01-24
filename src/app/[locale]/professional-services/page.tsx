@@ -3,7 +3,8 @@ import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { SecurityIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, FAQSchema } from "@/components/structured-data";
-import { professionalServicesContent } from "@/content";
+import { getContent } from "@/content";
+import { locales, type Locale } from "@/i18n/config";
 import {
   ShieldCheckIcon,
   BeakerIcon,
@@ -18,24 +19,48 @@ const serviceIcons: Record<string, typeof ShieldCheckIcon> = {
   consulting: ChatBubbleLeftRightIcon,
 };
 
-export const metadata: Metadata = {
-  title: "Professional Services - QA, Security & Analytics",
-  description:
-    "Professional IT services including quality assurance, security audits, penetration testing, and data analytics. Expert consulting backed by experience at Electronic Arts and TUI.",
-  openGraph: {
-    title: "Professional Services - ITGuys",
-    description:
-      "QA testing, security audits, penetration testing, and analytics services from experts with EA and TUI backgrounds.",
-    url: "https://itguys.ro/professional-services",
-    type: "website",
-  },
-  alternates: {
-    canonical: "/professional-services",
-  },
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
-export default function ProfessionalServicesPage() {
-  const { hero, services, cta } = professionalServicesContent;
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const isRomanian = locale === "ro";
+
+  return {
+    title: isRomanian
+      ? "Servicii Profesionale - QA, Securitate & Analytics"
+      : "Professional Services - QA, Security & Analytics",
+    description: isRomanian
+      ? "Servicii IT profesionale incluzand asigurarea calitatii, audituri de securitate, teste de penetrare si analiza datelor. Consultanta de expert sustinuta de experienta la Electronic Arts si TUI."
+      : "Professional IT services including quality assurance, security audits, penetration testing, and data analytics. Expert consulting backed by experience at Electronic Arts and TUI.",
+    openGraph: {
+      title: isRomanian ? "Servicii Profesionale - ITGuys" : "Professional Services - ITGuys",
+      description: isRomanian
+        ? "Testare QA, audituri de securitate, teste de penetrare si servicii analytics de la experti cu background la EA si TUI."
+        : "QA testing, security audits, penetration testing, and analytics services from experts with EA and TUI backgrounds.",
+      url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/professional-services`,
+      type: "website",
+    },
+    alternates: {
+      canonical: locale === "en" ? "/professional-services" : `/${locale}/professional-services`,
+      languages: {
+        en: "/professional-services",
+        ro: "/ro/professional-services",
+      },
+    },
+  };
+}
+
+export default async function ProfessionalServicesPage({ params }: Props) {
+  const { locale } = await params;
+
+  const content = getContent(locale as Locale);
+  const { hero, services, cta } = content.professionalServicesContent;
 
   const faqItems = [
     {
@@ -58,7 +83,7 @@ export default function ProfessionalServicesPage() {
 
   return (
     <>
-      <BreadcrumbSchema items={[{ name: "Professional Services", url: "https://itguys.ro/professional-services" }]} />
+      <BreadcrumbSchema items={[{ name: "Professional Services", url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/professional-services` }]} />
       <FAQSchema items={faqItems} />
       <Hero
         headline={hero.headline}
