@@ -14,7 +14,7 @@ export const aboutContent = {
   },
 
   vision: {
-    title: "Notre Vision",
+    title: "Notre vision",
     body: [
       "Il ne nous suffit pas de livrer un service. Nous nous efforçons de créer de vrais liens avec nos clients, de comprendre leur concept, de voir leur vision, puis de la faire nôtre.",
       "En tant que membres d'équipe, nous repoussons nos limites et n'hésitons jamais à apprendre quelque chose de nouveau. Pour nous, chaque client est une nouvelle opportunité d'améliorer nos compétences et une nouvelle chance de tester notre créativité et détermination.",
@@ -24,7 +24,7 @@ export const aboutContent = {
   },
 
   ourStory: {
-    title: "Notre Histoire",
+    title: "Notre histoire",
     body: [
       "ITGuys a été fondé par Catalin Teodorescu, un Senior Web Security Engineer avec plus de 15 ans d'expérience en cybersécurité, développement full-stack et DevOps. Après avoir travaillé chez Electronic Arts et TUI, et passé près de 7 ans à développer des logiciels pour des clients suisses, un constat s'est imposé : la plupart des agences choisissent leur stack favori et forcent chaque projet à s'y conformer.",
       "Nous faisons l'inverse. Votre produit mérite les bonnes fondations, pas des fondations convenables. Si cela signifie PHP, Node, Python ou autre chose dépend entièrement de ce que vous construisez et qui l'utilise.",
@@ -33,7 +33,7 @@ export const aboutContent = {
   },
 
   mission: {
-    title: "Notre Mission",
+    title: "Notre mission",
     body: [
       "Chez ITGuys, tout est question de structure convaincante et de fonctionnalité profonde. Notre objectif est de créer une expérience unique et riche en fonctionnalités qui est fiable pour le fournisseur et simple pour le client.",
       "Notre travail doit rassembler les gens, leur fournir un environnement sûr, leur permettant de bénéficier du produit, service ou concept. Nous assurons que notre travail est recommandable et constamment engageant.",
@@ -42,7 +42,7 @@ export const aboutContent = {
   },
 
   experience: {
-    title: "Partenaires avec qui nous avons Travaillé",
+    title: "Partenaires avec qui nous avons travaillé",
     companies: [
       { name: "TUI", description: "Sécurité web pour l'une des plus grandes entreprises de voyage au monde", logo: "/logos/tui.svg" },
       { name: "Electronic Arts", description: "Tests de sécurité pour applications web et plateformes de jeux", logo: "/logos/ea.svg" },
@@ -52,7 +52,7 @@ export const aboutContent = {
   },
 
   whatWeBelieve: {
-    title: "Nos Principes",
+    title: "Nos principes",
     intro:
       "Nous travaillons avec du code, oui, mais avec un sens plus profond. Nous trouvons de la fierté dans notre travail, de l'enthousiasme et de la confiance. Pour aborder cela, nous employons un code d'éthique qui façonne chaque projet.",
     values: [
@@ -90,16 +90,16 @@ export const aboutContent = {
   },
 
   deliveryModels: {
-    title: "Comment Nous Travaillons",
+    title: "Comment nous travaillons",
     models: [
       {
-        title: "Augmentation d'Équipe",
+        title: "Augmentation d'équipe",
         description:
           "Adapté aux projets en cours ou aux tâches spécifiques nécessitant un professionnel compétent. Qu'il s'agisse d'un développeur, d'un département ou de toute l'équipe, nous fournissons une main-d'œuvre qualifiée, expérimentée, formée pour respecter vos objectifs et s'intégrer à votre équipe existante.",
         ideal: "Idéal pour : Équipes existantes ayant besoin de capacité supplémentaire ou de compétences spécialisées.",
       },
       {
-        title: "Projets à Prix Fixe",
+        title: "Projets à prix fixe",
         description:
           "L'option pour l'engagement complet de l'équipe ITGuys. Concrétisez votre concept avec une implémentation professionnelle, un design complet, une structure fiable et une performance adaptable. Non seulement nous rendons votre idée tangible, mais nous la protégeons, la rendant sûre pour le fournisseur et l'utilisateur.",
         ideal: "Idéal pour : Nouveaux produits, MVPs ou constructions complètes de systèmes.",
@@ -136,7 +136,7 @@ export const aboutContent = {
   },
 
   cta: {
-    headline: "Envie de Travailler Ensemble ?",
+    headline: "Envie de travailler ensemble ?",
     body: "Nous sommes toujours heureux de rencontrer des fondateurs et des équipes travaillant sur des produits intéressants.",
     buttonText: "Contactez-nous",
     buttonHref: "/contact",

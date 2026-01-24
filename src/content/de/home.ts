@@ -1,10 +1,10 @@
 export const homeContent = {
   hero: {
-    headline: "Web, Mobile & Sicherheit. Richtig Gemacht.",
+    headline: "Web, Mobile & Sicherheit. Richtig gemacht.",
     subheadline:
       "Über 25 Jahre kombinierte Erfahrung bei Electronic Arts, TUI und Nagarro. Wir entwickeln maßgeschneiderte Anwendungen und schützen sie.",
     cta: {
-      text: "Lassen Sie uns Reden",
+      text: "Lassen Sie uns reden",
       href: "/contact",
     },
   },
@@ -46,15 +46,15 @@ export const homeContent = {
       "Sicherheit ist eingebaut, nicht nachträglich hinzugefügt. Penetrationstests, Akamai- und Cloudflare-Konfiguration, Cloud-Sicherheitsaudits. Die gleichen Standards, die wir bei EA und TUI angewandt haben.",
     ],
     link: {
-      text: "Services Ansehen",
+      text: "Services ansehen",
       href: "/services",
     },
   },
 
   cta: {
-    headline: "Bereit, Etwas zu Bauen?",
+    headline: "Bereit, etwas zu bauen?",
     body: "Erzählen Sie uns von Ihrem Projekt. Wir sagen Ihnen ehrlich, wie wir helfen können.",
-    buttonText: "Kontaktieren Sie Uns",
+    buttonText: "Kontaktieren Sie uns",
     buttonHref: "/contact",
   },
 };

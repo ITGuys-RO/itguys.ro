@@ -1,18 +1,18 @@
 export const homeContent = {
   hero: {
-    headline: "Web, Mobile și Securitate. Făcute Cum Trebuie.",
+    headline: "Web, mobile și securitate. Făcute cum trebuie.",
     subheadline:
       "Peste 25 de ani de experiență combinată de la Electronic Arts, TUI și Nagarro. Construim aplicații personalizate și le protejăm.",
     cta: {
-      text: "Hai să Vorbim",
+      text: "Hai să vorbim",
       href: "/contact",
     },
   },
 
   stats: [
-    { value: "25+", label: "Ani de Experiență" },
-    { value: "EA & TUI", label: "Experiență Securitate" },
-    { value: "Nagarro", label: "Expertiză Mobile" },
+    { value: "25+", label: "Ani de experiență" },
+    { value: "EA & TUI", label: "Experiență securitate" },
+    { value: "Nagarro", label: "Expertiză mobile" },
   ],
 
   whatSetsUsApart: {
@@ -46,13 +46,13 @@ export const homeContent = {
       "Securitatea este integrată, nu adăugată ulterior. Teste de penetrare, configurare Akamai și Cloudflare, audituri de securitate cloud. Aceleași standarde pe care le-am aplicat la EA și TUI.",
     ],
     link: {
-      text: "Vezi Serviciile",
+      text: "Vezi serviciile",
       href: "/services",
     },
   },
 
   cta: {
-    headline: "Pregătit să Construiești Ceva?",
+    headline: "Pregătit să construiești ceva?",
     body: "Spune-ne despre proiectul tău. Îți vom spune sincer cum te putem ajuta.",
     buttonText: "Contactează-ne",
     buttonHref: "/contact",

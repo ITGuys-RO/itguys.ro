@@ -1,6 +1,6 @@
 export const contactContent = {
   hero: {
-    headline: "Hai să Vorbim",
+    headline: "Hai să vorbim",
     subheadline: "Ai un proiect în minte? Spune-ne despre el.",
   },
 
@@ -9,14 +9,14 @@ export const contactContent = {
       name: { label: "Nume", required: true },
       email: { label: "Email", required: true },
       company: { label: "Companie", required: false },
-      projectType: { label: "Tip Proiect", required: false },
+      projectType: { label: "Tip proiect", required: false },
       description: {
-        label: "Descriere Proiect",
+        label: "Descriere proiect",
         placeholder: "Ce construiești? Ce problemă rezolvă?",
         required: true,
       },
     },
-    submitButton: "Trimite Mesaj",
+    submitButton: "Trimite mesaj",
   },
 
   directEmail: "contact@itguys.ro",
@@ -33,7 +33,7 @@ export const contactContent = {
   cta: {
     headline: "Pregătiți când ești tu",
     body: "Fără discurs de vânzări. Doar o conversație despre ce construiești.",
-    buttonText: "Trimite Mesaj",
+    buttonText: "Trimite mesaj",
     buttonHref: "#contact-form",
   },
 };

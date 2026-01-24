@@ -4,6 +4,7 @@ import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { BreadcrumbSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
+import { getGravatarUrl } from "@/lib/gravatar";
 import { locales, type Locale } from "@/i18n/config";
 import {
   AcademicCapIcon,
@@ -233,8 +234,21 @@ export default async function AboutPage({ params }: Props) {
               key={member.name}
               className="p-6 rounded-xl bg-brand-800/30 border border-brand-700/30"
             >
-              <h3 className="text-xl font-bold text-white">{member.name}</h3>
-              <p className="text-neon font-medium mt-1">{member.role}</p>
+              <div className="flex items-start gap-4">
+                {member.email && (
+                  <Image
+                    src={getGravatarUrl(member.email, 160)}
+                    alt={member.name}
+                    width={80}
+                    height={80}
+                    className="rounded-full border-2 border-brand-700/50 shrink-0"
+                  />
+                )}
+                <div>
+                  <h3 className="text-xl font-bold text-white">{member.name}</h3>
+                  <p className="text-neon font-medium mt-1">{member.role}</p>
+                </div>
+              </div>
               <p className="text-brand-200 mt-4">{member.bio}</p>
               <div className="mt-4 flex gap-4">
                 {member.linkedIn && (

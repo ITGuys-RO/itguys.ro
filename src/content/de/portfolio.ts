@@ -95,7 +95,7 @@ export const portfolioContent = {
   cta: {
     headline: "Ihr Projekt könnte das nächste sein",
     body: "Haben Sie etwas, das Sie bauen möchten? Lassen Sie uns reden.",
-    buttonText: "Gespräch Starten",
+    buttonText: "Gespräch starten",
     buttonHref: "/contact",
   },
 };

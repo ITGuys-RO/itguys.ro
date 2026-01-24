@@ -1,6 +1,6 @@
 export const servicesContent = {
   hero: {
-    headline: "Ce que Nous Construisons",
+    headline: "Ce que nous construisons",
     subheadline:
       "Développement logiciel sur mesure soutenu par plus de 25 ans d'expérience combinée chez EA, TUI et Nagarro. Solutions web, mobile, cloud et IA.",
   },
@@ -16,22 +16,22 @@ export const servicesContent = {
       technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
       subservices: [
         {
-          title: "Traitement du Langage Naturel",
+          title: "Traitement du langage naturel",
           description:
             "Chatbots, analyse de sentiment, classification de texte et traduction automatique. Faites comprendre et répondre vos applications au langage humain.",
         },
         {
-          title: "Vision par Ordinateur",
+          title: "Vision par ordinateur",
           description:
             "Reconnaissance d'images, détection d'objets et analyse vidéo. Du contrôle qualité à la surveillance de sécurité.",
         },
         {
-          title: "Deep Learning",
+          title: "Deep learning",
           description:
             "Réseaux neuronaux pour la reconnaissance de patterns complexes. Quand les algorithmes traditionnels ne suffisent pas.",
         },
         {
-          title: "Analytics Prédictive",
+          title: "Analytics prédictive",
           description:
             "Modèles de machine learning qui prévoient les tendances, détectent les anomalies et optimisent les décisions basées sur les données historiques.",
         },
@@ -48,7 +48,7 @@ export const servicesContent = {
     },
     {
       id: "mobile",
-      title: "Applications Mobiles",
+      title: "Applications mobiles",
       description:
         "Applications natives iOS et Android développées par des ingénieurs avec plus de 10 ans chez Nagarro et Enea AB. Pas de compromis cross-platform, vraie performance native.",
       details:
@@ -66,12 +66,12 @@ export const servicesContent = {
             "Applications pour appareils connectés, intégrations Fitbit et SDKs hardware. Expérience en livraison de produits IoT chez Enea AB.",
         },
         {
-          title: "Paiements & E-commerce",
+          title: "Paiements & e-commerce",
           description:
             "Intégrations Stripe, Shopify et paiements personnalisés. Transactions sécurisées conformes aux exigences réglementaires.",
         },
         {
-          title: "Santé & Pharma",
+          title: "Santé & pharma",
           description:
             "Applications pour les industries vétérinaire, nutrition et pharmaceutique. Compréhension des exigences réglementaires et de la sensibilité des données.",
         },
@@ -79,7 +79,7 @@ export const servicesContent = {
     },
     {
       id: "cloud",
-      title: "DevOps & Infrastructure Cloud",
+      title: "DevOps & infrastructure cloud",
       description:
         "Déploiements conteneurisés, pipelines CI/CD et architecture cloud sur AWS. Nous construisons une infrastructure qui évolue et reste sécurisée.",
       details:
@@ -88,7 +88,7 @@ export const servicesContent = {
     },
     {
       id: "backend",
-      title: "Backend, APIs & Intégrations",
+      title: "Backend, APIs & intégrations",
       description:
         "Le moteur derrière votre application. APIs RESTful, microservices, optimisation de bases de données et intégrations tierces.",
       details:
@@ -97,7 +97,7 @@ export const servicesContent = {
     },
     {
       id: "database",
-      title: "Conception & Gestion de Bases de Données",
+      title: "Conception & gestion de bases de données",
       description:
         "SQL, NoSQL, modélisation de données et administration. Nous concevons des bases de données qui évoluent et restent rapides.",
       details:
@@ -105,7 +105,7 @@ export const servicesContent = {
       technologies: ["MySQL", "PostgreSQL", "MongoDB", "Redis", "Elasticsearch"],
       subservices: [
         {
-          title: "Bases de Données SQL",
+          title: "Bases de données SQL",
           description:
             "Conception, optimisation et gestion de bases de données relationnelles. MySQL, PostgreSQL et solutions enterprise.",
         },
@@ -115,12 +115,12 @@ export const servicesContent = {
             "Document stores, bases de données clé-valeur et bases de données graphes pour données à haut débit et non structurées.",
         },
         {
-          title: "Modélisation de Données",
+          title: "Modélisation de données",
           description:
             "Conception de schéma qui supporte vos requêtes et évolue avec votre croissance. Bien poser les fondations.",
         },
         {
-          title: "Administration de Bases de Données",
+          title: "Administration de bases de données",
           description:
             "Stratégies de backup, tuning de performance, sécurisation et planification de disaster recovery.",
         },
@@ -129,9 +129,9 @@ export const servicesContent = {
   ],
 
   cta: {
-    headline: "Vous Avez un Projet en Tête ?",
+    headline: "Vous avez un projet en tête ?",
     body: "Parlons de ce que vous construisez. Sans jargon, sans engagement. Juste une conversation.",
-    buttonText: "Démarrer une Conversation",
+    buttonText: "Démarrer une conversation",
     buttonHref: "/contact",
   },
 };

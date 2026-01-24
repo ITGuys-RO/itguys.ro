@@ -9,9 +9,9 @@ export const contactContent = {
       name: { label: "Nom", required: true },
       email: { label: "Email", required: true },
       company: { label: "Entreprise", required: false },
-      projectType: { label: "Type de Projet", required: false },
+      projectType: { label: "Type de projet", required: false },
       description: {
-        label: "Description du Projet",
+        label: "Description du projet",
         placeholder: "Que construisez-vous ? Quel problème résolvez-vous ?",
         required: true,
       },

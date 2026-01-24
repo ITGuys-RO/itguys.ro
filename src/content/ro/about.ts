@@ -14,7 +14,7 @@ export const aboutContent = {
   },
 
   vision: {
-    title: "Viziunea Noastră",
+    title: "Viziunea noastră",
     body: [
       "Nu ne este suficient să livrăm un serviciu. Ne străduim să construim legături reale cu clienții noștri, să le înțelegem conceptul, să le vedem viziunea și apoi să o facem a noastră.",
       "Ca membri ai echipei, ne depășim limitele și nu ne ferim niciodată să învățăm ceva nou. Pentru noi, fiecare client este o nouă oportunitate de a ne îmbunătăți abilitățile și o nouă șansă de a ne testa creativitatea și determinarea.",
@@ -24,7 +24,7 @@ export const aboutContent = {
   },
 
   ourStory: {
-    title: "Povestea Noastră",
+    title: "Povestea noastră",
     body: [
       "ITGuys a fost fondat de Cătălin Teodorescu, un Senior Web Security Engineer cu peste 15 ani de experiență în cybersecurity, full-stack development și DevOps. După ce a lucrat la companii precum Electronic Arts și TUI, și a petrecut aproape 7 ani construind software pentru clienți elvețieni, un lucru a devenit clar: majoritatea agențiilor își aleg stack-ul favorit și adaptează fiecare proiect să se potrivească.",
       "Noi facem opusul. Produsul tău merită fundația potrivită, nu una convenabilă. Dacă asta înseamnă PHP, Node, Python sau altceva complet depinde de ce construiești și cine îl folosește.",
@@ -33,7 +33,7 @@ export const aboutContent = {
   },
 
   mission: {
-    title: "Misiunea Noastră",
+    title: "Misiunea noastră",
     body: [
       "La ITGuys totul este despre structură convingătoare și funcționalitate profundă. Scopul nostru este să creăm o experiență unică și bogată în funcționalități care este fiabilă pentru furnizor și simplă pentru client.",
       "Munca noastră trebuie să adune oamenii împreună, să le ofere un mediu sigur, permițându-le să beneficieze de produs, serviciu sau concept. Ne asigurăm că munca noastră este recomandabilă și constant captivantă.",
@@ -42,7 +42,7 @@ export const aboutContent = {
   },
 
   experience: {
-    title: "Parteneri cu care am Lucrat",
+    title: "Parteneri cu care am lucrat",
     companies: [
       { name: "TUI", description: "Securitate web pentru una dintre cele mai mari companii de turism din lume", logo: "/logos/tui.svg" },
       { name: "Electronic Arts", description: "Testare securitate pentru aplicații web și platforme de jocuri", logo: "/logos/ea.svg" },
@@ -52,7 +52,7 @@ export const aboutContent = {
   },
 
   whatWeBelieve: {
-    title: "Principiile Noastre",
+    title: "Principiile noastre",
     intro:
       "Lucrăm cu cod, da, dar cu un sens mai profund. Găsim mândrie în munca noastră, entuziasm și încredere. Pentru a aborda acest lucru, folosim un cod de etică care modelează fiecare proiect.",
     values: [
@@ -90,16 +90,16 @@ export const aboutContent = {
   },
 
   deliveryModels: {
-    title: "Cum Lucrăm",
+    title: "Cum lucrăm",
     models: [
       {
-        title: "Augmentare Echipă",
+        title: "Augmentare echipă",
         description:
           "Potrivit pentru proiecte în desfășurare sau sarcini specifice care necesită un profesionist competent. Fie că e un dezvoltator, un departament sau întreaga echipă, oferim forță de muncă calificată, experimentată, antrenată să respecte obiectivele tale și să se integreze cu echipa ta existentă.",
         ideal: "Ideal pentru: Echipe existente care au nevoie de capacitate suplimentară sau abilități specializate.",
       },
       {
-        title: "Proiecte Preț Fix",
+        title: "Proiecte preț fix",
         description:
           "Opțiunea pentru angajamentul complet al echipei ITGuys. Adu-ți conceptul la realitate cu implementare profesională, design complet, structură fiabilă și performanță adaptabilă. Nu doar că facem ideea ta tangibilă, ci o protejăm, făcând-o sigură atât pentru furnizor cât și pentru utilizator.",
         ideal: "Ideal pentru: Produse noi, MVP-uri sau construcții complete de sistem.",
@@ -136,7 +136,7 @@ export const aboutContent = {
   },
 
   cta: {
-    headline: "Vrei să Lucrăm Împreună?",
+    headline: "Vrei să lucrăm împreună?",
     body: "Suntem întotdeauna bucuroși să cunoaștem fondatori și echipe care lucrează la produse interesante.",
     buttonText: "Contactează-ne",
     buttonHref: "/contact",

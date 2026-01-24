@@ -1,6 +1,6 @@
 export const servicesContent = {
   hero: {
-    headline: "Was Wir Bauen",
+    headline: "Was wir bauen",
     subheadline:
       "Maßgeschneiderte Softwareentwicklung, gestützt durch über 25 Jahre kombinierte Erfahrung bei EA, TUI und Nagarro. Web-, Mobile-, Cloud- und KI-Lösungen.",
   },
@@ -131,7 +131,7 @@ export const servicesContent = {
   cta: {
     headline: "Haben Sie ein Projekt im Sinn?",
     body: "Lassen Sie uns über das sprechen, was Sie bauen. Kein Fachjargon, keine Verpflichtung. Nur ein Gespräch.",
-    buttonText: "Gespräch Starten",
+    buttonText: "Gespräch starten",
     buttonHref: "/contact",
   },
 };
