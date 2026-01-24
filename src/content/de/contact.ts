@@ -31,7 +31,7 @@ export const contactContent = {
   },
 
   cta: {
-    headline: "Bereit wenn Sie es sind",
+    headline: "Bereit, wenn Sie es sind",
     body: "Kein Verkaufsgespräch. Nur ein Gespräch darüber, was Sie bauen.",
     buttonText: "Nachricht senden",
     buttonHref: "#contact-form",

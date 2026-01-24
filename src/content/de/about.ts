@@ -31,7 +31,7 @@ export const aboutContent = {
     body: [
       "ITGuys wurde von Catalin Teodorescu gegründet, einem Senior Web Security Engineer mit über 15 Jahren Erfahrung in Cybersecurity, Full-Stack-Entwicklung und DevOps. Nach der Arbeit bei Unternehmen wie Electronic Arts und TUI und fast 7 Jahren Software-Entwicklung für Schweizer Kunden wurde eines klar: Die meisten Agenturen wählen ihren Lieblings-Stack und passen jedes Projekt daran an.",
       "Wir machen das Gegenteil. Ihr Produkt verdient das richtige Fundament, kein bequemes. Ob das PHP, Node, Python oder etwas ganz anderes bedeutet, hängt davon ab, was Sie bauen und wer es nutzt.",
-      "Unsere Sicherheitserfahrung ist nicht getrennt von unserer Entwicklungsarbeit. Sie ist eingebaut in wie wir Architektur denken, Code schreiben und Systeme deployen. Wenn man Jahre damit verbracht hat, Schwachstellen in der Software anderer zu finden, lernt man, seine eigene anders zu bauen.",
+      "Unsere Sicherheitserfahrung ist nicht getrennt von unserer Entwicklungsarbeit. Sie ist integriert in unsere Art, Architektur zu denken, Code zu schreiben und Systeme zu deployen. Wenn man Jahre damit verbracht hat, Schwachstellen in der Software anderer zu finden, lernt man, seine eigene anders zu bauen.",
     ],
   },
 
@@ -98,7 +98,7 @@ export const aboutContent = {
       {
         title: "Team-Erweiterung",
         description:
-          "Geeignet für laufende Projekte oder spezifische Aufgaben, die einen kompetenten Fachmann erfordern. Ob ein Entwickler, eine Abteilung oder das ganze Team - wir liefern qualifizierte, erfahrene Arbeitskräfte, trainiert um Ihre Ziele zu respektieren und sich in Ihr bestehendes Team zu integrieren.",
+          "Geeignet für laufende Projekte oder spezifische Aufgaben, die einen kompetenten Fachmann erfordern. Ob ein Entwickler, eine Abteilung oder das ganze Team - wir liefern qualifizierte, erfahrene Arbeitskräfte, trainiert, um Ihre Ziele zu respektieren und sich in Ihr bestehendes Team zu integrieren.",
         ideal: "Ideal für: Bestehende Teams, die zusätzliche Kapazität oder spezialisierte Fähigkeiten benötigen.",
       },
       {

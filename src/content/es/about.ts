@@ -30,7 +30,7 @@ export const aboutContent = {
     title: "Nuestra Historia",
     body: [
       "ITGuys fue fundada por Catalin Teodorescu, un Senior Web Security Engineer con mas de 15 anos de experiencia en ciberseguridad, desarrollo full-stack y DevOps. Despues de trabajar en empresas como Electronic Arts y TUI, y pasar casi 7 anos construyendo software para clientes suizos, una cosa quedo clara: la mayoria de las agencias eligen su stack favorito y adaptan cada proyecto para que encaje.",
-      "Nosotros hacemos lo opuesto. Tu producto merece los cimientos correctos, no los convenientes. Si eso significa PHP, Node, Python o algo completamente diferente depende de lo que estes construyendo y quien lo usara.",
+      "Nosotros hacemos lo opuesto. Tu producto merece los cimientos correctos, no los convenientes. Si eso significa PHP, Node, Python o algo completamente diferente, depende de lo que estes construyendo y quien lo usara.",
       "Nuestra experiencia en seguridad no esta separada de nuestro trabajo de desarrollo. Esta integrada en como pensamos sobre arquitectura, escribimos codigo y desplegamos sistemas. Cuando has pasado anos encontrando vulnerabilidades en el software de otros, aprendes a construir el tuyo de manera diferente.",
     ],
   },
@@ -140,7 +140,7 @@ export const aboutContent = {
   },
 
   cta: {
-    headline: "Quieres Trabajar Juntos?",
+    headline: "¿Quieres Trabajar Juntos?",
     body: "Siempre estamos felices de conocer fundadores y equipos trabajando en productos interesantes.",
     buttonText: "Contactanos",
     buttonHref: "/contact",

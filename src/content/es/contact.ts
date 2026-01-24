@@ -1,7 +1,7 @@
 export const contactContent = {
   hero: {
     headline: "Hablemos",
-    subheadline: "Tienes un proyecto en mente? Cuentanos sobre el.",
+    subheadline: "¿Tienes un proyecto en mente? Cuéntanos sobre él.",
   },
 
   form: {
@@ -12,7 +12,7 @@ export const contactContent = {
       projectType: { label: "Tipo de Proyecto", required: false },
       description: {
         label: "Descripcion del Proyecto",
-        placeholder: "Que estas construyendo? Que problema resuelve?",
+        placeholder: "¿Qué estás construyendo? ¿Qué problema resuelve?",
         required: true,
       },
     },
@@ -31,7 +31,7 @@ export const contactContent = {
   },
 
   cta: {
-    headline: "Listos cuando tu lo estes",
+    headline: "Listos, cuando tú lo estés",
     body: "Sin pitch de ventas. Solo una conversacion sobre lo que estas construyendo.",
     buttonText: "Enviar Mensaje",
     buttonHref: "#contact-form",

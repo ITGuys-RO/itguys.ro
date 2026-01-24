@@ -87,7 +87,7 @@ export const portfolioContent = {
       solution:
         "Développement d'une plateforme complète de gestion de cabinet juridique avec timesheets intégrées, facturation automatisée, suivi des audiences et tableaux de bord de performance. Implémentation du chiffrement SSL et des contrôles d'accès basés sur les rôles pour la protection des données.",
       tech: ["PHP", "Laravel", "Angular", "MySQL", "AWS"],
-      result: "Servant des cabinets d'avocats des praticiens solo aux grandes pratiques multi-équipes à travers l'Europe.",
+      result: "Au service des cabinets d'avocats, des praticiens solo aux grandes pratiques multi-équipes à travers l'Europe.",
       url: "https://www.keyvision.eu/",
     },
   ] as Project[],

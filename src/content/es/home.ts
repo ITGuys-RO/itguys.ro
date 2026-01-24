@@ -26,7 +26,7 @@ export const homeContent = {
     title: "Lo que nos diferencia",
     body: [
       "No somos solo desarrolladores que leen sobre seguridad. Hemos hecho pruebas de penetracion en Electronic Arts y construido sistemas de proteccion DDoS en TUI. Cuando escribimos codigo, pensamos en como podria ser atacado.",
-      "Necesitas una app movil? Nuestro ingeniero nativo iOS/Android paso mas de 5 anos en Nagarro construyendo apps para IoT, salud y e-commerce. Sin compromisos de React Native. Desarrollo nativo real cuando importa.",
+      "¿Necesitas una app móvil? Nuestro ingeniero nativo iOS/Android paso mas de 5 anos en Nagarro construyendo apps para IoT, salud y e-commerce. Sin compromisos de React Native. Desarrollo nativo real cuando importa.",
     ],
   },
 
@@ -60,7 +60,7 @@ export const homeContent = {
   },
 
   cta: {
-    headline: "Listo para Construir Algo?",
+    headline: "¿Listo para Construir Algo?",
     body: "Cuentanos sobre tu proyecto. Te diremos honestamente como podemos ayudarte.",
     buttonText: "Contactanos",
     buttonHref: "/contact",

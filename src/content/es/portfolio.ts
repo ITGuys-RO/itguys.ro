@@ -87,14 +87,14 @@ export const portfolioContent = {
       solution:
         "Desarrollamos una plataforma completa de gestion de practicas legales con hojas de tiempo integradas, facturacion automatizada, seguimiento de audiencias judiciales y dashboards de rendimiento. Implementada encriptacion SSL y controles de acceso basados en roles para proteccion de datos.",
       tech: ["PHP", "Laravel", "Angular", "MySQL", "AWS"],
-      result: "Sirviendo a despachos de abogados desde practicantes individuales hasta grandes practicas multi-equipo en toda Europa.",
+      result: "Al servicio de despachos de abogados, desde practicantes individuales hasta grandes prácticas multi-equipo en toda Europa.",
       url: "https://www.keyvision.eu/",
     },
   ] as Project[],
 
   cta: {
     headline: "Tu proyecto podria ser el siguiente",
-    body: "Tienes algo que quieres construir? Hablemos.",
+    body: "¿Tienes algo que quieres construir? Hablemos.",
     buttonText: "Inicia una Conversacion",
     buttonHref: "/contact",
   },
