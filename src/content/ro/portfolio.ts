@@ -25,7 +25,7 @@ export const portfolioContent = {
       challenge:
         "Construirea unei platforme de evenimente virtuale suficient de puternică pentru conferințe enterprise, dar suficient de simplă pentru oricine să o folosească. Platforma trebuia să gestioneze transmisiuni în direct la scară mare, interacțiune în timp real cu participanții și analytics detaliate.",
       solution:
-        "Am dezvoltat un sistem extensibil de management al evenimentelor cu instrumente intuitive de creare evenimente, funcții interactive de implicare a participanților și un dashboard cuprinzător de analytics. Ne-am concentrat pe fiabilitate și ușurință în utilizare fără a sacrifica capabilitățile.",
+        "Am dezvoltat un sistem extensibil de management al evenimentelor cu instrumente intuitive de creare evenimente, funcții interactive de implicare a participanților și un dashboard cuprinzător de analytics. Ne-am concentrat pe fiabilitate și ușurință în utilizare fără a compromite capabilitățile.",
       tech: ["React", "Node.js", "WebRTC", "AWS", "PostgreSQL"],
       result: "În prezent, platforma susține evenimente virtuale pentru organizații din întreaga lume.",
       url: "https://xtendlive.com/",
@@ -35,7 +35,7 @@ export const portfolioContent = {
       clientType: "Enterprise",
       industry: "Experiența Clienților",
       challenge:
-        "O agenție de mystery shopping de top din UK trebuia să își modernizeze platforma pentru a gestiona mii de evaluări lunare în retail, HoReCa, sănătate și sectorul legal. Sistemul trebuia să coordoneze 800+ mystery shopperi și să livreze feedback în 48 de ore.",
+        "O agenție de mystery shopping de top din UK trebuia să își modernizeze platforma pentru a gestiona mii de evaluări lunare în comerț, HoReCa, sănătate și sectorul legal. Sistemul trebuia să coordoneze 800+ mystery shopperi și să livreze feedback în 48 de ore.",
       solution:
         "Am construit un sistem cuprinzător de management al evaluărilor ce conțin colectare de date prietenoasă pentru mobile, rutare automată a workflow-ului și un portal pentru clienți pentru acces în timp real la rezultate. Am integrat capabilități de evaluare video, telefon și chat.",
       tech: ["PHP", "Laravel", "MySQL", "Vue.js", "AWS"],
@@ -59,7 +59,7 @@ export const portfolioContent = {
       clientType: "Non-Profit",
       industry: "Mediu",
       challenge:
-        "Organizația lider mondială de certificare a pădurilor avea nevoie de instrumente digitale pentru a susține misiunea de protejare a pădurilor la nivel global. Erau necesare sisteme pentru managementul certificării, trasabilitatea lanțului de aprovizionare și coordonarea actionarilor în mai multe țări.",
+        "Organizația lider mondială de certificare a pădurilor avea nevoie de instrumente digitale pentru a susține misiunea de protejare a pădurilor la nivel global. Erau necesare sisteme pentru managementul certificării, trasabilitatea lanțului de aprovizionare și coordonarea acționarilor în mai multe țări.",
       solution:
         "Am contribuit la dezvoltarea sistemelor de certificare și trasabilitate care ajută la verificarea practicilor de silvicultură durabilă în lanțurile de aprovizionare globale. Am implementat gestionare sigură a datelor pentru informații sensibile de conformitate.",
       tech: ["PHP", "Drupal", "PostgreSQL", "Docker", "REST APIs"],

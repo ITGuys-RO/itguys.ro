@@ -101,7 +101,7 @@ export const servicesContent = {
         {
           title: "Analiză competitivă",
           description:
-            "Perspectivă asupra comportamentului utilizatorilor, preferințe, obiceiuri și poziția ta față de concurența directă.",
+            "Descoperă comportamentul, preferințele și obiceiurile utilizatorilor, precum și cum te poziționezi față de concurență.",
         },
         {
           title: "Monitorizare în timp real",
