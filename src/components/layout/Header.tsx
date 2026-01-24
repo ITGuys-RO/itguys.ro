@@ -66,7 +66,7 @@ export function Header({ locale }: Props) {
                 {item.name[locale]}
               </Link>
             ))}
-            <ThemeSwitcher />
+            <ThemeSwitcher locale={locale} />
             <LanguageSwitcher locale={locale} />
             <Button href="/contact" variant="primary" className="flex items-center gap-1.5">
               <ChatBubbleLeftRightIcon className="w-4 h-4" />
@@ -129,7 +129,7 @@ export function Header({ locale }: Props) {
                 </Link>
               ))}
               <div className="flex items-center gap-4 mt-2">
-                <ThemeSwitcher />
+                <ThemeSwitcher locale={locale} />
                 <LanguageSwitcher locale={locale} />
               </div>
               <Button href="/contact" variant="primary" className="mt-2 flex items-center gap-2">
