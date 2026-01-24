@@ -129,7 +129,7 @@ export const aboutContent = {
       {
         name: "Cristian-Marian Mincu",
         role: "Senior Mobile Developer",
-        bio: "10+ years building native iOS and Android apps. Previously at Nagarro and Enea AB. Expert in mobile architecture, IoT integrations, and CI/CD pipelines. Master's in Information Security from Politehnica Bucharest.",
+        bio: "10+ years building native iOS and Android apps. Previously at Nagarro and Enea AB. Expert in mobile architecture, IoT integrations, and CI/CD pipelines. Master's in Information Security from PolitehnicaUniversity of Bucharest.",
         linkedIn: "https://www.linkedin.com/in/cristian-marian-mincu-44849690/",
       },
     ] as TeamMember[],
