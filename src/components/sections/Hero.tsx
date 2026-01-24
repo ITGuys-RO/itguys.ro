@@ -9,11 +9,16 @@ type HeroProps = {
     text: string;
     href: string;
   };
+  secondaryCta?: {
+    text: string;
+    href: string;
+  };
+  badgeText?: string;
   illustration?: ReactNode;
   showBadge?: boolean;
 };
 
-export function Hero({ headline, subheadline, cta, illustration, showBadge = true }: HeroProps) {
+export function Hero({ headline, subheadline, cta, secondaryCta, badgeText = "Available for new projects", illustration, showBadge = true }: HeroProps) {
   return (
     <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 px-6 md:px-8 overflow-hidden">
       {/* Cyberpunk background elements */}
@@ -50,7 +55,7 @@ export function Hero({ headline, subheadline, cta, illustration, showBadge = tru
             {showBadge && (
               <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 text-sm font-medium text-neon bg-neon/10 border border-neon/30 rounded-full animate-fade-in-down animate-pulse-glow">
                 <span className="w-2 h-2 bg-neon rounded-full animate-pulse" />
-                Available for new projects
+                {badgeText}
               </div>
             )}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight animate-fade-in-up">
@@ -65,9 +70,11 @@ export function Hero({ headline, subheadline, cta, illustration, showBadge = tru
                   {cta.text}
                   <ArrowRightIcon className="w-4 h-4" />
                 </Button>
-                <Button href="/portfolio" variant="secondary">
-                  View Our Work
-                </Button>
+                {secondaryCta && (
+                  <Button href={secondaryCta.href} variant="secondary">
+                    {secondaryCta.text}
+                  </Button>
+                )}
               </div>
             )}
           </div>

@@ -7,6 +7,11 @@ export const homeContent = {
       text: "Hai să vorbim",
       href: "/contact",
     },
+    secondaryCta: {
+      text: "Vezi portofoliul",
+      href: "/portfolio",
+    },
+    badgeText: "Disponibil pentru proiecte noi",
   },
 
   stats: [
@@ -18,8 +23,8 @@ export const homeContent = {
   whatSetsUsApart: {
     title: "Ce ne diferențiază",
     body: [
-      "Nu suntem doar programatori care citesc despre securitate. Am făcut teste de penetrare la Electronic Arts și am construit sisteme de protecție DDoS la TUI. Când scriem cod, ne gândim cum ar putea fi atacat.",
-      "Ai nevoie de o aplicație mobilă? Inginerul nostru nativ iOS/Android a petrecut peste 5 ani la Nagarro construind aplicații pentru IoT, sănătate și e-commerce. Nu compromisuri React Native. Dezvoltare nativă reală când contează.",
+      "Nu suntem doar programatori care citesc despre securitate. Am făcut teste de penetrare la Electronic Arts și am construit sisteme de protecție DDoS la TUI. Când scriem cod, ne gândim și la cum ar putea fi atacat.",
+      "Ai nevoie de o aplicație mobilă? Inginerul nostru nativ iOS/Android a petrecut peste 5 ani la Nagarro construind aplicații pentru IoT, sănătate și e-commerce. Fără compromisuri React Native. Dezvoltare nativă reală când contează.",
     ],
   },
 
