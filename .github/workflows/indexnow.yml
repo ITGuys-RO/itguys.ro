@@ -25,7 +25,7 @@ jobs:
             exit 1
           fi
 
-          URLS=$(echo "$SITEMAP_CONTENT" | grep -oP '(?<=<loc>)[^<]+' || true)
+          URLS=$(echo "$SITEMAP_CONTENT" | sed -n 's/.*<loc>\([^<]*\)<\/loc>.*/\1/p')
 
           if [ -z "$URLS" ]; then
             echo "No URLs found in sitemap"
