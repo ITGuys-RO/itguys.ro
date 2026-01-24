@@ -25,7 +25,7 @@ export function Button({
 
   const variants = {
     primary: clsx(
-      "bg-brand-400 text-white border border-brand-400/50",
+      "bg-brand-400 text-white border border-brand-400/50 btn-primary",
       "hover:bg-brand-300 hover:border-brand-300/50",
       "hover:shadow-[0_0_20px_rgba(81,116,161,0.4),0_0_40px_rgba(81,116,161,0.2)]",
       "focus:ring-brand-400",
@@ -39,7 +39,7 @@ export function Button({
       "dark:text-brand-200 dark:border-brand-400/30 dark:hover:border-brand-400/60"
     ),
     neon: clsx(
-      "bg-transparent text-neon border border-neon/50",
+      "bg-transparent text-neon border border-neon/50 btn-neon",
       "hover:border-neon hover:bg-neon/10",
       "hover:shadow-[0_0_20px_rgba(0,212,255,0.4),0_0_40px_rgba(0,212,255,0.2),inset_0_0_10px_rgba(0,212,255,0.1)]",
       "focus:ring-neon",
