@@ -12,14 +12,13 @@ export function Card({ children, className, glowOnHover = true, cornerAccents = 
     <div
       className={clsx(
         "relative p-6 rounded-xl",
-        // Glass morphism base
-        "bg-brand-900/60 dark:bg-brand-900/60 backdrop-blur-xl",
-        "border border-brand-700/30 dark:border-brand-700/30",
+        // Glass morphism base - theme aware
+        "theme-card backdrop-blur-xl",
         // Transition
         "transition-all duration-300",
         // Hover effects
         glowOnHover && [
-          "hover:border-brand-400/40 dark:hover:border-brand-400/40",
+          "hover:border-brand-400/40",
           "hover:shadow-[0_0_30px_rgba(81,116,161,0.15),0_0_60px_rgba(81,116,161,0.05)]",
           "hover:-translate-y-1",
         ],
@@ -49,7 +48,7 @@ export function CardTitle({ children, className }: CardTitleProps) {
   return (
     <h3
       className={clsx(
-        "text-lg font-semibold text-white mb-2",
+        "text-lg font-semibold text-foreground mb-2",
         className
       )}
     >
@@ -65,7 +64,7 @@ type CardDescriptionProps = {
 
 export function CardDescription({ children, className }: CardDescriptionProps) {
   return (
-    <p className={clsx("text-brand-200 dark:text-brand-200", className)}>
+    <p className={clsx("text-brand-300", className)}>
       {children}
     </p>
   );

@@ -6,3 +6,4 @@ export { GridPattern, DotPattern, GradientBlob, CyberGrid, ScanlineOverlay, HexP
 export { AnimateOnScroll, StaggerChildren } from "./AnimateOnScroll";
 export { Carousel } from "./Carousel";
 export { LanguageSwitcher } from "./LanguageSwitcher";
+export { ThemeSwitcher } from "./ThemeSwitcher";

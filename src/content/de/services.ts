@@ -7,6 +7,37 @@ export const servicesContent = {
 
   services: [
     {
+      id: "ai-ml",
+      title: "KI & Machine Learning",
+      description:
+        "Von Natural Language Processing bis Computer Vision - wir bauen intelligente Systeme, die lernen und sich anpassen. Verwandeln Sie Daten in umsetzbare Erkenntnisse.",
+      details:
+        "Wir entwickeln maßgeschneiderte KI-Lösungen mit TensorFlow, PyTorch und Scikit-learn. Ob prädiktive Modelle, NLP für Chatbots oder Computer-Vision-Systeme zur Bilderkennung - wir konzentrieren uns auf praktische KI, die echte Geschäftsprobleme löst.",
+      technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
+      subservices: [
+        {
+          title: "Natural Language Processing",
+          description:
+            "Chatbots, Sentiment-Analyse, Textklassifizierung und maschinelle Übersetzung. Lassen Sie Ihre Anwendungen menschliche Sprache verstehen und darauf reagieren.",
+        },
+        {
+          title: "Computer Vision",
+          description:
+            "Bilderkennung, Objekterkennung und Videoanalyse. Von Qualitätskontrolle bis Sicherheitsüberwachung.",
+        },
+        {
+          title: "Deep Learning",
+          description:
+            "Neuronale Netze für komplexe Mustererkennung. Wenn traditionelle Algorithmen nicht ausreichen.",
+        },
+        {
+          title: "Predictive Analytics",
+          description:
+            "Machine-Learning-Modelle, die Trends vorhersagen, Anomalien erkennen und Entscheidungen basierend auf historischen Daten optimieren.",
+        },
+      ],
+    },
+    {
       id: "development",
       title: "Web-Anwendungen",
       description:
@@ -63,37 +94,6 @@ export const servicesContent = {
       details:
         "MySQL, PostgreSQL, Elastic Search für komplexe Abfragen. Wir kümmern uns um Legacy-Modernisierung, Systemintegrationen und eigenständige Module für größere Produkte. Wenn Sie eine spezifische technische Herausforderung haben, vertiefen wir uns gerne.",
       technologies: ["Node.js", "Python", "PHP", "GraphQL", "REST APIs"],
-    },
-    {
-      id: "ai-ml",
-      title: "KI & Machine Learning",
-      description:
-        "Von Natural Language Processing bis Computer Vision - wir bauen intelligente Systeme, die lernen und sich anpassen. Verwandeln Sie Daten in umsetzbare Erkenntnisse.",
-      details:
-        "Wir entwickeln maßgeschneiderte KI-Lösungen mit TensorFlow, PyTorch und Scikit-learn. Ob prädiktive Modelle, NLP für Chatbots oder Computer-Vision-Systeme zur Bilderkennung - wir konzentrieren uns auf praktische KI, die echte Geschäftsprobleme löst.",
-      technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
-      subservices: [
-        {
-          title: "Natural Language Processing",
-          description:
-            "Chatbots, Sentiment-Analyse, Textklassifizierung und maschinelle Übersetzung. Lassen Sie Ihre Anwendungen menschliche Sprache verstehen und darauf reagieren.",
-        },
-        {
-          title: "Computer Vision",
-          description:
-            "Bilderkennung, Objekterkennung und Videoanalyse. Von Qualitätskontrolle bis Sicherheitsüberwachung.",
-        },
-        {
-          title: "Deep Learning",
-          description:
-            "Neuronale Netze für komplexe Mustererkennung. Wenn traditionelle Algorithmen nicht ausreichen.",
-        },
-        {
-          title: "Predictive Analytics",
-          description:
-            "Machine-Learning-Modelle, die Trends vorhersagen, Anomalien erkennen und Entscheidungen basierend auf historischen Daten optimieren.",
-        },
-      ],
     },
     {
       id: "database",

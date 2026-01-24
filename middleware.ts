@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { locales, defaultLocale } from "./src/i18n/config";
+import { locales } from "./src/i18n/config";
+
+// English pages that exist in the (en) route group - no rewrite needed
+const englishRoutes = [
+  "/",
+  "/services",
+  "/about",
+  "/contact",
+  "/portfolio",
+  "/professional-services",
+];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -9,30 +19,24 @@ export function middleware(request: NextRequest) {
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
 
+  // If pathname has a locale, let it through
   if (pathnameHasLocale) {
-    // If it's the default locale with explicit prefix, redirect to remove it
-    // e.g., /en/about -> /about
-    if (pathname.startsWith(`/${defaultLocale}/`) || pathname === `/${defaultLocale}`) {
-      const newPathname = pathname.replace(`/${defaultLocale}`, "") || "/";
-      return NextResponse.redirect(new URL(newPathname, request.url));
-    }
-    // Other locales keep their prefix
     return NextResponse.next();
   }
 
-  // No locale in pathname - rewrite to default locale internally
-  // e.g., /about -> /en/about (internal rewrite, URL stays as /about)
-  const newUrl = new URL(`/${defaultLocale}${pathname}`, request.url);
-  return NextResponse.rewrite(newUrl);
+  // If pathname is an English route that exists in (en) group, let it through
+  if (englishRoutes.includes(pathname)) {
+    return NextResponse.next();
+  }
+
+  // For any other paths without locale, let Next.js handle the 404
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    // Match all paths except:
-    // - API routes
-    // - Next.js internals
-    // - Static files
-    "/((?!api|_next|_vercel|.*\\..*).*)",
+    // All paths except root, API, Next.js internals, and static files
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.[\\w]+$).+)",
   ],
 };
 

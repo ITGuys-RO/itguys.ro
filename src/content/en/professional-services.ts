@@ -7,33 +7,33 @@ export const professionalServicesContent = {
 
   services: [
     {
-      id: "qa-testing",
-      title: "QA & Testing Services",
+      id: "consulting",
+      title: "Technical Consulting",
       description:
-        "Quality is not optional. We ensure your software works flawlessly through comprehensive manual and automated testing.",
+        "Expert guidance on architecture decisions, technology choices, and development strategies.",
       details:
-        "Our testing approach covers functionality, performance, security, and user experience. We use industry-standard tools like Selenium, Appium, and JMeter to detect issues before they reach your users.",
-      technologies: ["Selenium", "Appium", "JMeter", "Postman", "Cypress"],
+        "Sometimes you need a second opinion or expert guidance before committing to a direction. We offer consulting services to help you make informed decisions about your technology stack, architecture, and development approach.",
+      technologies: [],
       subservices: [
         {
-          title: "Manual Testing",
+          title: "Architecture Review",
           description:
-            "Hands-on testing that catches UX issues, edge cases, and real-world scenarios automated tests miss.",
+            "Assessment of your current architecture with recommendations for scalability, security, and maintainability.",
         },
         {
-          title: "Automated Testing",
+          title: "Technology Selection",
           description:
-            "Selenium, Appium, and custom test suites for fast, repeatable regression testing across builds.",
+            "Unbiased guidance on choosing the right technologies for your specific requirements and constraints.",
         },
         {
-          title: "Performance Testing",
+          title: "Code Review",
           description:
-            "Load testing, stress testing, and bottleneck identification. Know your limits before your users find them.",
+            "Expert review of your codebase focusing on best practices, security vulnerabilities, and performance issues.",
         },
         {
-          title: "Security Testing",
+          title: "DevSecOps Strategy",
           description:
-            "Vulnerability scanning, penetration testing, and risk assessment integrated into your development cycle.",
+            "Integrating security into your development process. Shifting left without slowing down.",
         },
       ],
     },
@@ -111,33 +111,33 @@ export const professionalServicesContent = {
       ],
     },
     {
-      id: "consulting",
-      title: "Technical Consulting",
+      id: "qa-testing",
+      title: "QA & Testing Services",
       description:
-        "Expert guidance on architecture decisions, technology choices, and development strategies.",
+        "Quality is not optional. We ensure your software works flawlessly through comprehensive manual and automated testing.",
       details:
-        "Sometimes you need a second opinion or expert guidance before committing to a direction. We offer consulting services to help you make informed decisions about your technology stack, architecture, and development approach.",
-      technologies: [],
+        "Our testing approach covers functionality, performance, security, and user experience. We use industry-standard tools like Selenium, Appium, and JMeter to detect issues before they reach your users.",
+      technologies: ["Selenium", "Appium", "JMeter", "Postman", "Cypress"],
       subservices: [
         {
-          title: "Architecture Review",
+          title: "Manual Testing",
           description:
-            "Assessment of your current architecture with recommendations for scalability, security, and maintainability.",
+            "Hands-on testing that catches UX issues, edge cases, and real-world scenarios automated tests miss.",
         },
         {
-          title: "Technology Selection",
+          title: "Automated Testing",
           description:
-            "Unbiased guidance on choosing the right technologies for your specific requirements and constraints.",
+            "Selenium, Appium, and custom test suites for fast, repeatable regression testing across builds.",
         },
         {
-          title: "Code Review",
+          title: "Performance Testing",
           description:
-            "Expert review of your codebase focusing on best practices, security vulnerabilities, and performance issues.",
+            "Load testing, stress testing, and bottleneck identification. Know your limits before your users find them.",
         },
         {
-          title: "DevSecOps Strategy",
+          title: "Security Testing",
           description:
-            "Integrating security into your development process. Shifting left without slowing down.",
+            "Vulnerability scanning, penetration testing, and risk assessment integrated into your development cycle.",
         },
       ],
     },

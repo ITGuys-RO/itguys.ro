@@ -7,33 +7,33 @@ export const professionalServicesContent = {
 
   services: [
     {
-      id: "qa-testing",
-      title: "Services QA & Tests",
+      id: "consulting",
+      title: "Conseil Technique",
       description:
-        "La qualité n'est pas optionnelle. Nous assurons que votre logiciel fonctionne parfaitement grâce à des tests manuels et automatisés complets.",
+        "Conseils d'experts sur les décisions d'architecture, les choix technologiques et les stratégies de développement.",
       details:
-        "Notre approche de test couvre la fonctionnalité, la performance, la sécurité et l'expérience utilisateur. Nous utilisons des outils standard de l'industrie comme Selenium, Appium et JMeter pour détecter les problèmes avant qu'ils n'atteignent vos utilisateurs.",
-      technologies: ["Selenium", "Appium", "JMeter", "Postman", "Cypress"],
+        "Parfois vous avez besoin d'un second avis ou d'un accompagnement expert avant de vous engager dans une direction. Nous offrons des services de conseil pour vous aider à prendre des décisions éclairées sur votre stack technologique, votre architecture et votre approche de développement.",
+      technologies: [],
       subservices: [
         {
-          title: "Tests Manuels",
+          title: "Revue d'Architecture",
           description:
-            "Tests pratiques qui détectent les problèmes UX, les cas limites et les scénarios réels que les tests automatisés manquent.",
+            "Évaluation de votre architecture actuelle avec recommandations pour la scalabilité, la sécurité et la maintenabilité.",
         },
         {
-          title: "Tests Automatisés",
+          title: "Sélection Technologique",
           description:
-            "Selenium, Appium et suites de tests personnalisées pour des tests de régression rapides et répétables sur tous les builds.",
+            "Guidance impartiale pour choisir les bonnes technologies pour vos besoins et contraintes spécifiques.",
         },
         {
-          title: "Tests de Performance",
+          title: "Revue de Code",
           description:
-            "Tests de charge, tests de stress et identification des goulots d'étranglement. Connaissez vos limites avant que vos utilisateurs ne les trouvent.",
+            "Revue experte de votre code axée sur les bonnes pratiques, les failles de sécurité et les problèmes de performance.",
         },
         {
-          title: "Tests de Sécurité",
+          title: "Stratégie DevSecOps",
           description:
-            "Scan de vulnérabilités, tests d'intrusion et évaluation des risques intégrés à votre cycle de développement.",
+            "Intégration de la sécurité dans votre processus de développement. Shift left sans ralentir.",
         },
       ],
     },
@@ -111,33 +111,33 @@ export const professionalServicesContent = {
       ],
     },
     {
-      id: "consulting",
-      title: "Conseil Technique",
+      id: "qa-testing",
+      title: "Services QA & Tests",
       description:
-        "Conseils d'experts sur les décisions d'architecture, les choix technologiques et les stratégies de développement.",
+        "La qualité n'est pas optionnelle. Nous assurons que votre logiciel fonctionne parfaitement grâce à des tests manuels et automatisés complets.",
       details:
-        "Parfois vous avez besoin d'un second avis ou d'un accompagnement expert avant de vous engager dans une direction. Nous offrons des services de conseil pour vous aider à prendre des décisions éclairées sur votre stack technologique, votre architecture et votre approche de développement.",
-      technologies: [],
+        "Notre approche de test couvre la fonctionnalité, la performance, la sécurité et l'expérience utilisateur. Nous utilisons des outils standard de l'industrie comme Selenium, Appium et JMeter pour détecter les problèmes avant qu'ils n'atteignent vos utilisateurs.",
+      technologies: ["Selenium", "Appium", "JMeter", "Postman", "Cypress"],
       subservices: [
         {
-          title: "Revue d'Architecture",
+          title: "Tests Manuels",
           description:
-            "Évaluation de votre architecture actuelle avec recommandations pour la scalabilité, la sécurité et la maintenabilité.",
+            "Tests pratiques qui détectent les problèmes UX, les cas limites et les scénarios réels que les tests automatisés manquent.",
         },
         {
-          title: "Sélection Technologique",
+          title: "Tests Automatisés",
           description:
-            "Guidance impartiale pour choisir les bonnes technologies pour vos besoins et contraintes spécifiques.",
+            "Selenium, Appium et suites de tests personnalisées pour des tests de régression rapides et répétables sur tous les builds.",
         },
         {
-          title: "Revue de Code",
+          title: "Tests de Performance",
           description:
-            "Revue experte de votre code axée sur les bonnes pratiques, les failles de sécurité et les problèmes de performance.",
+            "Tests de charge, tests de stress et identification des goulots d'étranglement. Connaissez vos limites avant que vos utilisateurs ne les trouvent.",
         },
         {
-          title: "Stratégie DevSecOps",
+          title: "Tests de Sécurité",
           description:
-            "Intégration de la sécurité dans votre processus de développement. Shift left sans ralentir.",
+            "Scan de vulnérabilités, tests d'intrusion et évaluation des risques intégrés à votre cycle de développement.",
         },
       ],
     },

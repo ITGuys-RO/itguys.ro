@@ -31,7 +31,7 @@ type Props = {
 
 export function Footer({ locale }: Props) {
   return (
-    <footer className="relative border-t border-brand-700/30 bg-brand-950">
+    <footer className="relative border-t border-brand-700/30 bg-background">
       {/* Grid pattern overlay */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <svg className="absolute w-full h-full opacity-[0.02]" xmlns="http://www.w3.org/2000/svg">
