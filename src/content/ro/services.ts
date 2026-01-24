@@ -1,6 +1,6 @@
 export const servicesContent = {
   hero: {
-    headline: "Ce Construim",
+    headline: "Ce construim",
     subheadline:
       "Dezvoltare software personalizată susținută de peste 25 de ani de experiență combinată la EA, TUI și Nagarro. Soluții web, mobile, cloud și AI.",
   },
@@ -16,7 +16,7 @@ export const servicesContent = {
       technologies: ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "OpenAI"],
       subservices: [
         {
-          title: "Procesare Limbaj Natural",
+          title: "Procesare limbaj natural",
           description:
             "Chatboți, analiză sentimente, clasificare text și traducere automată. Fă aplicațiile tale să înțeleagă și să răspundă la limbajul uman.",
         },
@@ -26,12 +26,12 @@ export const servicesContent = {
             "Recunoașterea imaginilor, detectarea obiectelor și analiza video. De la controlul calității la monitorizarea securității.",
         },
         {
-          title: "Deep Learning",
+          title: "Deep learning",
           description:
             "Rețele neuronale pentru recunoașterea tiparelor complexe. Când algoritmii tradiționali nu sunt suficienți.",
         },
         {
-          title: "Analiză Predictivă",
+          title: "Analiză predictivă",
           description:
             "Modele de machine learning care prezic tendințe, detectează anomalii și optimizează deciziile bazate pe date istorice.",
         },
@@ -39,7 +39,7 @@ export const servicesContent = {
     },
     {
       id: "development",
-      title: "Aplicații Web",
+      title: "Aplicații web",
       description:
         "De la dashboard-uri interne la platforme pentru clienți. SPA-uri, PWA-uri, panouri de administrare, produse SaaS. Orice au nevoie utilizatorii tăi.",
       details:
@@ -48,7 +48,7 @@ export const servicesContent = {
     },
     {
       id: "mobile",
-      title: "Aplicații Mobile",
+      title: "Aplicații mobile",
       description:
         "Aplicații native iOS și Android construite de ingineri cu peste 10 ani de experiență la Nagarro și Enea AB. Nu compromisuri cross-platform, performanță nativă reală.",
       details:
@@ -56,7 +56,7 @@ export const servicesContent = {
       technologies: ["Swift", "Kotlin", "iOS SDK", "Android SDK", "Fitbit SDK"],
       subservices: [
         {
-          title: "iOS & Android Nativ",
+          title: "iOS & Android nativ",
           description:
             "Aplicații cu adevărat native cu integrare completă a platformei. Nu React Native sau Flutter. Când aplicația ta trebuie să se simtă ca acasă pe dispozitiv.",
         },
@@ -66,12 +66,12 @@ export const servicesContent = {
             "Aplicații pentru dispozitive conectate, integrări Fitbit și SDK-uri hardware. Experiență în livrarea produselor IoT la Enea AB.",
         },
         {
-          title: "Plăți & E-commerce",
+          title: "Plăți & e-commerce",
           description:
             "Stripe, Shopify și integrări de plată personalizate. Tranzacții sigure care respectă cerințele de conformitate.",
         },
         {
-          title: "Sănătate & Pharma",
+          title: "Sănătate & pharma",
           description:
             "Aplicații pentru industria veterinară, nutriție și farmaceutică. Înțelegerea cerințelor de reglementare și sensibilitatea datelor.",
         },
@@ -79,7 +79,7 @@ export const servicesContent = {
     },
     {
       id: "cloud",
-      title: "DevOps & Infrastructură Cloud",
+      title: "DevOps & infrastructură cloud",
       description:
         "Implementări containerizate, pipeline-uri CI/CD și arhitectură cloud pe AWS. Construim infrastructură care scalează și rămâne sigură.",
       details:
@@ -88,7 +88,7 @@ export const servicesContent = {
     },
     {
       id: "backend",
-      title: "Backend, API-uri & Integrări",
+      title: "Backend, API-uri & integrări",
       description:
         "Motorul din spatele aplicației tale. API-uri RESTful, microservicii, optimizare baze de date și integrări third-party.",
       details:
@@ -97,7 +97,7 @@ export const servicesContent = {
     },
     {
       id: "database",
-      title: "Design & Management Baze de Date",
+      title: "Design & management baze de date",
       description:
         "SQL, NoSQL, modelare date și administrare. Proiectăm baze de date care scalează și rămân rapide.",
       details:
@@ -105,7 +105,7 @@ export const servicesContent = {
       technologies: ["MySQL", "PostgreSQL", "MongoDB", "Redis", "Elasticsearch"],
       subservices: [
         {
-          title: "Baze de Date SQL",
+          title: "Baze de date SQL",
           description:
             "Design, optimizare și management baze de date relaționale. MySQL, PostgreSQL și soluții enterprise.",
         },
@@ -115,12 +115,12 @@ export const servicesContent = {
             "Document stores, baze de date key-value și graph databases pentru date cu viteză mare și nestructurate.",
         },
         {
-          title: "Modelare Date",
+          title: "Modelare date",
           description:
             "Design schemă care suportă interogările tale și scalează cu creșterea ta. Construim fundația corect.",
         },
         {
-          title: "Administrare Baze de Date",
+          title: "Administrare baze de date",
           description:
             "Strategii de backup, tuning performanță, securizare și planificare disaster recovery.",
         },
@@ -129,9 +129,9 @@ export const servicesContent = {
   ],
 
   cta: {
-    headline: "Ai un Proiect în Minte?",
+    headline: "Ai un proiect în minte?",
     body: "Hai să vorbim despre ce construiești. Fără jargon, fără angajament. Doar o conversație.",
-    buttonText: "Începe o Conversație",
+    buttonText: "Începe o conversație",
     buttonHref: "/contact",
   },
 };

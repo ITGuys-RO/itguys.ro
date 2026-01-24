@@ -8,7 +8,7 @@ export const professionalServicesContent = {
   services: [
     {
       id: "consulting",
-      title: "Consultanță Tehnică",
+      title: "Consultanță tehnică",
       description:
         "Ghidare expertă pentru decizii de arhitectură, alegeri de tehnologie și strategii de dezvoltare.",
       details:
@@ -16,17 +16,17 @@ export const professionalServicesContent = {
       technologies: [],
       subservices: [
         {
-          title: "Revizuire Arhitectură",
+          title: "Revizuire arhitectură",
           description:
             "Evaluarea arhitecturii tale curente cu recomandări pentru scalabilitate, securitate și mentenabilitate.",
         },
         {
-          title: "Selecție Tehnologie",
+          title: "Selecție tehnologie",
           description:
             "Ghidare imparțială pentru alegerea tehnologiilor potrivite pentru cerințele și constrângerile tale specifice.",
         },
         {
-          title: "Revizuire Cod",
+          title: "Revizuire cod",
           description:
             "Revizuire expertă a codului tău concentrată pe best practices, vulnerabilități de securitate și probleme de performanță.",
         },
@@ -39,34 +39,34 @@ export const professionalServicesContent = {
     },
     {
       id: "security",
-      title: "Servicii de Securitate",
+      title: "Servicii de securitate",
       description:
         "Cu experiență la Electronic Arts și TUI, nu doar construim software. Știm cum să-l spargem. Această perspectivă modelează tot ce creăm.",
       details:
         "Securitatea este atributul fundamental al oricărui serviciu recomandabil. Încrederea este ceea ce stabilește loialitatea utilizatorilor. Înțelegem gravitatea protejării sistemelor și datelor tale.",
       subservices: [
         {
-          title: "Testare de Penetrare",
+          title: "Testare de penetrare",
           description:
             "Testare manuală și automatizată a vulnerabilităților împotriva aplicațiilor web, API-urilor și infrastructurii. Aceleași tehnici pe care le-am folosit la EA, acum pentru aplicațiile tale.",
         },
         {
-          title: "Audituri de Securitate",
+          title: "Audituri de securitate",
           description:
             "Revizuiri de cod și evaluări ale arhitecturii pentru a găsi vulnerabilități înainte ca atacatorii să o facă. Am revizuit binare de jocuri și platforme enterprise.",
         },
         {
-          title: "Securitate Cloud",
+          title: "Securitate cloud",
           description:
             "Revizuiri configurație AWS, politici IAM, segmentare rețea, management secrete. Lucrurile plictisitoare care previn breșele.",
         },
         {
-          title: "Protecție DDoS & Boți",
+          title: "Protecție DDoS & boți",
           description:
             "Implementare și tuning a apărării Akamai și Cloudflare. Prevenire credential stuffing, scraping, DDoS, preluare cont. Certificat Akamai.",
         },
         {
-          title: "Răspuns la Incidente",
+          title: "Răspuns la incidente",
           description:
             "Evaluare rapidă, containment și recuperare când apar breșe. Analiză post-incident și securizare.",
         },
@@ -89,22 +89,22 @@ export const professionalServicesContent = {
       technologies: ["Google Analytics", "Mixpanel", "Grafana", "Elasticsearch", "Python"],
       subservices: [
         {
-          title: "Design Dashboard-uri",
+          title: "Design dashboard-uri",
           description:
             "Date randate în forme și infografice accesibile oricărui cititor. Transformă datele în ceva organic și acționabil.",
         },
         {
-          title: "Tracking Performanță",
+          title: "Tracking performanță",
           description:
             "Toleranță zero pentru colectare eronată. Instrumente precise, timing perfect și metrici relevante pentru cazul tău specific.",
         },
         {
-          title: "Analiză Competitivă",
+          title: "Analiză competitivă",
           description:
             "Insight în comportamentul utilizatorilor, preferințe, obiceiuri și cum te compari cu competiția imediată.",
         },
         {
-          title: "Monitorizare Real-time",
+          title: "Monitorizare real-time",
           description:
             "Viteză și gestionare volum pentru citiri live, mai ales critic când cantitățile de date devin enorme.",
         },
@@ -112,7 +112,7 @@ export const professionalServicesContent = {
     },
     {
       id: "qa-testing",
-      title: "Servicii QA & Testare",
+      title: "Servicii QA & testare",
       description:
         "Calitatea nu este opțională. Ne asigurăm că software-ul tău funcționează impecabil prin testare manuală și automatizată cuprinzătoare.",
       details:
@@ -120,22 +120,22 @@ export const professionalServicesContent = {
       technologies: ["Selenium", "Appium", "JMeter", "Postman", "Cypress"],
       subservices: [
         {
-          title: "Testare Manuală",
+          title: "Testare manuală",
           description:
             "Testare hands-on care surprinde probleme UX, cazuri limită și scenarii din lumea reală pe care testele automate le ratează.",
         },
         {
-          title: "Testare Automatizată",
+          title: "Testare automatizată",
           description:
             "Selenium, Appium și suite de teste personalizate pentru testare de regresie rapidă și repetabilă pe toate build-urile.",
         },
         {
-          title: "Testare Performanță",
+          title: "Testare performanță",
           description:
             "Testare de încărcare, testare de stres și identificare blocaje. Cunoaște-ți limitele înainte ca utilizatorii să le găsească.",
         },
         {
-          title: "Testare Securitate",
+          title: "Testare securitate",
           description:
             "Scanare vulnerabilități, testare de penetrare și evaluare risc integrate în ciclul tău de dezvoltare.",
         },
@@ -144,7 +144,7 @@ export const professionalServicesContent = {
   ],
 
   cta: {
-    headline: "Ai Nevoie de Ghidare Expertă?",
+    headline: "Ai nevoie de ghidare expertă?",
     body: "Fie că e vorba de asigurarea calității, consolidarea securității sau înțelegerea datelor, suntem aici să ajutăm.",
     buttonText: "Contactează-ne",
     buttonHref: "/contact",

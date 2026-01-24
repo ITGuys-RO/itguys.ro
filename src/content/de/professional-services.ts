@@ -146,7 +146,7 @@ export const professionalServicesContent = {
   cta: {
     headline: "Brauchen Sie Expertenberatung?",
     body: "Ob Qualitätssicherung, Stärkung der Sicherheit oder Verständnis Ihrer Daten - wir sind hier, um zu helfen.",
-    buttonText: "Kontaktieren Sie Uns",
+    buttonText: "Kontaktieren Sie uns",
     buttonHref: "/contact",
   },
 };

@@ -12,7 +12,7 @@ type Project = {
 
 export const portfolioContent = {
   hero: {
-    headline: "Munca Noastră",
+    headline: "Munca noastră",
     subheadline:
       "Proiecte pe care le-am construit pentru startup-uri și companii. Provocări diferite, soluții diferite.",
   },
@@ -95,7 +95,7 @@ export const portfolioContent = {
   cta: {
     headline: "Proiectul tău ar putea fi următorul",
     body: "Ai ceva ce vrei să construiești? Hai să vorbim.",
-    buttonText: "Începe o Conversație",
+    buttonText: "Începe o conversație",
     buttonHref: "/contact",
   },
 };

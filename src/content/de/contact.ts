@@ -1,6 +1,6 @@
 export const contactContent = {
   hero: {
-    headline: "Lassen Sie uns Reden",
+    headline: "Lassen Sie uns reden",
     subheadline: "Haben Sie ein Projekt im Sinn? Erzählen Sie uns davon.",
   },
 
@@ -16,7 +16,7 @@ export const contactContent = {
         required: true,
       },
     },
-    submitButton: "Nachricht Senden",
+    submitButton: "Nachricht senden",
   },
 
   directEmail: "contact@itguys.ro",
@@ -33,7 +33,7 @@ export const contactContent = {
   cta: {
     headline: "Bereit wenn Sie es sind",
     body: "Kein Verkaufsgespräch. Nur ein Gespräch darüber, was Sie bauen.",
-    buttonText: "Nachricht Senden",
+    buttonText: "Nachricht senden",
     buttonHref: "#contact-form",
   },
 };

@@ -90,7 +90,7 @@ export const aboutContent = {
   },
 
   deliveryModels: {
-    title: "Wie Wir Arbeiten",
+    title: "Wie wir arbeiten",
     models: [
       {
         title: "Team-Erweiterung",
@@ -136,9 +136,9 @@ export const aboutContent = {
   },
 
   cta: {
-    headline: "Möchten Sie Zusammenarbeiten?",
+    headline: "Möchten Sie zusammenarbeiten?",
     body: "Wir freuen uns immer, Gründer und Teams kennenzulernen, die an interessanten Produkten arbeiten.",
-    buttonText: "Kontaktieren Sie Uns",
+    buttonText: "Kontaktieren Sie uns",
     buttonHref: "/contact",
   },
 };

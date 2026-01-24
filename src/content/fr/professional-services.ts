@@ -1,6 +1,6 @@
 export const professionalServicesContent = {
   hero: {
-    headline: "Services Professionnels",
+    headline: "Services professionnels",
     subheadline:
       "Assurance qualité, expertise sécurité et analyse de données. Les services qui maintiennent votre logiciel fiable, sécurisé et optimisé.",
   },
@@ -8,7 +8,7 @@ export const professionalServicesContent = {
   services: [
     {
       id: "consulting",
-      title: "Conseil Technique",
+      title: "Conseil technique",
       description:
         "Conseils d'experts sur les décisions d'architecture, les choix technologiques et les stratégies de développement.",
       details:
@@ -16,17 +16,17 @@ export const professionalServicesContent = {
       technologies: [],
       subservices: [
         {
-          title: "Revue d'Architecture",
+          title: "Revue d'architecture",
           description:
             "Évaluation de votre architecture actuelle avec recommandations pour la scalabilité, la sécurité et la maintenabilité.",
         },
         {
-          title: "Sélection Technologique",
+          title: "Sélection technologique",
           description:
             "Guidance impartiale pour choisir les bonnes technologies pour vos besoins et contraintes spécifiques.",
         },
         {
-          title: "Revue de Code",
+          title: "Revue de code",
           description:
             "Revue experte de votre code axée sur les bonnes pratiques, les failles de sécurité et les problèmes de performance.",
         },
@@ -39,24 +39,24 @@ export const professionalServicesContent = {
     },
     {
       id: "security",
-      title: "Services de Sécurité",
+      title: "Services de sécurité",
       description:
         "Avec notre expérience chez Electronic Arts et TUI, nous ne faisons pas que construire des logiciels. Nous savons comment les casser. Cette perspective façonne tout ce que nous créons.",
       details:
         "La sécurité est l'attribut fondamental de tout service recommandable. La confiance est ce qui établit la fidélité des utilisateurs. Nous comprenons la gravité de la protection de vos systèmes et données.",
       subservices: [
         {
-          title: "Tests d'Intrusion",
+          title: "Tests d'intrusion",
           description:
             "Tests de vulnérabilités manuels et automatisés contre les applications web, APIs et infrastructure. Les mêmes techniques utilisées chez EA, maintenant pour vos applications.",
         },
         {
-          title: "Audits de Sécurité",
+          title: "Audits de sécurité",
           description:
             "Revues de code et évaluations d'architecture pour trouver les vulnérabilités avant les attaquants. Nous avons audité des binaires de jeux et des plateformes enterprise.",
         },
         {
-          title: "Sécurité Cloud",
+          title: "Sécurité cloud",
           description:
             "Revues de configuration AWS, politiques IAM, segmentation réseau, gestion des secrets. Les choses ennuyeuses qui préviennent les brèches.",
         },
@@ -66,7 +66,7 @@ export const professionalServicesContent = {
             "Implémentation et tuning des défenses Akamai et Cloudflare. Prévention du credential stuffing, scraping, DDoS, prise de contrôle de compte. Certifié Akamai.",
         },
         {
-          title: "Réponse aux Incidents",
+          title: "Réponse aux incidents",
           description:
             "Évaluation rapide, confinement et récupération lors de brèches. Analyse post-incident et renforcement de la sécurité.",
         },
@@ -89,22 +89,22 @@ export const professionalServicesContent = {
       technologies: ["Google Analytics", "Mixpanel", "Grafana", "Elasticsearch", "Python"],
       subservices: [
         {
-          title: "Conception de Tableaux de Bord",
+          title: "Conception de tableaux de bord",
           description:
             "Données rendues en formes et infographies accessibles à tous. Transformez les données en quelque chose de concret et exploitable.",
         },
         {
-          title: "Tracking de Performance",
+          title: "Tracking de performance",
           description:
             "Tolérance zéro pour la collecte erronée. Outils précis, timing parfait et métriques pertinentes pour votre cas spécifique.",
         },
         {
-          title: "Analyse Concurrentielle",
+          title: "Analyse concurrentielle",
           description:
             "Aperçu du comportement utilisateur, préférences, habitudes et comment vous vous situez face à la concurrence immédiate.",
         },
         {
-          title: "Surveillance en Temps Réel",
+          title: "Surveillance en temps réel",
           description:
             "Vitesse et gestion du volume pour les lectures en direct, particulièrement critique quand les volumes de données deviennent énormes.",
         },
@@ -112,7 +112,7 @@ export const professionalServicesContent = {
     },
     {
       id: "qa-testing",
-      title: "Services QA & Tests",
+      title: "Services QA & tests",
       description:
         "La qualité n'est pas optionnelle. Nous assurons que votre logiciel fonctionne parfaitement grâce à des tests manuels et automatisés complets.",
       details:
@@ -120,22 +120,22 @@ export const professionalServicesContent = {
       technologies: ["Selenium", "Appium", "JMeter", "Postman", "Cypress"],
       subservices: [
         {
-          title: "Tests Manuels",
+          title: "Tests manuels",
           description:
             "Tests pratiques qui détectent les problèmes UX, les cas limites et les scénarios réels que les tests automatisés manquent.",
         },
         {
-          title: "Tests Automatisés",
+          title: "Tests automatisés",
           description:
             "Selenium, Appium et suites de tests personnalisées pour des tests de régression rapides et répétables sur tous les builds.",
         },
         {
-          title: "Tests de Performance",
+          title: "Tests de performance",
           description:
             "Tests de charge, tests de stress et identification des goulots d'étranglement. Connaissez vos limites avant que vos utilisateurs ne les trouvent.",
         },
         {
-          title: "Tests de Sécurité",
+          title: "Tests de sécurité",
           description:
             "Scan de vulnérabilités, tests d'intrusion et évaluation des risques intégrés à votre cycle de développement.",
         },
@@ -144,7 +144,7 @@ export const professionalServicesContent = {
   ],
 
   cta: {
-    headline: "Besoin de Conseils d'Experts ?",
+    headline: "Besoin de conseils d'experts ?",
     body: "Que ce soit pour assurer la qualité, renforcer la sécurité ou comprendre vos données, nous sommes là pour aider.",
     buttonText: "Contactez-nous",
     buttonHref: "/contact",
