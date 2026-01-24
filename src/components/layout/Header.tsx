@@ -16,8 +16,8 @@ import {
 } from "@heroicons/react/24/outline";
 
 const navigation = [
-  { name: { en: "Development", ro: "Dezvoltare", fr: "Développement", de: "Entwicklung" }, href: "/services", icon: WrenchScrewdriverIcon },
-  { name: { en: "Services", ro: "Servicii", fr: "Services", de: "Dienstleistungen" }, href: "/professional-services", icon: ShieldCheckIcon },
+  { name: { en: "Development", ro: "Dezvoltare", fr: "Développement", de: "Entwicklung" }, href: "/development", icon: WrenchScrewdriverIcon },
+  { name: { en: "Services", ro: "Servicii", fr: "Services", de: "Dienstleistungen" }, href: "/services", icon: ShieldCheckIcon },
   { name: { en: "Portfolio", ro: "Portofoliu", fr: "Portfolio", de: "Portfolio" }, href: "/portfolio", icon: BriefcaseIcon },
   { name: { en: "About", ro: "Despre", fr: "À propos", de: "Über uns" }, href: "/about", icon: UserGroupIcon },
 ];

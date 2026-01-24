@@ -3,8 +3,8 @@ import { Link } from "@/i18n/navigation";
 import { type Locale } from "@/i18n/config";
 
 const navigation = [
-  { name: { en: "Development", ro: "Dezvoltare", fr: "Développement", de: "Entwicklung" }, href: "/services" },
-  { name: { en: "Services", ro: "Servicii", fr: "Services", de: "Dienstleistungen" }, href: "/professional-services" },
+  { name: { en: "Development", ro: "Dezvoltare", fr: "Développement", de: "Entwicklung" }, href: "/development" },
+  { name: { en: "Services", ro: "Servicii", fr: "Services", de: "Dienstleistungen" }, href: "/services" },
   { name: { en: "Portfolio", ro: "Portofoliu", fr: "Portfolio", de: "Portfolio" }, href: "/portfolio" },
   { name: { en: "About", ro: "Despre", fr: "À propos", de: "Über uns" }, href: "/about" },
   { name: { en: "Contact", ro: "Contact", fr: "Contact", de: "Kontakt" }, href: "/contact" },

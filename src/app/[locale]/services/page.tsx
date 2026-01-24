@@ -6,21 +6,17 @@ import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/st
 import { getContent } from "@/content";
 import { locales, type Locale } from "@/i18n/config";
 import {
-  CodeBracketIcon,
-  CloudIcon,
-  CpuChipIcon,
-  DevicePhoneMobileIcon,
-  CircleStackIcon,
-  SparklesIcon,
+  ShieldCheckIcon,
+  BeakerIcon,
+  ChartBarIcon,
+  ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 
-const serviceIcons: Record<string, typeof CodeBracketIcon> = {
-  development: CodeBracketIcon,
-  mobile: DevicePhoneMobileIcon,
-  cloud: CloudIcon,
-  backend: CpuChipIcon,
-  "ai-ml": SparklesIcon,
-  database: CircleStackIcon,
+const serviceIcons: Record<string, typeof ShieldCheckIcon> = {
+  "qa-testing": BeakerIcon,
+  security: ShieldCheckIcon,
+  "data-analytics": ChartBarIcon,
+  consulting: ChatBubbleLeftRightIcon,
 };
 
 type Props = {
@@ -37,16 +33,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: isRomanian
-      ? "Servicii Dezvoltare - Web, Mobile, Cloud & AI"
-      : "Development Services - Web, Mobile, Cloud & AI",
+      ? "Servicii Profesionale - QA, Securitate & Analytics"
+      : "Professional Services - QA, Security & Analytics",
     description: isRomanian
-      ? "Servicii de dezvoltare software personalizate incluzand aplicatii web, aplicatii mobile, infrastructura cloud, API-uri, solutii AI/ML si design baze de date. Construite de experti de la EA, TUI si Nagarro."
-      : "Custom software development services including web applications, mobile apps, cloud infrastructure, APIs, AI/ML solutions, and database design. Built by experts from EA, TUI, and Nagarro.",
+      ? "Servicii IT profesionale incluzand asigurarea calitatii, audituri de securitate, teste de penetrare si analiza datelor. Consultanta de expert sustinuta de experienta la Electronic Arts si TUI."
+      : "Professional IT services including quality assurance, security audits, penetration testing, and data analytics. Expert consulting backed by experience at Electronic Arts and TUI.",
     openGraph: {
-      title: isRomanian ? "Servicii Dezvoltare - ITGuys" : "Development Services - ITGuys",
+      title: isRomanian ? "Servicii Profesionale - ITGuys" : "Professional Services - ITGuys",
       description: isRomanian
-        ? "Dezvoltare software personalizata: aplicatii web, aplicatii mobile, infrastructura cloud, AI/ML si solutii baze de date."
-        : "Custom software development: web apps, mobile apps, cloud infrastructure, AI/ML, and database solutions.",
+        ? "Testare QA, audituri de securitate, teste de penetrare si servicii analytics de la experti cu background la EA si TUI."
+        : "QA testing, security audits, penetration testing, and analytics services from experts with EA and TUI backgrounds.",
       url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/services`,
       type: "website",
     },
@@ -66,32 +62,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function ServicesPage({ params }: Props) {
+export default async function ProfessionalServicesPage({ params }: Props) {
   const { locale } = await params;
 
   const content = getContent(locale as Locale);
-  const { hero, services, cta } = content.servicesContent;
+  const { hero, services, cta } = content.professionalServicesContent;
 
   const faqItems = [
     {
-      question: "What types of software do you develop?",
-      answer: "We develop custom web applications, mobile apps (iOS and Android), APIs, backend systems, and cloud-based solutions. We specialize in React, Next.js, Node.js, and modern JavaScript technologies.",
+      question: "What security testing services do you offer?",
+      answer: "We provide penetration testing, security audits, cloud security reviews, DDoS protection, and incident response services. Our team has backgrounds at Electronic Arts and TUI, bringing enterprise-level security expertise.",
     },
     {
-      question: "Do you offer security testing services?",
-      answer: "Yes, we provide comprehensive security services including security audits, penetration testing, vulnerability assessments, and security consulting to help protect your applications and infrastructure.",
+      question: "Do you offer QA services for existing projects?",
+      answer: "Yes, we can integrate with your existing development team to provide manual testing, automated testing, performance testing, and security testing services. We work with Selenium, Appium, JMeter, and other industry-standard tools.",
     },
     {
-      question: "What is your development process?",
-      answer: "We follow agile methodologies with iterative development cycles. We start with requirements gathering, then move through design, development, testing, and deployment phases with continuous client communication.",
+      question: "What analytics solutions do you provide?",
+      answer: "We implement custom dashboards, real-time monitoring, performance tracking, and competitive analysis. We help you transform raw data into actionable business intelligence using tools like Google Analytics, Mixpanel, and Grafana.",
     },
     {
-      question: "Do you work with clients outside Romania?",
-      answer: "Absolutely. While we're based in Romania, we serve clients worldwide across Europe, UK, and other regions. We're experienced in remote collaboration and working across time zones.",
-    },
-    {
-      question: "What technologies do you specialize in?",
-      answer: "Our core expertise includes React, Next.js, Node.js, TypeScript, PostgreSQL, MongoDB, AWS, and various modern web and mobile frameworks. We choose the right technology stack based on your specific needs.",
+      question: "Can you help with compliance and data privacy?",
+      answer: "Absolutely. We help organizations achieve compliance with GDPR, CCPA, HIPAA, and other regulations. Our security audits include data privacy assessments and recommendations for regulatory compliance.",
     },
   ];
 
@@ -108,7 +100,7 @@ export default async function ServicesPage({ params }: Props) {
       />
 
       {services.map((service, index) => {
-        const Icon = serviceIcons[service.id] || CodeBracketIcon;
+        const Icon = serviceIcons[service.id] || ShieldCheckIcon;
         return (
         <Section
           key={service.id}
@@ -142,7 +134,7 @@ export default async function ServicesPage({ params }: Props) {
             </div>
           )}
 
-          {service.technologies && (
+          {service.technologies && service.technologies.length > 0 && (
             <div className="mt-6 flex flex-wrap gap-2">
               {service.technologies.map((tech) => (
                 <span
@@ -153,6 +145,12 @@ export default async function ServicesPage({ params }: Props) {
                 </span>
               ))}
             </div>
+          )}
+
+          {service.note && (
+            <p className="mt-6 text-sm text-brand-400 italic">
+              {service.note}
+            </p>
           )}
         </Section>
         );
