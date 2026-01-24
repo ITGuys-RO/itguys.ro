@@ -9,10 +9,12 @@ import {
   BriefcaseIcon,
   UserGroupIcon,
   ChatBubbleLeftRightIcon,
+  ShieldCheckIcon,
 } from "@heroicons/react/24/outline";
 
 const navigation = [
-  { name: "Services", href: "/services", icon: WrenchScrewdriverIcon },
+  { name: "Development", href: "/services", icon: WrenchScrewdriverIcon },
+  { name: "Services", href: "/professional-services", icon: ShieldCheckIcon },
   { name: "Portfolio", href: "/portfolio", icon: BriefcaseIcon },
   { name: "About", href: "/about", icon: UserGroupIcon },
 ];
