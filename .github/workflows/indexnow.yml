@@ -14,33 +14,40 @@ jobs:
         run: sleep 15
 
       - name: Fetch sitemap and submit to IndexNow
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
         run: |
+          set -e
+
           SITEMAP_URL="https://itguys.ro/sitemap.xml"
 
           echo "Fetching sitemap from $SITEMAP_URL"
-          SITEMAP_CONTENT=$(curl -s "$SITEMAP_URL")
+          curl -s "$SITEMAP_URL" -o sitemap.xml
 
-          if [ -z "$SITEMAP_CONTENT" ]; then
-            echo "Failed to fetch sitemap"
+          echo "Sitemap content (first 20 lines):"
+          head -20 sitemap.xml
+
+          echo ""
+          echo "Extracting URLs..."
+          grep -o '<loc>[^<]*</loc>' sitemap.xml | sed 's/<loc>//g;s/<\/loc>//g' > urls.txt
+
+          echo "Extracted URLs:"
+          cat urls.txt
+
+          URL_COUNT=$(wc -l < urls.txt)
+          echo "Found $URL_COUNT URLs"
+
+          if [ "$URL_COUNT" -eq 0 ]; then
+            echo "ERROR: No URLs found in sitemap"
             exit 1
           fi
 
-          URLS=$(echo "$SITEMAP_CONTENT" | sed -n 's/.*<loc>\([^<]*\)<\/loc>.*/\1/p')
-
-          if [ -z "$URLS" ]; then
-            echo "No URLs found in sitemap"
-            exit 0
-          fi
-
-          URL_COUNT=$(echo "$URLS" | wc -l)
-          echo "Found $URL_COUNT URLs in sitemap"
-
-          URL_ARRAY=$(echo "$URLS" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          URL_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0))' < urls.txt)
 
           JSON_PAYLOAD=$(jq -n \
             --arg host "itguys.ro" \
-            --arg key "${{ secrets.INDEXNOW_KEY }}" \
-            --arg keyLocation "https://itguys.ro/${{ secrets.INDEXNOW_KEY }}.txt" \
+            --arg key "$INDEXNOW_KEY" \
+            --arg keyLocation "https://itguys.ro/${INDEXNOW_KEY}.txt" \
             --argjson urlList "$URL_ARRAY" \
             '{host: $host, key: $key, keyLocation: $keyLocation, urlList: $urlList}')
 
@@ -49,16 +56,14 @@ jobs:
 
           echo "Submitting to IndexNow..."
 
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "https://api.indexnow.org/IndexNow" \
+          HTTP_CODE=$(curl -s -w "%{http_code}" -o response.txt -X POST "https://api.indexnow.org/IndexNow" \
             -H "Content-Type: application/json; charset=utf-8" \
             -d "$JSON_PAYLOAD")
 
-          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-          BODY=$(echo "$RESPONSE" | sed '$d')
-
           echo "Response code: $HTTP_CODE"
-          if [ -n "$BODY" ]; then
-            echo "Response body: $BODY"
+          if [ -s response.txt ]; then
+            echo "Response body:"
+            cat response.txt
           fi
 
           case $HTTP_CODE in
