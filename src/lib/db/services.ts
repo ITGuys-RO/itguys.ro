@@ -97,10 +97,16 @@ export async function getAllServicesWithTranslations(): Promise<ServiceWithTrans
 }
 
 export async function getServicesLocalized(locale: Locale): Promise<ServiceLocalized[]> {
+  // Use LEFT JOIN with COALESCE to fall back to English if translation is missing
   const rows = await query<Service & ServiceTranslation>(
-    `SELECT s.*, t.title, t.description, t.details, t.note
+    `SELECT s.*,
+       COALESCE(t.title, t_en.title) as title,
+       COALESCE(t.description, t_en.description) as description,
+       COALESCE(t.details, t_en.details) as details,
+       COALESCE(t.note, t_en.note) as note
      FROM services s
-     JOIN service_translations t ON t.service_id = s.id AND t.locale = ?
+     LEFT JOIN service_translations t ON t.service_id = s.id AND t.locale = ?
+     LEFT JOIN service_translations t_en ON t_en.service_id = s.id AND t_en.locale = 'en'
      WHERE s.is_active = 1
      ORDER BY s.sort_order ASC`,
     [locale]
@@ -110,10 +116,14 @@ export async function getServicesLocalized(locale: Locale): Promise<ServiceLocal
   for (const row of rows) {
     const [technologies, subservices] = await Promise.all([
       getServiceTechnologies(row.id),
+      // Also apply fallback for subservice translations
       query<Subservice & SubserviceTranslation>(
-        `SELECT sub.*, st.title, st.description
+        `SELECT sub.*,
+           COALESCE(st.title, st_en.title) as title,
+           COALESCE(st.description, st_en.description) as description
          FROM subservices sub
-         JOIN subservice_translations st ON st.subservice_id = sub.id AND st.locale = ?
+         LEFT JOIN subservice_translations st ON st.subservice_id = sub.id AND st.locale = ?
+         LEFT JOIN subservice_translations st_en ON st_en.subservice_id = sub.id AND st_en.locale = 'en'
          WHERE sub.service_id = ?
          ORDER BY sub.sort_order ASC`,
         [locale, row.id]

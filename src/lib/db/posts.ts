@@ -79,10 +79,17 @@ export async function getAllPostsWithTranslations(): Promise<PostWithTranslation
 }
 
 export async function getPostsLocalized(locale: Locale, limit?: number): Promise<PostLocalized[]> {
+  // Use LEFT JOIN with COALESCE to fall back to English if translation is missing
   let sql = `
-    SELECT p.*, t.title, t.excerpt, t.content, t.meta_title, t.meta_description
+    SELECT p.*,
+      COALESCE(t.title, t_en.title) as title,
+      COALESCE(t.excerpt, t_en.excerpt) as excerpt,
+      COALESCE(t.content, t_en.content) as content,
+      COALESCE(t.meta_title, t_en.meta_title) as meta_title,
+      COALESCE(t.meta_description, t_en.meta_description) as meta_description
     FROM posts p
-    JOIN post_translations t ON t.post_id = p.id AND t.locale = ?
+    LEFT JOIN post_translations t ON t.post_id = p.id AND t.locale = ?
+    LEFT JOIN post_translations t_en ON t_en.post_id = p.id AND t_en.locale = 'en'
     WHERE p.is_published = 1
     ORDER BY p.published_at DESC
   `;
@@ -122,10 +129,17 @@ export async function getPostsLocalized(locale: Locale, limit?: number): Promise
 }
 
 export async function getPostLocalized(slug: string, locale: Locale): Promise<PostLocalized | null> {
+  // Use LEFT JOIN with COALESCE to fall back to English if translation is missing
   const row = await queryFirst<Post & PostTranslation>(
-    `SELECT p.*, t.title, t.excerpt, t.content, t.meta_title, t.meta_description
+    `SELECT p.*,
+       COALESCE(t.title, t_en.title) as title,
+       COALESCE(t.excerpt, t_en.excerpt) as excerpt,
+       COALESCE(t.content, t_en.content) as content,
+       COALESCE(t.meta_title, t_en.meta_title) as meta_title,
+       COALESCE(t.meta_description, t_en.meta_description) as meta_description
      FROM posts p
-     JOIN post_translations t ON t.post_id = p.id AND t.locale = ?
+     LEFT JOIN post_translations t ON t.post_id = p.id AND t.locale = ?
+     LEFT JOIN post_translations t_en ON t_en.post_id = p.id AND t_en.locale = 'en'
      WHERE p.slug = ? AND p.is_published = 1`,
     [locale, slug]
   );

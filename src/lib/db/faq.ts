@@ -60,10 +60,14 @@ export async function getAllFaqWithTranslations(): Promise<FaqWithTranslations[]
 }
 
 export async function getFaqLocalized(locale: Locale, category?: string): Promise<FaqLocalized[]> {
+  // Use LEFT JOIN with COALESCE to fall back to English if translation is missing
   let sql = `
-    SELECT f.*, t.question, t.answer
+    SELECT f.*,
+      COALESCE(t.question, t_en.question) as question,
+      COALESCE(t.answer, t_en.answer) as answer
     FROM faq_items f
-    JOIN faq_translations t ON t.faq_id = f.id AND t.locale = ?
+    LEFT JOIN faq_translations t ON t.faq_id = f.id AND t.locale = ?
+    LEFT JOIN faq_translations t_en ON t_en.faq_id = f.id AND t_en.locale = 'en'
     WHERE f.is_active = 1
   `;
   const params: unknown[] = [locale];

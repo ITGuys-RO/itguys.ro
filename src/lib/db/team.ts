@@ -60,10 +60,15 @@ export async function getAllTeamMembersWithTranslations(): Promise<TeamMemberWit
 }
 
 export async function getTeamMembersLocalized(locale: Locale): Promise<TeamMemberLocalized[]> {
+  // Use LEFT JOIN with COALESCE to fall back to English if translation is missing
   const rows = await query<TeamMember & TeamMemberTranslation>(
-    `SELECT m.*, t.name, t.role, t.bio
+    `SELECT m.*,
+       COALESCE(t.name, t_en.name) as name,
+       COALESCE(t.role, t_en.role) as role,
+       COALESCE(t.bio, t_en.bio) as bio
      FROM team_members m
-     JOIN team_member_translations t ON t.team_member_id = m.id AND t.locale = ?
+     LEFT JOIN team_member_translations t ON t.team_member_id = m.id AND t.locale = ?
+     LEFT JOIN team_member_translations t_en ON t_en.team_member_id = m.id AND t_en.locale = 'en'
      WHERE m.is_active = 1
      ORDER BY m.sort_order ASC`,
     [locale]
@@ -83,10 +88,15 @@ export async function getTeamMembersLocalized(locale: Locale): Promise<TeamMembe
 }
 
 export async function getTeamMemberLocalized(id: number, locale: Locale): Promise<TeamMemberLocalized | null> {
+  // Use LEFT JOIN with COALESCE to fall back to English if translation is missing
   const row = await queryFirst<TeamMember & TeamMemberTranslation>(
-    `SELECT m.*, t.name, t.role, t.bio
+    `SELECT m.*,
+       COALESCE(t.name, t_en.name) as name,
+       COALESCE(t.role, t_en.role) as role,
+       COALESCE(t.bio, t_en.bio) as bio
      FROM team_members m
-     JOIN team_member_translations t ON t.team_member_id = m.id AND t.locale = ?
+     LEFT JOIN team_member_translations t ON t.team_member_id = m.id AND t.locale = ?
+     LEFT JOIN team_member_translations t_en ON t_en.team_member_id = m.id AND t_en.locale = 'en'
      WHERE m.id = ?`,
     [locale, id]
   );

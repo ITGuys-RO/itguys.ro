@@ -76,10 +76,18 @@ export async function getAllProjectsWithTranslations(): Promise<ProjectWithTrans
 }
 
 export async function getProjectsLocalized(locale: Locale): Promise<ProjectLocalized[]> {
+  // Use LEFT JOIN with COALESCE to fall back to English if translation is missing
   const rows = await query<Project & ProjectTranslation>(
-    `SELECT p.*, t.name, t.client_type, t.industry, t.challenge, t.solution, t.result
+    `SELECT p.*,
+       COALESCE(t.name, t_en.name) as name,
+       COALESCE(t.client_type, t_en.client_type) as client_type,
+       COALESCE(t.industry, t_en.industry) as industry,
+       COALESCE(t.challenge, t_en.challenge) as challenge,
+       COALESCE(t.solution, t_en.solution) as solution,
+       COALESCE(t.result, t_en.result) as result
      FROM projects p
-     JOIN project_translations t ON t.project_id = p.id AND t.locale = ?
+     LEFT JOIN project_translations t ON t.project_id = p.id AND t.locale = ?
+     LEFT JOIN project_translations t_en ON t_en.project_id = p.id AND t_en.locale = 'en'
      WHERE p.is_active = 1
      ORDER BY p.sort_order ASC`,
     [locale]
@@ -107,10 +115,18 @@ export async function getProjectsLocalized(locale: Locale): Promise<ProjectLocal
 }
 
 export async function getProjectLocalized(slug: string, locale: Locale): Promise<ProjectLocalized | null> {
+  // Use LEFT JOIN with COALESCE to fall back to English if translation is missing
   const row = await queryFirst<Project & ProjectTranslation>(
-    `SELECT p.*, t.name, t.client_type, t.industry, t.challenge, t.solution, t.result
+    `SELECT p.*,
+       COALESCE(t.name, t_en.name) as name,
+       COALESCE(t.client_type, t_en.client_type) as client_type,
+       COALESCE(t.industry, t_en.industry) as industry,
+       COALESCE(t.challenge, t_en.challenge) as challenge,
+       COALESCE(t.solution, t_en.solution) as solution,
+       COALESCE(t.result, t_en.result) as result
      FROM projects p
-     JOIN project_translations t ON t.project_id = p.id AND t.locale = ?
+     LEFT JOIN project_translations t ON t.project_id = p.id AND t.locale = ?
+     LEFT JOIN project_translations t_en ON t_en.project_id = p.id AND t_en.locale = 'en'
      WHERE p.slug = ? AND p.is_active = 1`,
     [locale, slug]
   );

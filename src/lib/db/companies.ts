@@ -60,10 +60,14 @@ export async function getAllCompaniesWithTranslations(): Promise<CompanyWithTran
 }
 
 export async function getCompaniesLocalized(locale: Locale): Promise<CompanyLocalized[]> {
+  // Use LEFT JOIN with COALESCE to fall back to English if translation is missing
   const rows = await query<Company & CompanyTranslation>(
-    `SELECT c.*, t.name, t.description
+    `SELECT c.*,
+       COALESCE(t.name, t_en.name) as name,
+       COALESCE(t.description, t_en.description) as description
      FROM companies c
-     JOIN company_translations t ON t.company_id = c.id AND t.locale = ?
+     LEFT JOIN company_translations t ON t.company_id = c.id AND t.locale = ?
+     LEFT JOIN company_translations t_en ON t_en.company_id = c.id AND t_en.locale = 'en'
      WHERE c.is_active = 1
      ORDER BY c.sort_order ASC`,
     [locale]
