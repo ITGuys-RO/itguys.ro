@@ -17,10 +17,10 @@ export function getAdminUser(request: NextRequest): CloudflareAccessPayload | nu
   const jwt = request.headers.get('Cf-Access-Jwt-Assertion');
 
   // For local development, allow access without authentication
-  // You can set ADMIN_DEV_MODE=true in your environment
   if (!jwt) {
     // Check for dev mode - allows local testing without Cloudflare Access
-    const isDev = process.env.NODE_ENV === 'development';
+    // Works with both Next.js dev server (NODE_ENV) and wrangler dev (ADMIN_DEV_BYPASS)
+    const isDev = process.env.NODE_ENV === 'development' || process.env.ADMIN_DEV_BYPASS === 'true';
     if (isDev) {
       return { email: 'dev@localhost', sub: 'dev' };
     }
@@ -36,9 +36,10 @@ export function getAdminUser(request: NextRequest): CloudflareAccessPayload | nu
     }
 
     const payloadBase64 = parts[1];
-    const payload = JSON.parse(
-      Buffer.from(payloadBase64, 'base64').toString('utf-8')
-    ) as CloudflareAccessPayload;
+    // Convert base64url to standard base64 and decode using Web API (edge-compatible)
+    const base64 = payloadBase64.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
+    const payload = JSON.parse(atob(padded)) as CloudflareAccessPayload;
 
     // Check if the token has expired
     if (payload.exp && payload.exp * 1000 < Date.now()) {

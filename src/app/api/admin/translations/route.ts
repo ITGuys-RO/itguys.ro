@@ -11,8 +11,6 @@ import {
 import type { TranslationInput } from '@/lib/db';
 import type { Locale } from '@/i18n/config';
 
-export const runtime = 'edge';
-
 export async function GET(request: NextRequest) {
   try {
     requireAdmin(request);

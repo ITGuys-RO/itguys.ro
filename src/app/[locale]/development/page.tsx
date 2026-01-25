@@ -4,7 +4,8 @@ import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { DevelopmentIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
-import { locales, type Locale } from "@/i18n/config";
+import { getServicesLocalized } from "@/lib/db";
+import { type Locale } from "@/i18n/config";
 import {
   CodeBracketIcon,
   CloudIcon,
@@ -13,6 +14,9 @@ import {
   CircleStackIcon,
   SparklesIcon,
 } from "@heroicons/react/24/outline";
+
+// Force dynamic rendering since we fetch from D1
+export const dynamic = 'force-dynamic';
 
 const serviceIcons: Record<string, typeof CodeBracketIcon> = {
   development: CodeBracketIcon,
@@ -26,10 +30,6 @@ const serviceIcons: Record<string, typeof CodeBracketIcon> = {
 type Props = {
   params: Promise<{ locale: string }>;
 };
-
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
 
 const devTitles: Record<string, string> = {
   en: "Development Services - Web, Mobile, Cloud & AI",
@@ -84,7 +84,10 @@ export default async function ServicesPage({ params }: Props) {
   const { locale } = await params;
 
   const content = getContent(locale as Locale);
-  const { hero, services, cta } = content.developmentContent;
+  const { hero, cta } = content.developmentContent;
+
+  // Fetch services from D1
+  const services = await getServicesLocalized(locale as Locale, 'development');
 
   const faqItems = [
     {

@@ -4,13 +4,17 @@ import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { SecurityIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
-import { locales, type Locale } from "@/i18n/config";
+import { getServicesLocalized } from "@/lib/db";
+import { type Locale } from "@/i18n/config";
 import {
   ShieldCheckIcon,
   BeakerIcon,
   ChartBarIcon,
   ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
+
+// Force dynamic rendering since we fetch from D1
+export const dynamic = 'force-dynamic';
 
 const serviceIcons: Record<string, typeof ShieldCheckIcon> = {
   "qa-testing": BeakerIcon,
@@ -22,10 +26,6 @@ const serviceIcons: Record<string, typeof ShieldCheckIcon> = {
 type Props = {
   params: Promise<{ locale: string }>;
 };
-
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
 
 const titles: Record<string, string> = {
   en: "Professional Services - QA, Security & Analytics",
@@ -80,7 +80,10 @@ export default async function ProfessionalServicesPage({ params }: Props) {
   const { locale } = await params;
 
   const content = getContent(locale as Locale);
-  const { hero, services, cta } = content.servicesContent;
+  const { hero, cta } = content.servicesContent;
+
+  // Fetch services from D1
+  const services = await getServicesLocalized(locale as Locale, 'professional-services');
 
   const faqItems = [
     {

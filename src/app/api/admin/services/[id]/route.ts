@@ -7,8 +7,6 @@ import {
 } from '@/lib/db';
 import type { ServiceInput } from '@/lib/db';
 
-export const runtime = 'edge';
-
 type RouteParams = { params: Promise<{ id: string }> };
 
 export async function GET(request: NextRequest, { params }: RouteParams) {

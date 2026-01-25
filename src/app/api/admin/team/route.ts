@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin, handleApiError } from '@/lib/admin-auth';
-import {
-  getAllTeamMembersWithTranslations,
-  createTeamMember,
-} from '@/lib/db';
-import type { TeamMemberInput } from '@/lib/db';
-
-export const runtime = 'edge';
+import { getAllTeamMembersWithTranslations, createTeamMember } from '@/lib/db/team';
+import type { TeamMemberInput } from '@/lib/db/schema';
 
 export async function GET(request: NextRequest) {
   try {

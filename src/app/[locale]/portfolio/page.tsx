@@ -3,16 +3,16 @@ import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, Carousel } from "@/components/ui";
 import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
-import { locales, type Locale } from "@/i18n/config";
+import { getProjectsLocalized } from "@/lib/db";
+import { type Locale } from "@/i18n/config";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
+
+// Force dynamic rendering since we fetch from D1
+export const dynamic = 'force-dynamic';
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
-
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
 
 const portfolioTitles: Record<string, string> = {
   en: "Portfolio - Our Software Development Projects",
@@ -67,8 +67,11 @@ export default async function PortfolioPage({ params }: Props) {
   const { locale } = await params;
 
   const content = getContent(locale as Locale);
-  const { hero, projects, cta } = content.portfolioContent;
+  const { hero, cta } = content.portfolioContent;
   const { hero: homeHero } = content.homeContent;
+
+  // Fetch projects from D1
+  const projects = await getProjectsLocalized(locale as Locale);
 
   return (
     <>
@@ -80,7 +83,7 @@ export default async function PortfolioPage({ params }: Props) {
         {projects.length > 0 ? (
           <Carousel>
             {projects.map((project) => (
-              <Card key={project.name} className="p-6 h-full flex flex-col">
+              <Card key={project.slug} className="p-6 h-full flex flex-col">
                 <div className="flex flex-col gap-2 mb-4">
                   {project.url ? (
                     <a

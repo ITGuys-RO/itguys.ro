@@ -6,8 +6,6 @@ import {
 } from '@/lib/db';
 import type { ProjectInput } from '@/lib/db';
 
-export const runtime = 'edge';
-
 export async function GET(request: NextRequest) {
   try {
     requireAdmin(request);

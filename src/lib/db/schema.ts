@@ -1,4 +1,5 @@
-import type { Locale } from '@/i18n/config';
+// Inline locale type to avoid bundling issues with @/i18n/config import
+type Locale = 'en' | 'ro' | 'fr' | 'de' | 'it' | 'es';
 
 // Base types for database rows
 export interface TeamMember {
@@ -240,6 +241,7 @@ export interface ServiceWithTranslations extends Service {
 export interface ServiceLocalized {
   id: string;
   slug: string;
+  category: string;
   title: string;
   description: string | null;
   details: string | null;

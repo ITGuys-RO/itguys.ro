@@ -28,28 +28,26 @@ export type D1ExecResult = {
   duration: number;
 };
 
-// For OpenNext/Cloudflare, we access the DB through process.env
-// In edge runtime, Cloudflare bindings are available through the request context
+// Import getCloudflareContext from OpenNext for accessing D1 bindings
+import { getCloudflareContext } from '@opennextjs/cloudflare';
+
+// Extend CloudflareEnv globally to include our D1 binding
 declare global {
-  // eslint-disable-next-line no-var
-  var __cf_env__: { DB?: D1Database } | undefined;
+  interface CloudflareEnv {
+    DB?: D1Database;
+  }
 }
 
 export function getDB(): D1Database {
-  // Try to get DB from Cloudflare environment
-  // OpenNext exposes bindings through process.env in edge runtime
-  const env = (process.env as unknown as { DB?: D1Database });
+  // Use OpenNext's getCloudflareContext to access bindings
+  // This works in both edge and nodejs runtimes
+  const { env } = getCloudflareContext();
 
   if (env.DB) {
     return env.DB;
   }
 
-  // Fallback for global context (used by some Cloudflare setups)
-  if (globalThis.__cf_env__?.DB) {
-    return globalThis.__cf_env__.DB;
-  }
-
-  throw new Error('D1 database not available - must be called within an edge runtime request context');
+  throw new Error('D1 database not available - ensure DB binding is configured in wrangler.toml');
 }
 
 // Helper to run a single query and return results

@@ -6,6 +6,7 @@ import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-da
 import { AboutIllustration } from "@/components/illustrations";
 import { getContent } from "@/content";
 import { getGravatarUrl } from "@/lib/gravatar";
+import { getTeamMembersLocalized, getCompaniesLocalized } from "@/lib/db";
 import { locales, type Locale } from "@/i18n/config";
 import {
   AcademicCapIcon,
@@ -14,13 +15,12 @@ import {
   CheckBadgeIcon,
 } from "@heroicons/react/24/outline";
 
+// Force dynamic rendering since we fetch from D1
+export const dynamic = 'force-dynamic';
+
 type Props = {
   params: Promise<{ locale: string }>;
 };
-
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -83,6 +83,12 @@ export default async function AboutPage({ params }: Props) {
     team,
     cta,
   } = content.aboutContent;
+
+  // Fetch dynamic data from D1
+  const [teamMembers, companies] = await Promise.all([
+    getTeamMembersLocalized(locale as Locale),
+    getCompaniesLocalized(locale as Locale),
+  ]);
 
   return (
     <>
@@ -159,8 +165,8 @@ export default async function AboutPage({ params }: Props) {
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {experience.companies.map((company) => (
-            <Card key={company.name}>
+          {companies.map((company) => (
+            <Card key={company.slug}>
               <CardTitle>{company.name}</CardTitle>
               <CardDescription>{company.description}</CardDescription>
             </Card>
@@ -238,9 +244,9 @@ export default async function AboutPage({ params }: Props) {
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {team.members.map((member) => (
+          {teamMembers.map((member) => (
             <div
-              key={member.name}
+              key={member.slug}
               className="p-6 rounded-xl bg-brand-800/30 border border-brand-700/30"
             >
               <div className="flex items-start gap-4">

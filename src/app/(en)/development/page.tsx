@@ -4,6 +4,7 @@ import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { DevelopmentIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
+import { getServicesLocalized } from "@/lib/db";
 import {
   CodeBracketIcon,
   CloudIcon,
@@ -12,6 +13,9 @@ import {
   CircleStackIcon,
   SparklesIcon,
 } from "@heroicons/react/24/outline";
+
+// Force dynamic rendering since we fetch from D1
+export const dynamic = 'force-dynamic';
 
 const serviceIcons: Record<string, typeof CodeBracketIcon> = {
   development: CodeBracketIcon,
@@ -73,9 +77,12 @@ const faqItems = [
   },
 ];
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
   const content = getContent("en");
-  const { hero, services, cta } = content.developmentContent;
+  const { hero, cta } = content.developmentContent;
+
+  // Fetch services from D1
+  const services = await getServicesLocalized('en', 'development');
 
   return (
     <>

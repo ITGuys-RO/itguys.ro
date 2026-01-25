@@ -4,12 +4,16 @@ import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { SecurityIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
+import { getServicesLocalized } from "@/lib/db";
 import {
   ShieldCheckIcon,
   BeakerIcon,
   ChartBarIcon,
   ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
+
+// Force dynamic rendering since we fetch from D1
+export const dynamic = 'force-dynamic';
 
 const serviceIcons: Record<string, typeof ShieldCheckIcon> = {
   "qa-testing": BeakerIcon,
@@ -65,9 +69,12 @@ const faqItems = [
   },
 ];
 
-export default function ProfessionalServicesPage() {
+export default async function ProfessionalServicesPage() {
   const content = getContent("en");
-  const { hero, services, cta } = content.servicesContent;
+  const { hero, cta } = content.servicesContent;
+
+  // Fetch services from D1
+  const services = await getServicesLocalized('en', 'professional-services');
 
   return (
     <>

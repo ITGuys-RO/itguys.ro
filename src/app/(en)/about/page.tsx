@@ -6,12 +6,16 @@ import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-da
 import { AboutIllustration } from "@/components/illustrations";
 import { getContent } from "@/content";
 import { getGravatarUrl } from "@/lib/gravatar";
+import { getTeamMembersLocalized, getCompaniesLocalized } from "@/lib/db";
 import {
   AcademicCapIcon,
   UserGroupIcon,
   BuildingOffice2Icon,
   CheckBadgeIcon,
 } from "@heroicons/react/24/outline";
+
+// Force dynamic rendering since we fetch from D1
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: "About Us - ITGuys",
@@ -41,7 +45,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
   const content = getContent("en");
   const {
     hero,
@@ -55,6 +59,12 @@ export default function AboutPage() {
     team,
     cta,
   } = content.aboutContent;
+
+  // Fetch dynamic data from D1
+  const [teamMembers, companies] = await Promise.all([
+    getTeamMembersLocalized('en'),
+    getCompaniesLocalized('en'),
+  ]);
 
   return (
     <>
@@ -131,8 +141,8 @@ export default function AboutPage() {
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {experience.companies.map((company) => (
-            <Card key={company.name}>
+          {companies.map((company) => (
+            <Card key={company.slug}>
               <CardTitle>{company.name}</CardTitle>
               <CardDescription>{company.description}</CardDescription>
             </Card>
@@ -210,9 +220,9 @@ export default function AboutPage() {
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {team.members.map((member) => (
+          {teamMembers.map((member) => (
             <div
-              key={member.name}
+              key={member.slug}
               className="p-6 rounded-xl bg-brand-800/30 border border-brand-700/30"
             >
               <div className="flex items-start gap-4">
