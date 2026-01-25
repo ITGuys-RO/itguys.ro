@@ -29,6 +29,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const [formData, setFormData] = useState<ProjectInput>({
     slug: '',
@@ -86,6 +87,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     e.preventDefault();
     setSaving(true);
     setError(null);
+    setSuccess(false);
 
     try {
       const res = await fetch(`/api/admin/projects/${id}`, {
@@ -99,7 +101,8 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         throw new Error(data.error || 'Failed to save');
       }
 
-      router.push('/admin/projects');
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Save failed');
     } finally {
@@ -136,9 +139,19 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         <DeleteButton itemName="project" onDelete={handleDelete} />
       </div>
 
-      {error && (
-        <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400">
-          {error}
+      {/* Toast notifications */}
+      {(error || success) && (
+        <div className="fixed bottom-6 right-6 z-50">
+          {error && (
+            <div className="p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 shadow-lg backdrop-blur-sm">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 shadow-lg backdrop-blur-sm">
+              Saved successfully
+            </div>
+          )}
         </div>
       )}
 

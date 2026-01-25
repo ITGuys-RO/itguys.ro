@@ -15,6 +15,7 @@ export default function EditCompanyPage({ params }: { params: Promise<{ id: stri
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState<CompanyInput>({
     slug: '',
     logo_path: '',
@@ -55,6 +56,8 @@ export default function EditCompanyPage({ params }: { params: Promise<{ id: stri
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+    setError(null);
+    setSuccess(false);
     try {
       const res = await fetch(`/api/admin/companies/${id}`, {
         method: 'PUT',
@@ -62,7 +65,8 @@ export default function EditCompanyPage({ params }: { params: Promise<{ id: stri
         body: JSON.stringify(formData),
       });
       if (!res.ok) throw new Error('Failed to save');
-      router.push('/admin/companies');
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Save failed');
     } finally {
@@ -86,7 +90,21 @@ export default function EditCompanyPage({ params }: { params: Promise<{ id: stri
         </div>
         <DeleteButton itemName="company" onDelete={handleDelete} />
       </div>
-      {error && <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400">{error}</div>}
+      {/* Toast notifications */}
+      {(error || success) && (
+        <div className="fixed bottom-6 right-6 z-50">
+          {error && (
+            <div className="p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 shadow-lg backdrop-blur-sm">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 shadow-lg backdrop-blur-sm">
+              Saved successfully
+            </div>
+          )}
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6">
           <h2 className="text-lg font-semibold text-white mb-4">Basic Information</h2>
