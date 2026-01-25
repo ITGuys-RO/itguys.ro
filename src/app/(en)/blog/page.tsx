@@ -3,8 +3,6 @@ import Link from 'next/link';
 import { getPostsLocalized } from '@/lib/db';
 import { Section } from '@/components/ui';
 
-export const runtime = 'edge';
-
 export const metadata: Metadata = {
   title: 'Blog | ITGuys',
   description: 'Insights and articles on software development, security, and technology.',

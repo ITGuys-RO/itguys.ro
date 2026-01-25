@@ -4,8 +4,6 @@ import { getPostsLocalized } from '@/lib/db';
 import { Section } from '@/components/ui';
 import type { Locale } from '@/i18n/config';
 
-export const runtime = 'edge';
-
 type Props = {
   params: Promise<{ locale: Locale }>;
 };

@@ -4,8 +4,6 @@ import Link from 'next/link';
 import { getPostLocalized } from '@/lib/db';
 import { Section } from '@/components/ui';
 
-export const runtime = 'edge';
-
 type Props = {
   params: Promise<{ slug: string }>;
 };

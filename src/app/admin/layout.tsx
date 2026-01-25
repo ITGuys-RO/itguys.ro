@@ -1,7 +1,5 @@
 import { Sidebar } from '@/components/admin';
 
-export const runtime = 'edge';
-
 export const metadata = {
   title: 'Admin | ITGuys',
   robots: 'noindex, nofollow',
