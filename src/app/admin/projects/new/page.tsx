@@ -34,7 +34,7 @@ export default function NewProjectPage() {
     sort_order: 0,
     is_active: 1,
     technologies: [],
-    translations: {},
+    translations: { en: { name: '', client_type: null, industry: null, challenge: null, solution: null, result: null } },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

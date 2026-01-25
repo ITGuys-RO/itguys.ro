@@ -37,7 +37,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     sort_order: 0,
     is_active: 1,
     technologies: [],
-    translations: {},
+    translations: { en: { name: '', client_type: null, industry: null, challenge: null, solution: null, result: null } },
   });
 
   useEffect(() => {
@@ -50,6 +50,22 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
       if (!res.ok) throw new Error('Failed to fetch project');
       const project: ProjectWithTranslations = await res.json();
 
+      const translations = Object.fromEntries(
+        Object.entries(project.translations).map(([locale, t]) => [
+          locale,
+          t
+            ? {
+                name: t.name,
+                client_type: t.client_type,
+                industry: t.industry,
+                challenge: t.challenge,
+                solution: t.solution,
+                result: t.result,
+              }
+            : undefined,
+        ])
+      ) as ProjectInput['translations'];
+
       setFormData({
         slug: project.slug,
         image_path: project.image_path,
@@ -57,21 +73,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         sort_order: project.sort_order,
         is_active: project.is_active,
         technologies: project.technologies,
-        translations: Object.fromEntries(
-          Object.entries(project.translations).map(([locale, t]) => [
-            locale,
-            t
-              ? {
-                  name: t.name,
-                  client_type: t.client_type,
-                  industry: t.industry,
-                  challenge: t.challenge,
-                  solution: t.solution,
-                  result: t.result,
-                }
-              : undefined,
-          ])
-        ) as Partial<Record<Locale, TranslationData>>,
+        translations,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');

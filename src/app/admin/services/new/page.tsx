@@ -29,7 +29,7 @@ export default function NewServicePage() {
     is_active: 1,
     technologies: [],
     subservices: [],
-    translations: {},
+    translations: { en: { title: '', description: null, details: null, note: null } },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

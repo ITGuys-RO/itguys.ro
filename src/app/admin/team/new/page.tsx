@@ -27,7 +27,7 @@ export default function NewTeamMemberPage() {
     image_path: '',
     sort_order: 0,
     is_active: 1,
-    translations: {},
+    translations: { en: { name: '', role: '', bio: '' } },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

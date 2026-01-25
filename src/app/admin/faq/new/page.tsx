@@ -18,7 +18,7 @@ export default function NewFaqPage() {
     category: '',
     sort_order: 0,
     is_active: 1,
-    translations: {},
+    translations: { en: { question: '', answer: '' } },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

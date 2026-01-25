@@ -280,6 +280,9 @@ export interface PostLocalized {
   author?: TeamMemberLocalized;
 }
 
+// Helper type: English is required, other locales are optional
+type TranslationsWithRequiredEnglish<T> = { en: T } & Partial<Record<Exclude<Locale, 'en'>, T>>;
+
 // Input types for creating/updating
 export interface TeamMemberInput {
   slug: string;
@@ -289,11 +292,11 @@ export interface TeamMemberInput {
   image_path?: string | null;
   sort_order?: number;
   is_active?: number;
-  translations: Partial<Record<Locale, {
+  translations: TranslationsWithRequiredEnglish<{
     name: string;
     role: string;
     bio: string;
-  }>>;
+  }>;
 }
 
 export interface ProjectInput {
@@ -303,14 +306,14 @@ export interface ProjectInput {
   sort_order?: number;
   is_active?: number;
   technologies: string[];
-  translations: Partial<Record<Locale, {
+  translations: TranslationsWithRequiredEnglish<{
     name: string;
     client_type?: string | null;
     industry?: string | null;
     challenge?: string | null;
     solution?: string | null;
     result?: string | null;
-  }>>;
+  }>;
 }
 
 export interface CompanyInput {
@@ -319,19 +322,19 @@ export interface CompanyInput {
   external_url?: string | null;
   sort_order?: number;
   is_active?: number;
-  translations: Partial<Record<Locale, {
+  translations: TranslationsWithRequiredEnglish<{
     name: string;
     description?: string | null;
-  }>>;
+  }>;
 }
 
 export interface SubserviceInput {
   slug: string;
   sort_order?: number;
-  translations: Partial<Record<Locale, {
+  translations: TranslationsWithRequiredEnglish<{
     title: string;
     description?: string | null;
-  }>>;
+  }>;
 }
 
 export interface ServiceInput {
@@ -342,12 +345,12 @@ export interface ServiceInput {
   is_active?: number;
   technologies: string[];
   subservices: SubserviceInput[];
-  translations: Partial<Record<Locale, {
+  translations: TranslationsWithRequiredEnglish<{
     title: string;
     description?: string | null;
     details?: string | null;
     note?: string | null;
-  }>>;
+  }>;
 }
 
 export interface FaqInput {
@@ -355,10 +358,10 @@ export interface FaqInput {
   category?: string | null;
   sort_order?: number;
   is_active?: number;
-  translations: Partial<Record<Locale, {
+  translations: TranslationsWithRequiredEnglish<{
     question: string;
     answer: string;
-  }>>;
+  }>;
 }
 
 export interface PostInput {
@@ -368,13 +371,13 @@ export interface PostInput {
   published_at?: string | null;
   is_published?: number;
   tags: string[];
-  translations: Partial<Record<Locale, {
+  translations: TranslationsWithRequiredEnglish<{
     title: string;
     excerpt?: string | null;
     content: string;
     meta_title?: string | null;
     meta_description?: string | null;
-  }>>;
+  }>;
 }
 
 export interface TranslationInput {

@@ -28,7 +28,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
     published_at: '',
     is_published: 0,
     tags: [],
-    translations: {},
+    translations: { en: { title: '', excerpt: null, content: '', meta_title: null, meta_description: null } },
   });
 
   useEffect(() => {
@@ -37,6 +37,18 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
         const res = await fetch(`/api/admin/posts/${id}`);
         if (!res.ok) throw new Error('Failed to fetch');
         const post: PostWithTranslations = await res.json();
+        const translations = Object.fromEntries(
+          Object.entries(post.translations).map(([locale, t]) => [
+            locale, t ? {
+              title: t.title,
+              excerpt: t.excerpt,
+              content: t.content,
+              meta_title: t.meta_title,
+              meta_description: t.meta_description,
+            } : undefined
+          ])
+        ) as PostInput['translations'];
+
         setFormData({
           slug: post.slug,
           image_path: post.image_path,
@@ -44,17 +56,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
           published_at: post.published_at || '',
           is_published: post.is_published,
           tags: post.tags,
-          translations: Object.fromEntries(
-            Object.entries(post.translations).map(([locale, t]) => [
-              locale, t ? {
-                title: t.title,
-                excerpt: t.excerpt,
-                content: t.content,
-                meta_title: t.meta_title,
-                meta_description: t.meta_description,
-              } : undefined
-            ])
-          ) as Partial<Record<Locale, TranslationData>>,
+          translations,
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error');

@@ -20,7 +20,7 @@ export default function EditFaqPage({ params }: { params: Promise<{ id: string }
     category: '',
     sort_order: 0,
     is_active: 1,
-    translations: {},
+    translations: { en: { question: '', answer: '' } },
   });
 
   useEffect(() => {
@@ -29,16 +29,18 @@ export default function EditFaqPage({ params }: { params: Promise<{ id: string }
         const res = await fetch(`/api/admin/faq/${id}`);
         if (!res.ok) throw new Error('Failed to fetch');
         const item: FaqWithTranslations = await res.json();
+        const translations = Object.fromEntries(
+          Object.entries(item.translations).map(([locale, t]) => [
+            locale, t ? { question: t.question, answer: t.answer } : undefined
+          ])
+        ) as FaqInput['translations'];
+
         setFormData({
           slug: item.slug,
           category: item.category,
           sort_order: item.sort_order,
           is_active: item.is_active,
-          translations: Object.fromEntries(
-            Object.entries(item.translations).map(([locale, t]) => [
-              locale, t ? { question: t.question, answer: t.answer } : undefined
-            ])
-          ) as Partial<Record<Locale, TranslationData>>,
+          translations,
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error');

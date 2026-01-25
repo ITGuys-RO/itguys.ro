@@ -19,7 +19,7 @@ export default function NewCompanyPage() {
     external_url: '',
     sort_order: 0,
     is_active: 1,
-    translations: {},
+    translations: { en: { name: '', description: null } },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -30,7 +30,7 @@ export default function EditTeamMemberPage({ params }: { params: Promise<{ id: s
     image_path: '',
     sort_order: 0,
     is_active: 1,
-    translations: {},
+    translations: { en: { name: '', role: '', bio: '' } },
   });
 
   useEffect(() => {
@@ -43,6 +43,13 @@ export default function EditTeamMemberPage({ params }: { params: Promise<{ id: s
       if (!res.ok) throw new Error('Failed to fetch team member');
       const member: TeamMemberWithTranslations = await res.json();
 
+      const translations = Object.fromEntries(
+        Object.entries(member.translations).map(([locale, t]) => [
+          locale,
+          t ? { name: t.name, role: t.role, bio: t.bio } : undefined,
+        ])
+      ) as TeamMemberInput['translations'];
+
       setFormData({
         slug: member.slug,
         email: member.email,
@@ -51,12 +58,7 @@ export default function EditTeamMemberPage({ params }: { params: Promise<{ id: s
         image_path: member.image_path,
         sort_order: member.sort_order,
         is_active: member.is_active,
-        translations: Object.fromEntries(
-          Object.entries(member.translations).map(([locale, t]) => [
-            locale,
-            t ? { name: t.name, role: t.role, bio: t.bio } : undefined,
-          ])
-        ) as Partial<Record<Locale, TranslationData>>,
+        translations,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');

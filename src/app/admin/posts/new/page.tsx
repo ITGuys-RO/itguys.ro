@@ -26,7 +26,7 @@ export default function NewPostPage() {
     published_at: new Date().toISOString().split('T')[0],
     is_published: 0,
     tags: [],
-    translations: {},
+    translations: { en: { title: '', excerpt: null, content: '', meta_title: null, meta_description: null } },
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -31,7 +31,7 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
     is_active: 1,
     technologies: [],
     subservices: [],
-    translations: {},
+    translations: { en: { title: '', description: null, details: null, note: null } },
   });
 
   useEffect(() => {
@@ -40,6 +40,12 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
         const res = await fetch(`/api/admin/services/${id}`);
         if (!res.ok) throw new Error('Failed to fetch');
         const service: ServiceWithTranslations = await res.json();
+        const translations = Object.fromEntries(
+          Object.entries(service.translations).map(([locale, t]) => [
+            locale, t ? { title: t.title, description: t.description, details: t.details, note: t.note } : undefined
+          ])
+        ) as ServiceInput['translations'];
+
         setFormData({
           slug: service.slug,
           icon: service.icon,
@@ -54,11 +60,7 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
               Object.entries(sub.translations).map(([l, t]) => [l, t ? { title: t.title, description: t.description } : undefined])
             ) as ServiceInput['subservices'][0]['translations'],
           })),
-          translations: Object.fromEntries(
-            Object.entries(service.translations).map(([locale, t]) => [
-              locale, t ? { title: t.title, description: t.description, details: t.details, note: t.note } : undefined
-            ])
-          ) as Partial<Record<Locale, TranslationData>>,
+          translations,
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error');

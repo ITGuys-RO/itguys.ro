@@ -21,7 +21,7 @@ export default function EditCompanyPage({ params }: { params: Promise<{ id: stri
     external_url: '',
     sort_order: 0,
     is_active: 1,
-    translations: {},
+    translations: { en: { name: '', description: null } },
   });
 
   useEffect(() => {
@@ -30,17 +30,19 @@ export default function EditCompanyPage({ params }: { params: Promise<{ id: stri
         const res = await fetch(`/api/admin/companies/${id}`);
         if (!res.ok) throw new Error('Failed to fetch');
         const company: CompanyWithTranslations = await res.json();
+        const translations = Object.fromEntries(
+          Object.entries(company.translations).map(([locale, t]) => [
+            locale, t ? { name: t.name, description: t.description } : undefined
+          ])
+        ) as CompanyInput['translations'];
+
         setFormData({
           slug: company.slug,
           logo_path: company.logo_path,
           external_url: company.external_url,
           sort_order: company.sort_order,
           is_active: company.is_active,
-          translations: Object.fromEntries(
-            Object.entries(company.translations).map(([locale, t]) => [
-              locale, t ? { name: t.name, description: t.description } : undefined
-            ])
-          ) as Partial<Record<Locale, TranslationData>>,
+          translations,
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error');
