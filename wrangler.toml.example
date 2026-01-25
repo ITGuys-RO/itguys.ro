@@ -19,3 +19,8 @@ TURNSTILE_SECRET_KEY = "${TURNSTILE_SECRET_KEY}"
 binding = "DB"
 database_name = "itguys-ro"
 database_id = "${D1_DATABASE_ID}"
+
+[observability]
+[observability.logs]
+enabled = true
+invocation_logs = true
