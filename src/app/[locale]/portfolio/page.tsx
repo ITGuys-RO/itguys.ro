@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, Carousel } from "@/components/ui";
+import { PortfolioIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { getProjectsLocalized } from "@/lib/db";
@@ -68,7 +69,6 @@ export default async function PortfolioPage({ params }: Props) {
 
   const content = getContent(locale as Locale);
   const { hero, cta } = content.portfolioContent;
-  const { hero: homeHero } = content.homeContent;
 
   // Fetch projects from D1
   const projects = await getProjectsLocalized(locale as Locale);
@@ -77,7 +77,12 @@ export default async function PortfolioPage({ params }: Props) {
     <>
       <OrganizationSchema />
       <BreadcrumbSchema items={[{ name: "Portfolio", url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/portfolio` }]} />
-      <Hero headline={hero.headline} subheadline={hero.subheadline} badgeText={homeHero.badgeText} />
+      <Hero
+        headline={hero.headline}
+        subheadline={hero.subheadline}
+        showBadge={false}
+        illustration={<PortfolioIllustration className="w-full h-auto max-w-sm mx-auto" />}
+      />
 
       <Section wide>
         {projects.length > 0 ? (

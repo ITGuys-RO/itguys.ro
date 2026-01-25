@@ -52,7 +52,7 @@ export default function ContactPage() {
       />
 
       <Section id="contact-form">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="lg:col-span-3">
             <ContactForm locale="en" />
           </div>

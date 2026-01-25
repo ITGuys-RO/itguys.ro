@@ -42,7 +42,7 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <main>
-      <Section className="pt-32 pb-16">
+      <Section className="pt-24 pb-10">
         <article className="max-w-3xl mx-auto">
           <Link
             href={`/${locale}/blog`}

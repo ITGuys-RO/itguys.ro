@@ -12,6 +12,31 @@
   --text-primary: #fafafa;
   --text-secondary: #9eb8d6;
   --text-muted: #7092be;
+  /* Terminal/code window */
+  --terminal-frame: #27272a;
+  --terminal-titlebar: #3f3f46;
+  --terminal-content: #18181b;
+  --terminal-text: #fafafa;
+  /* Illustration colors - swap light/dark for theme */
+  --illust-light: #1a2636;
+  --illust-light-80: rgba(26, 38, 54, 0.8);
+  --illust-light-60: rgba(26, 38, 54, 0.6);
+  --illust-light-50: rgba(26, 38, 54, 0.5);
+  --illust-light-40: rgba(26, 38, 54, 0.4);
+  --illust-light-30: rgba(26, 38, 54, 0.3);
+  --illust-medium-light: #2e4563;
+  --illust-medium: #3d5a82;
+  --illust-medium-50: rgba(61, 90, 130, 0.5);
+  --illust-primary: #5174a1;
+  --illust-primary-40: rgba(81, 116, 161, 0.4);
+  --illust-primary-50: rgba(81, 116, 161, 0.5);
+  --illust-secondary: #7092be;
+  --illust-secondary-30: rgba(112, 146, 190, 0.3);
+  --illust-secondary-50: rgba(112, 146, 190, 0.5);
+  /* Device frames - inverted (dark in light mode, light in dark mode) */
+  --illust-device-frame: #e4e4e7;
+  --illust-device-stand: #d4d4d8;
+  --illust-device-base: #f4f4f5;
 }
 
 /* Light theme - applied via .light class on html */
@@ -25,6 +50,31 @@ html.light {
   --text-primary: #1a2636;
   --text-secondary: #3d5a82;
   --text-muted: #5174a1;
+  /* Terminal/code window */
+  --terminal-frame: #e4e4e7;
+  --terminal-titlebar: #d4d4d8;
+  --terminal-content: #f4f4f5;
+  --terminal-text: #27272a;
+  /* Illustration colors - swap light/dark for theme */
+  --illust-light: #9eb8d6;
+  --illust-light-80: rgba(158, 184, 214, 0.8);
+  --illust-light-60: rgba(158, 184, 214, 0.6);
+  --illust-light-50: rgba(158, 184, 214, 0.5);
+  --illust-light-40: rgba(158, 184, 214, 0.4);
+  --illust-light-30: rgba(158, 184, 214, 0.3);
+  --illust-medium-light: #7092be;
+  --illust-medium: #5174a1;
+  --illust-medium-50: rgba(81, 116, 161, 0.5);
+  --illust-primary: #3d5a82;
+  --illust-primary-40: rgba(61, 90, 130, 0.4);
+  --illust-primary-50: rgba(61, 90, 130, 0.5);
+  --illust-secondary: #2e4563;
+  --illust-secondary-30: rgba(46, 69, 99, 0.3);
+  --illust-secondary-50: rgba(46, 69, 99, 0.5);
+  /* Device frames - inverted (dark in light mode, light in dark mode) */
+  --illust-device-frame: #27272a;
+  --illust-device-stand: #3f3f46;
+  --illust-device-base: #18181b;
 }
 
 @theme inline {

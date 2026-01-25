@@ -102,8 +102,8 @@ export default async function HomePage({ params }: Props) {
       <div className="relative border-y border-brand-700/30 bg-brand-900/80 backdrop-blur-sm">
         {/* Top accent line */}
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neon/30 to-transparent" />
-        <div className="max-w-4xl mx-auto px-6 md:px-8 py-8">
-          <div className="grid grid-cols-3 gap-8">
+        <div className="max-w-6xl mx-auto px-6 md:px-8 py-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <AnimateOnScroll key={stat.label} animation="fade-in-up" delay={index * 100}>
                 <div className="text-center">

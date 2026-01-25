@@ -18,8 +18,9 @@ export const homeContent = {
 
   stats: [
     { value: getCombinedYearsText(), label: "Combined Years" },
-    { value: "EA & TUI", label: "Security Background" },
+    { value: "Swiss Clients", label: "Web Development" },
     { value: "Nagarro", label: "Mobile Expertise" },
+    { value: "EA & TUI", label: "Security Background" },
   ],
 
   whatSetsUsApart: {

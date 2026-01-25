@@ -20,7 +20,7 @@ type HeroProps = {
 
 export function Hero({ headline, subheadline, cta, secondaryCta, badgeText = "Available for new projects", illustration, showBadge = true }: HeroProps) {
   return (
-    <section className="relative pt-32 pb-16 md:pt-40 md:pb-24 px-6 md:px-8 overflow-hidden">
+    <section className="relative pt-24 pb-10 md:pt-32 md:pb-14 overflow-hidden">
       {/* Cyberpunk background elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Perspective grid floor */}
@@ -49,8 +49,8 @@ export function Hero({ headline, subheadline, cta, secondaryCta, badgeText = "Av
         <div className="absolute top-2/3 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neon/10 to-transparent" />
       </div>
 
-      <div className="relative max-w-6xl mx-auto">
-        <div className={`grid ${illustration ? "lg:grid-cols-2 gap-12 items-center" : ""}`}>
+      <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-8">
+        <div className={`grid ${illustration ? "lg:grid-cols-2 gap-8 items-center" : ""}`}>
           <div className="max-w-2xl">
             {showBadge && (
               <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 text-sm font-medium text-neon bg-neon/10 border border-neon/30 rounded-full animate-fade-in-down animate-pulse-glow">
@@ -65,7 +65,7 @@ export function Hero({ headline, subheadline, cta, secondaryCta, badgeText = "Av
               {subheadline}
             </p>
             {cta && (
-              <div className="mt-8 flex flex-wrap gap-4 animate-fade-in-up stagger-2">
+              <div className="relative z-10 mt-8 flex flex-wrap gap-4 animate-fade-in-up stagger-2">
                 <Button href={cta.href} variant="primary" className="flex items-center gap-2">
                   {cta.text}
                   <ArrowRightIcon className="w-4 h-4" />

@@ -51,7 +51,7 @@ export function Footer({ locale }: Props) {
       {/* Top accent line */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-400/30 to-transparent" />
 
-      <div className="relative max-w-4xl mx-auto px-6 md:px-8 py-12">
+      <div className="relative max-w-6xl mx-auto px-6 md:px-8 py-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
           <div>
             <Link
@@ -87,7 +87,7 @@ export function Footer({ locale }: Props) {
           </nav>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-brand-700/30 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="mt-6 pt-6 border-t border-brand-700/30 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="text-sm text-brand-400">
             <p>&copy; {new Date().getFullYear()} ITGuys. {footerText.rights[locale]}</p>
             <p className="mt-1 text-xs text-brand-500">

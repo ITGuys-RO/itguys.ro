@@ -64,7 +64,7 @@ export function CTA({ headline, body, buttonText, buttonHref }: CTAProps) {
           <p className="mt-4 text-brand-200 max-w-xl mx-auto">{body}</p>
         </AnimateOnScroll>
         <AnimateOnScroll animation="scale-in" delay={200}>
-          <div className="mt-8">
+          <div className="mt-6">
             <Button
               href={buttonHref}
               variant="neon"

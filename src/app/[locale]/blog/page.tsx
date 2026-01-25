@@ -37,15 +37,15 @@ export default async function BlogPage({ params }: Props) {
 
   return (
     <main>
-      <Section className="pt-32 pb-16">
-        <div className="max-w-4xl mx-auto">
+      <Section className="pt-24 pb-10">
+        <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Blog</h1>
-          <p className="text-xl text-brand-300 mb-12">
+          <p className="text-xl text-brand-300 mb-8">
             Insights and articles on software development, security, and technology.
           </p>
 
           {posts.length === 0 ? (
-            <div className="text-center py-16">
+            <div className="text-center py-10">
               <p className="text-brand-400">No posts yet. Check back soon!</p>
             </div>
           ) : (

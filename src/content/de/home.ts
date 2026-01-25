@@ -18,8 +18,9 @@ export const homeContent = {
 
   stats: [
     { value: getCombinedYearsText(), label: "Jahre Erfahrung" },
-    { value: "EA & TUI", label: "Sicherheitserfahrung" },
+    { value: "Schweiz", label: "Webentwicklung" },
     { value: "Nagarro", label: "Mobile Expertise" },
+    { value: "EA & TUI", label: "Sicherheitserfahrung" },
   ],
 
   whatSetsUsApart: {

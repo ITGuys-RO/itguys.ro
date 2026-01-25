@@ -17,9 +17,10 @@ export const homeContent = {
   },
 
   stats: [
-    { value: getCombinedYearsText(), label: "Anos Combinados" },
+    { value: getCombinedYearsText(), label: "Años Combinados" },
+    { value: "Suiza", label: "Desarrollo Web" },
+    { value: "Nagarro", label: "Experiencia Móvil" },
     { value: "EA & TUI", label: "Experiencia en Seguridad" },
-    { value: "Nagarro", label: "Experiencia Movil" },
   ],
 
   whatSetsUsApart: {
