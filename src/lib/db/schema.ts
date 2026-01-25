@@ -1,5 +1,5 @@
 // Inline locale type to avoid bundling issues with @/i18n/config import
-type Locale = 'en' | 'ro' | 'fr' | 'de' | 'it' | 'es';
+export type Locale = 'en' | 'ro' | 'fr' | 'de' | 'it' | 'es';
 
 // Base types for database rows
 export interface TeamMember {

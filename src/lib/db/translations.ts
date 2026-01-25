@@ -1,5 +1,5 @@
 import { query, queryFirst, execute, batch } from './client';
-import type { Locale } from '@/i18n/config';
+import type { Locale } from './schema';
 import type { Translation, Setting, TranslationInput } from './schema';
 
 // UI Translations
