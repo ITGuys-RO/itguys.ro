@@ -191,11 +191,11 @@ html.light .text-brand-200 {
 }
 
 html.light .text-brand-300 {
-  color: var(--text-muted);
+  color: #3d5a82;  /* Darker blue for 5.0+ contrast ratio */
 }
 
 html.light .text-brand-400 {
-  color: #5174a1;
+  color: #456590;  /* Darker blue for 4.8+ contrast ratio */
 }
 
 /* Light mode background overrides */
@@ -252,7 +252,7 @@ html.light .drop-shadow-\[0_0_10px_rgba\(0\,212\,255\,0\.3\)\] {
 
 /* Light mode neon color adjustment for better contrast */
 html.light .text-neon {
-  color: #007a8a;
+  color: #006570;  /* Darker teal for 5.0+ contrast ratio */
 }
 
 html.light .border-neon\/40 {

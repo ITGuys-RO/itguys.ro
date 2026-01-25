@@ -15,6 +15,8 @@ import {
   ServerStackIcon,
   ShieldCheckIcon,
   ArrowRightIcon,
+  UserGroupIcon,
+  WrenchScrewdriverIcon,
 } from "@heroicons/react/24/outline";
 
 const clientIcons = [RocketLaunchIcon, BuildingOffice2Icon];
@@ -143,10 +145,15 @@ export default async function HomePage({ params }: Props) {
       </Section>
 
       <Section className="bg-brand-900/50">
-        <AnimateOnScroll animation="fade-in-up">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-8">
-            {whoWeWorkWith.title}
-          </h2>
+        <AnimateOnScroll animation="slide-in-left">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="p-2 rounded-lg bg-brand-800/50 border border-brand-700/30">
+              <UserGroupIcon className="w-6 h-6 text-neon" />
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-white">
+              {whoWeWorkWith.title}
+            </h2>
+          </div>
         </AnimateOnScroll>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {whoWeWorkWith.items.map((item, index) => {
@@ -175,10 +182,15 @@ export default async function HomePage({ params }: Props) {
       </Section>
 
       <Section>
-        <AnimateOnScroll animation="fade-in-up">
-          <h2 className="text-2xl md:text-3xl font-bold text-white">
-            {whatWeBuild.title}
-          </h2>
+        <AnimateOnScroll animation="slide-in-left">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 rounded-lg bg-brand-800/50 border border-brand-700/30">
+              <WrenchScrewdriverIcon className="w-6 h-6 text-neon" />
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-white">
+              {whatWeBuild.title}
+            </h2>
+          </div>
         </AnimateOnScroll>
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           {whatWeBuild.categories.map((label, index) => {
