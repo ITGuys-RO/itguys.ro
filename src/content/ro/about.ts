@@ -1,14 +1,5 @@
 import { getCombinedYears } from "@/lib/utils";
 
-type TeamMember = {
-  name: string;
-  role: string;
-  bio: string;
-  email?: string;
-  gravatarEmail?: string;
-  linkedIn?: string;
-};
-
 export const aboutContent = {
   hero: {
     headline: "Suntem ITGuys",
@@ -46,12 +37,6 @@ export const aboutContent = {
 
   experience: {
     title: "Parteneri cu care am lucrat",
-    companies: [
-      { name: "TUI", description: "Securitate web pentru una dintre cele mai mari companii de turism din lume", logo: "/logos/tui.svg" },
-      { name: "Electronic Arts", description: "Testare securitate pentru aplicații web și platforme de jocuri", logo: "/logos/ea.svg" },
-      { name: "Nagarro", description: "Peste 5 ani de arhitectură mobile și dezvoltare aplicații native", logo: "/logos/nagarro.svg" },
-      { name: "Enea AB", description: "Dezvoltare IoT și SDK nativ pentru dispozitive conectate", logo: "/logos/enea.svg" },
-    ],
   },
 
   whatWeBelieve: {
@@ -121,22 +106,6 @@ export const aboutContent = {
 
   team: {
     title: "Echipa",
-    members: [
-      {
-        name: "Cătălin Teodorescu",
-        role: "Fondator & Lead Engineer",
-        bio: "Peste 15 ani în dezvoltare software și cybersecurity. Anterior la TUI, Electronic Arts și Team Extension AG. Specializat în arhitectură sigură, DevOps și securitatea aplicațiilor web.",
-        linkedIn: "https://www.linkedin.com/in/dustfeather/",
-        email: "contact@itguys.ro",
-        gravatarEmail: "dustfeather@gmail.com",
-      },
-      {
-        name: "Cristian-Marian Mincu",
-        role: "Senior Mobile Developer",
-        bio: "Peste 10 ani construind aplicații native iOS și Android. Anterior la Nagarro și Enea AB. Expert în arhitectură mobile, integrări IoT și pipeline-uri CI/CD. Master în Securitatea Informației de la Universitatea Politehnica din București.",
-        linkedIn: "https://www.linkedin.com/in/cristian-marian-mincu-44849690/",
-      },
-    ] as TeamMember[],
   },
 
   cta: {

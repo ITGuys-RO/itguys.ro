@@ -4,3 +4,4 @@ export { InputField, TextareaField, SelectField, CheckboxField, TagInput } from 
 export { LocaleTabs, LocaleFields, LocaleCompletion } from './LocaleTabs';
 export { DeleteConfirm, DeleteButton } from './DeleteConfirm';
 export { MarkdownEditor } from './MarkdownEditor';
+export { GlobalSearch } from './GlobalSearch';

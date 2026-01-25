@@ -13,3 +13,4 @@ export * from './services';
 export * from './faq';
 export * from './posts';
 export * from './translations';
+export * from './search';

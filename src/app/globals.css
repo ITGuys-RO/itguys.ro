@@ -289,6 +289,21 @@ html.light .hover\:shadow-\[0_0_30px_rgba\(81\,116\,161\,0\.15\)\,0_0_60px_rgba\
   box-shadow: 0 4px 20px rgba(81, 116, 161, 0.15), 0 8px 40px rgba(81, 116, 161, 0.08);
 }
 
+/* Carousel navigation buttons for light mode */
+html.light .carousel-nav-btn {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-color: rgba(81, 116, 161, 0.3);
+  box-shadow: 0 2px 8px rgba(81, 116, 161, 0.15);
+}
+
+html.light .carousel-nav-btn:hover {
+  background-color: rgba(255, 255, 255, 1);
+}
+
+html.light .carousel-nav-btn svg {
+  color: #3d5a82;
+}
+
 /* Light mode input/form styles */
 html.light input,
 html.light textarea,
@@ -424,6 +439,57 @@ html.light .hover\:bg-brand-800:hover {
 /* Shadow adjustments */
 html.light .shadow-black\/20 {
   --tw-shadow-color: rgba(81, 116, 161, 0.15);
+}
+
+/* Admin panel buttons in light mode */
+html.light .bg-brand-600 {
+  background-color: #5174a1;
+}
+
+html.light .hover\:bg-brand-500:hover {
+  background-color: #3d5a82;
+}
+
+html.light .bg-brand-600.text-white {
+  color: #ffffff;
+}
+
+/* Admin table row hover in light mode */
+html.light .hover\:bg-brand-800\/30:hover {
+  background-color: rgba(197, 212, 232, 0.5);
+}
+
+/* Admin panel backgrounds in light mode */
+html.light .bg-brand-950 {
+  background-color: #f0f4f8;
+}
+
+html.light .bg-brand-900\/60 {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+/* Admin borders in light mode */
+html.light .border-brand-600\/50 {
+  border-color: rgba(81, 116, 161, 0.4);
+}
+
+html.light .hover\:border-brand-400\/50:hover {
+  border-color: rgba(81, 116, 161, 0.6);
+}
+
+/* Admin text adjustments for light mode */
+html.light .divide-brand-700\/30 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(81, 116, 161, 0.2);
+}
+
+/* Admin TagInput tags in light mode */
+html.light .bg-brand-700\/50 {
+  background-color: rgba(81, 116, 161, 0.2);
+}
+
+/* Admin subservice translation boxes in light mode */
+html.light .bg-brand-800\/20 {
+  background-color: rgba(197, 212, 232, 0.4);
 }
 
 /* Theme switcher hover */

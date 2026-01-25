@@ -32,18 +32,20 @@ Tables with translation support (entity + entity_translations pattern):
 - `team_members` / `team_member_translations`
 - `projects` / `project_translations` / `project_technologies`
 - `companies` / `company_translations`
-- `services` / `service_translations` / `subservices` / `subservice_translations`
+- `services` / `service_translations` / `service_technologies` / `subservices` / `subservice_translations`
 - `faq_items` / `faq_translations`
 - `posts` / `post_translations` / `post_tags`
-- `translations` (UI strings)
-- `settings` (site settings)
+
+Other tables:
+- `translations` (UI strings by key/namespace/locale)
+- `settings` (site settings, optionally locale-specific)
+- `indexnow_submitted` (tracks URLs submitted to IndexNow for rate limiting)
 
 ## Data Flow
-- **Public pages**: Currently use static TypeScript files in `src/content/`
-- **Admin panel**: Uses D1 database via API routes
+- **Entity data** (team, companies, projects, services, FAQ, posts): Served from D1 database
+- **Page copy** (hero text, section titles, CTAs): Static TypeScript files in `src/content/`
+- **Admin panel**: Full CRUD via D1 database and API routes
 - **Blog**: D1 only (no static fallback)
-
-To connect public pages to D1, replace `getContent()` calls with db query functions.
 
 ## Development
 

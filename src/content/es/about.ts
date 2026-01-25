@@ -1,14 +1,5 @@
 import { getCombinedYearsText } from "@/lib/utils";
 
-type TeamMember = {
-  name: string;
-  role: string;
-  bio: string;
-  email?: string;
-  gravatarEmail?: string;
-  linkedIn?: string;
-};
-
 export const aboutContent = {
   hero: {
     headline: "Somos ITGuys",
@@ -46,12 +37,6 @@ export const aboutContent = {
 
   experience: {
     title: "Socios con los que Hemos Trabajado",
-    companies: [
-      { name: "TUI", description: "Seguridad web para una de las mayores companias de viajes del mundo", logo: "/logos/tui.svg" },
-      { name: "Electronic Arts", description: "Pruebas de seguridad para aplicaciones web y plataformas de juegos", logo: "/logos/ea.svg" },
-      { name: "Nagarro", description: "Mas de 5 anos de arquitectura movil y desarrollo de apps nativas", logo: "/logos/nagarro.svg" },
-      { name: "Enea AB", description: "Desarrollo de IoT y SDK nativos para dispositivos conectados", logo: "/logos/enea.svg" },
-    ],
   },
 
   whatWeBelieve: {
@@ -121,22 +106,6 @@ export const aboutContent = {
 
   team: {
     title: "El equipo",
-    members: [
-      {
-        name: "Catalin Teodorescu",
-        role: "Fundador & Lead Engineer",
-        bio: "Mas de 15 anos en desarrollo de software y ciberseguridad. Anteriormente en TUI, Electronic Arts y Team Extension AG. Especializado en arquitectura segura, DevOps y seguridad de aplicaciones web.",
-        linkedIn: "https://www.linkedin.com/in/dustfeather/",
-        email: "contact@itguys.ro",
-        gravatarEmail: "dustfeather@gmail.com",
-      },
-      {
-        name: "Cristian-Marian Mincu",
-        role: "Senior Mobile Developer",
-        bio: "Mas de 10 anos construyendo apps nativas iOS y Android. Anteriormente en Nagarro y Enea AB. Experto en arquitectura movil, integraciones IoT y pipelines CI/CD. Master en Seguridad de la Información de la Universidad Politécnica de Bucarest.",
-        linkedIn: "https://www.linkedin.com/in/cristian-marian-mincu-44849690/",
-      },
-    ] as TeamMember[],
   },
 
   cta: {

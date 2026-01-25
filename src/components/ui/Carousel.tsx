@@ -73,11 +73,11 @@ export function Carousel({ children, className }: CarouselProps) {
       {/* Previous Arrow */}
       <button
         onClick={scrollPrev}
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white dark:hover:bg-gray-800"
+        className="carousel-nav-btn absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-brand-800/90 shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-brand-800 border border-brand-700/30"
         aria-label="Previous slide"
       >
         <svg
-          className="w-5 h-5 text-gray-700 dark:text-gray-200"
+          className="w-5 h-5 text-brand-200"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -94,11 +94,11 @@ export function Carousel({ children, className }: CarouselProps) {
       {/* Next Arrow */}
       <button
         onClick={scrollNext}
-        className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white dark:hover:bg-gray-800"
+        className="carousel-nav-btn absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-brand-800/90 shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-brand-800 border border-brand-700/30"
         aria-label="Next slide"
       >
         <svg
-          className="w-5 h-5 text-gray-700 dark:text-gray-200"
+          className="w-5 h-5 text-brand-200"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

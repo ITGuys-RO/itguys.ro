@@ -1,14 +1,5 @@
 import { getCombinedYears } from "@/lib/utils";
 
-type TeamMember = {
-  name: string;
-  role: string;
-  bio: string;
-  email?: string;
-  gravatarEmail?: string;
-  linkedIn?: string;
-};
-
 export const aboutContent = {
   hero: {
     headline: "Nous sommes ITGuys",
@@ -46,12 +37,6 @@ export const aboutContent = {
 
   experience: {
     title: "Partenaires avec qui nous avons travaillé",
-    companies: [
-      { name: "TUI", description: "Sécurité web pour l'une des plus grandes entreprises de voyage au monde", logo: "/logos/tui.svg" },
-      { name: "Electronic Arts", description: "Tests de sécurité pour applications web et plateformes de jeux", logo: "/logos/ea.svg" },
-      { name: "Nagarro", description: "Plus de 5 ans d'architecture mobile et développement d'apps natives", logo: "/logos/nagarro.svg" },
-      { name: "Enea AB", description: "Développement IoT et SDK natif pour appareils connectés", logo: "/logos/enea.svg" },
-    ],
   },
 
   whatWeBelieve: {
@@ -121,22 +106,6 @@ export const aboutContent = {
 
   team: {
     title: "L'équipe",
-    members: [
-      {
-        name: "Catalin Teodorescu",
-        role: "Fondateur & Lead Engineer",
-        bio: "Plus de 15 ans en développement logiciel et cybersécurité. Précédemment chez TUI, Electronic Arts et Team Extension AG. Spécialisé en architecture sécurisée, DevOps et sécurité des applications web.",
-        linkedIn: "https://www.linkedin.com/in/dustfeather/",
-        email: "contact@itguys.ro",
-        gravatarEmail: "dustfeather@gmail.com",
-      },
-      {
-        name: "Cristian-Marian Mincu",
-        role: "Senior Mobile Developer",
-        bio: "Plus de 10 ans à développer des apps natives iOS et Android. Précédemment chez Nagarro et Enea AB. Expert en architecture mobile, intégrations IoT et pipelines CI/CD. Master en Sécurité de l'Information de l'Université Politehnica de Bucarest.",
-        linkedIn: "https://www.linkedin.com/in/cristian-marian-mincu-44849690/",
-      },
-    ] as TeamMember[],
   },
 
   cta: {

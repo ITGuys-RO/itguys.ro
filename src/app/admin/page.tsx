@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { GlobalSearch } from '@/components/admin';
 
 const sections = [
   {
@@ -59,6 +60,11 @@ export default function AdminDashboard() {
         <p className="text-brand-400 mt-2">
           Welcome to the ITGuys admin panel. Manage your content from here.
         </p>
+      </div>
+
+      {/* Global Search */}
+      <div className="mb-8">
+        <GlobalSearch />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -9,13 +9,20 @@ type ContactFormData = {
   turnstileToken: string;
 };
 
-async function verifyTurnstile(token: string): Promise<boolean> {
-  const secretKey = process.env.TURNSTILE_SECRET_KEY;
+type CloudflareEnv = {
+  TURNSTILE_SECRET_KEY?: string;
+  TELEGRAM_BOT_TOKEN?: string;
+  TELEGRAM_CHAT_ID?: string;
+};
 
-  if (!secretKey) {
-    throw new Error("Turnstile secret key not configured");
-  }
+async function getEnv(): Promise<CloudflareEnv> {
+  // Use Cloudflare context for runtime vars (from wrangler.toml)
+  const { getCloudflareContext } = await import('@opennextjs/cloudflare');
+  const { env } = await getCloudflareContext({ async: true });
+  return env as CloudflareEnv;
+}
 
+async function verifyTurnstile(token: string, secretKey: string): Promise<boolean> {
   const response = await fetch(
     "https://challenges.cloudflare.com/turnstile/v0/siteverify",
     {
@@ -32,14 +39,7 @@ async function verifyTurnstile(token: string): Promise<boolean> {
   return result.success === true;
 }
 
-async function sendTelegramMessage(text: string): Promise<void> {
-  const botToken = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-
-  if (!botToken || !chatId) {
-    throw new Error("Telegram credentials not configured");
-  }
-
+async function sendTelegramMessage(text: string, botToken: string, chatId: string): Promise<void> {
   const response = await fetch(
     `https://api.telegram.org/bot${botToken}/sendMessage`,
     {
@@ -77,7 +77,18 @@ export async function POST(request: Request) {
       );
     }
 
-    const isValidToken = await verifyTurnstile(data.turnstileToken);
+    // Get env vars from Cloudflare context (wrangler.toml)
+    const env = await getEnv();
+
+    if (!env.TURNSTILE_SECRET_KEY) {
+      console.error("TURNSTILE_SECRET_KEY not configured in wrangler.toml");
+      return NextResponse.json(
+        { error: "Server configuration error" },
+        { status: 500 }
+      );
+    }
+
+    const isValidToken = await verifyTurnstile(data.turnstileToken, env.TURNSTILE_SECRET_KEY);
     if (!isValidToken) {
       return NextResponse.json(
         { error: "Security verification failed. Please try again." },
@@ -116,7 +127,15 @@ export async function POST(request: Request) {
 ${escapeHtml(data.description)}
     `.trim();
 
-    await sendTelegramMessage(message);
+    if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) {
+      console.error("Telegram credentials not configured in wrangler.toml");
+      return NextResponse.json(
+        { error: "Server configuration error" },
+        { status: 500 }
+      );
+    }
+
+    await sendTelegramMessage(message, env.TELEGRAM_BOT_TOKEN, env.TELEGRAM_CHAT_ID);
 
     return NextResponse.json({ success: true });
   } catch (error) {
