@@ -1,7 +1,7 @@
 name: Submit to IndexNow
 
 permissions:
-  contents: write
+  contents: read
 
 on:
   workflow_run:
@@ -16,7 +16,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: master
+          sparse-checkout: |
+            wrangler.toml.example
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install wrangler
+        run: npm install -g wrangler
+
+      - name: Generate wrangler.toml
+        run: envsubst < wrangler.toml.example > wrangler.toml
+        env:
+          TELEGRAM_BOT_TOKEN: "unused"
+          TELEGRAM_CHAT_ID: "unused"
+          TURNSTILE_SECRET_KEY: "unused"
+          D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
 
       - name: Download sitemap URLs
         uses: actions/download-artifact@v4
@@ -25,24 +43,27 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
 
+      - name: Get previously submitted URLs from D1
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          wrangler d1 execute itguys-ro --remote --command "SELECT url FROM indexnow_submitted" --json | \
+            jq -r '.[0].results[].url' > submitted-urls.txt 2>/dev/null || touch submitted-urls.txt
+
       - name: Find new URLs to submit
         id: find-new
         run: |
-          # Ensure the data directory and file exist
-          mkdir -p .github/data
-          touch .github/data/indexnow-submitted.txt
-
           echo "=== Current sitemap URLs ==="
           cat sitemap-urls.txt
           echo ""
 
           echo "=== Previously submitted URLs ==="
-          cat .github/data/indexnow-submitted.txt
+          cat submitted-urls.txt
           echo ""
 
           # Find URLs that haven't been submitted yet
           sort sitemap-urls.txt > sorted-current.txt
-          sort .github/data/indexnow-submitted.txt > sorted-submitted.txt
+          sort submitted-urls.txt > sorted-submitted.txt
           comm -23 sorted-current.txt sorted-submitted.txt > new-urls.txt
 
           NEW_COUNT=$(wc -l < new-urls.txt | tr -d ' ')
@@ -101,14 +122,16 @@ jobs:
             *) echo "Unexpected response code: $HTTP_CODE"; exit 1 ;;
           esac
 
-      - name: Update submitted URLs and commit
+      - name: Store submitted URLs in D1
         if: steps.find-new.outputs.has_new == 'true' && steps.submit.outputs.success == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          cat new-urls.txt >> .github/data/indexnow-submitted.txt
-          sort -u .github/data/indexnow-submitted.txt -o .github/data/indexnow-submitted.txt
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .github/data/indexnow-submitted.txt
-          git commit -m "chore: update IndexNow submitted URLs [skip ci]"
-          git push
+          # Insert each URL into D1
+          while IFS= read -r url; do
+            if [ -n "$url" ]; then
+              echo "Storing: $url"
+              wrangler d1 execute itguys-ro --remote --command "INSERT OR IGNORE INTO indexnow_submitted (url) VALUES ('$url')"
+            fi
+          done < new-urls.txt
+          echo "All URLs stored in D1"
