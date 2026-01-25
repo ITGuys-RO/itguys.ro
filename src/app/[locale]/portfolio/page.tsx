@@ -85,6 +85,7 @@ export default async function PortfolioPage({ params }: Props) {
       />
 
       <Section wide>
+        <h2 className="sr-only">Our Projects</h2>
         {projects.length > 0 ? (
           <Carousel>
             {projects.map((project) => (

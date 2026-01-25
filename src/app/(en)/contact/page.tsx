@@ -88,9 +88,9 @@ export default function ContactPage() {
                 <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-neon/40 rounded-bl-lg" />
                 <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-neon/40 rounded-br-lg" />
 
-                <h3 className="text-lg font-semibold text-white mb-4">
+                <h2 className="text-lg font-semibold text-white mb-4">
                   {whatHappensNext.title}
-                </h3>
+                </h2>
                 <div className="space-y-3">
                   {whatHappensNext.body.map((paragraph, i) => (
                     <p
