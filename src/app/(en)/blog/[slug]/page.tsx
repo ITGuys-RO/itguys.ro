@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getPostLocalized, getPostsLocalized } from '@/lib/db';
+import { getPostLocalized } from '@/lib/db';
 import { Section } from '@/components/ui';
 
 export const runtime = 'edge';
@@ -23,15 +23,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   } catch {
     return { title: 'Blog | ITGuys' };
-  }
-}
-
-export async function generateStaticParams() {
-  try {
-    const posts = await getPostsLocalized('en');
-    return posts.map((post) => ({ slug: post.slug }));
-  } catch {
-    return [];
   }
 }
 

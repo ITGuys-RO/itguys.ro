@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getPostLocalized, getPostsLocalized } from '@/lib/db';
+import { getPostLocalized } from '@/lib/db';
 import { Section } from '@/components/ui';
-import { locales, type Locale } from '@/i18n/config';
+import { type Locale } from '@/i18n/config';
 
 export const runtime = 'edge';
 
@@ -25,23 +25,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   } catch {
     return { title: 'Blog | ITGuys' };
   }
-}
-
-export async function generateStaticParams() {
-  const params: Array<{ locale: Locale; slug: string }> = [];
-
-  try {
-    for (const locale of locales) {
-      const posts = await getPostsLocalized(locale);
-      for (const post of posts) {
-        params.push({ locale, slug: post.slug });
-      }
-    }
-  } catch {
-    // Database not available
-  }
-
-  return params;
 }
 
 export default async function BlogPostPage({ params }: Props) {
