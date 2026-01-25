@@ -19,10 +19,14 @@ export function getAdminUser(request: NextRequest): CloudflareAccessPayload | nu
   // For local development, allow access without authentication
   if (!jwt) {
     // Check for dev mode - allows local testing without Cloudflare Access
-    // Works with both Next.js dev server (NODE_ENV) and wrangler dev (ADMIN_DEV_BYPASS)
-    const isDev = process.env.NODE_ENV === 'development' || process.env.ADMIN_DEV_BYPASS === 'true';
-    if (isDev) {
-      return { email: 'dev@localhost', sub: 'dev' };
+    // Use try-catch because process.env may not exist in Cloudflare Workers
+    try {
+      const isDev = process.env.NODE_ENV === 'development' || process.env.ADMIN_DEV_BYPASS === 'true';
+      if (isDev) {
+        return { email: 'dev@localhost', sub: 'dev' };
+      }
+    } catch {
+      // process.env not available in production - that's fine
     }
     return null;
   }
@@ -73,8 +77,16 @@ export function handleApiError(error: unknown): NextResponse {
   }
 
   console.error('API Error:', error);
+
+  // Include more details in development/debug
   const message = error instanceof Error ? error.message : 'Internal server error';
-  return NextResponse.json({ error: message }, { status: 500 });
+  const stack = error instanceof Error ? error.stack : undefined;
+
+  return NextResponse.json({
+    error: message,
+    // Include stack trace for debugging (remove in production if sensitive)
+    stack: stack?.split('\n').slice(0, 5).join('\n')
+  }, { status: 500 });
 }
 
 // Wrapper to handle authentication and errors for admin API routes
