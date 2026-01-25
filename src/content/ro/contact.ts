@@ -25,7 +25,7 @@ export const contactContent = {
   whatHappensNext: {
     title: "Ce urmează",
     body: [
-      "Vom analiza mesajul tău și vom răspunde în 1-2 zile lucrătoare. Dacă există potrivire, vom programa un apel scurt pentru a discuta obiectivele tale și a pregăti o propunere.",
+      "Vom analiza mesajul tău și vom răspunde în 1-2 zile lucrătoare. Dacă ne potrivim, vom programa un apel scurt pentru a discuta obiectivele tale și a pregăti o propunere.",
       "Fără obligații. Dacă nu suntem echipa potrivită pentru proiectul tău, îți vom spune.",
     ],
   },
