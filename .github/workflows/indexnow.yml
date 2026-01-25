@@ -28,20 +28,34 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
 
+      # Security: Cache is validated in the next step to prevent cache poisoning.
+      # Only URLs matching https://itguys.ro/* are accepted.
       - name: Restore previously submitted URLs cache
         id: cache-restore
         uses: actions/cache/restore@v4
         with:
           path: submitted-urls.txt
-          key: indexnow-submitted-urls-v1
+          key: indexnow-submitted-${{ github.repository }}-v1
           restore-keys: |
-            indexnow-submitted-
+            indexnow-submitted-${{ github.repository }}-
 
-      - name: Find new URLs to submit
+      - name: Validate and find new URLs to submit
         id: find-new
         run: |
           # Create empty file if no cache exists
           touch submitted-urls.txt
+
+          # Validate cached file: must only contain valid https://itguys.ro URLs
+          # This prevents cache poisoning attacks
+          if [ -s submitted-urls.txt ]; then
+            INVALID_LINES=$(grep -cvE '^https://itguys\.ro(/|$)' submitted-urls.txt 2>/dev/null || echo "0")
+            if [ "$INVALID_LINES" -gt 0 ]; then
+              echo "WARNING: Cache contains invalid URLs, discarding cached data"
+              echo "Invalid lines found: $INVALID_LINES"
+              rm submitted-urls.txt
+              touch submitted-urls.txt
+            fi
+          fi
 
           echo "=== Current sitemap URLs ==="
           cat sitemap-urls.txt
@@ -124,9 +138,11 @@ jobs:
         if: steps.find-new.outputs.has_new == 'true' && steps.submit.outputs.success == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
         run: |
           echo "Clearing old IndexNow caches..."
-          gh cache list --json key -q '.[].key' | grep -E '^indexnow-submitted-' | while read key; do
+          SAFE_REPO=$(echo "$REPO" | sed 's/[^a-zA-Z0-9_-]/-/g')
+          gh cache list --json key -q '.[].key' | grep -E "^indexnow-submitted-${SAFE_REPO}-" | while read key; do
             echo "Deleting cache: $key"
             gh cache delete "$key" || true
           done
@@ -137,4 +153,4 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: submitted-urls.txt
-          key: indexnow-submitted-urls-v1
+          key: indexnow-submitted-${{ github.repository }}-v1
