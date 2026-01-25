@@ -52,7 +52,8 @@ export function ContactIllustration({ className = "" }: { className?: string }) 
           width="180"
           height="120"
           rx="8"
-          className="fill-[var(--background)]"
+          className="fill-[var(--illust-paper)] stroke-[var(--illust-paper-stroke)]"
+          strokeWidth="2"
         />
         {/* Text lines on paper */}
         <rect x="20" y="20" width="80" height="8" rx="2" className="fill-[var(--illust-primary)]" />

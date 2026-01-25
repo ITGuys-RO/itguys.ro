@@ -37,6 +37,9 @@
   --illust-device-frame: #e4e4e7;
   --illust-device-stand: #d4d4d8;
   --illust-device-base: #f4f4f5;
+  /* Paper - light in both themes with stroke for definition */
+  --illust-paper: #fafaf8;
+  --illust-paper-stroke: #d4d4d8;
 }
 
 /* Light theme - applied via .light class on html */
@@ -75,6 +78,9 @@ html.light {
   --illust-device-frame: #27272a;
   --illust-device-stand: #3f3f46;
   --illust-device-base: #18181b;
+  /* Paper - slightly tinted for visibility against white background */
+  --illust-paper: #e8e8e0;
+  --illust-paper-stroke: #9ca3af;
 }
 
 @theme inline {

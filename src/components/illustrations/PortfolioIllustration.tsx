@@ -13,7 +13,7 @@ export function PortfolioIllustration({ className = "" }: { className?: string }
           width="240"
           height="180"
           rx="12"
-          className="fill-[var(--terminal-frame)]"
+          className="fill-[var(--illust-device-frame)]"
         />
         {/* Screen bezel */}
         <rect
@@ -62,8 +62,8 @@ export function PortfolioIllustration({ className = "" }: { className?: string }
         <rect x="113" y="120" width="30" height="14" rx="7" className="fill-[var(--illust-primary)]" />
 
         {/* Monitor stand */}
-        <rect x="100" y="180" width="40" height="20" className="fill-[var(--terminal-frame)]" />
-        <rect x="80" y="195" width="80" height="8" rx="4" className="fill-[var(--terminal-frame)]" />
+        <rect x="100" y="180" width="40" height="20" className="fill-[var(--illust-device-stand)]" />
+        <rect x="80" y="195" width="80" height="8" rx="4" className="fill-[var(--illust-device-base)]" />
       </g>
 
       {/* Floating project card - top left */}
