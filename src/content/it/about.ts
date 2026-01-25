@@ -29,7 +29,7 @@ export const aboutContent = {
   mission: {
     title: "La Nostra Missione",
     body: [
-      "In ITGuys ci interessano due cose: codice organizzato e funzionalita che funzionano davvero. Affidabile per te, semplice per i tuoi utenti.",
+      "In ITGuys ci interessano due cose: codice organizzato e funzionalità davvero utili. Affidabile per te, semplice per i tuoi utenti.",
       "Costruiamo cose che uniscono le persone e le tengono al sicuro. Cose che la gente vuole davvero usare e raccomandare.",
       "Prendiamo il lavoro seriamente. Ogni progetto riceve la nostra piena attenzione.",
     ],

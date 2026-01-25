@@ -10,7 +10,7 @@ export const aboutContent = {
   vision: {
     title: "Viziunea noastră",
     body: [
-      "Nu doar livrăm un serviciu. Construim relații reale cu clienții noștri, înțelegem ce vor să realizeze și facem obiectivele lor ale noastre.",
+      "Nu doar livrăm un serviciu. Construim relații reale cu toți clienții noștri, înțelegem ce vor să obțină și facem ca obiectivele lor să devină și ale noastre.",
       "Învățăm mereu. Fiecare proiect ne învață ceva nou și ne permite să testăm ce putem face.",
       "Construim software care se potrivește problemei tale specifice. Simplu unde poate fi, solid unde trebuie să fie.",
     ],
@@ -29,7 +29,7 @@ export const aboutContent = {
   mission: {
     title: "Misiunea noastră",
     body: [
-      "La ITGuys, ne pasă de două lucruri: cod organizat și funcționalități care chiar funcționează. Fiabil pentru tine, simplu pentru utilizatorii tăi.",
+      "La ITGuys, ne pasă de două lucruri: cod organizat și funcționalități care chiar sunt utile. Fiabil pentru tine, simplu pentru utilizatorii tăi.",
       "Construim lucruri care aduc oamenii împreună și îi păstrează în siguranță. Lucruri pe care oamenii chiar vor să le folosească și să le recomande.",
       "Luăm munca în serios. Fiecare proiect primește toată atenția noastră.",
     ],
@@ -42,7 +42,7 @@ export const aboutContent = {
   whatWeBelieve: {
     title: "Principiile noastre",
     intro:
-      "Scriem cod, dar nu doar asta ne preocupă. Suntem mândri de ce construim. Aceste principii definesc cum lucrăm.",
+      "Scriem cod, dar nu doar asta ne preocupă. Suntem mândri de ce construim. Aceste principii definesc modul în care lucrăm.",
     values: [
       {
         title: "Simplitate",
@@ -62,7 +62,7 @@ export const aboutContent = {
       {
         title: "Securitate",
         description:
-          "Cu atacurile cibernetice în creștere, ne asigurăm că produsele sunt livrate în siguranță fără a compromite integritatea utilizatorului. Securitatea este cerința de bază pentru orice interacțiune ulterioară.",
+          "Cu atacurile cibernetice în creștere, ne asigurăm că produsele sunt livrate în siguranță, fără a compromite integritatea utilizatorului. Securitatea este cerința de bază pentru orice interacțiune ulterioară.",
       },
       {
         title: "Unealta potrivită pentru job",
@@ -89,7 +89,7 @@ export const aboutContent = {
       {
         title: "Proiecte cu preț fix",
         description:
-          "Angajament complet din partea echipei ITGuys. Îți luăm conceptul de la idee la produs funcțional, ne ocupăm de design și arhitectură, și ne asigurăm că e securizat din prima zi.",
+          "Angajament complet din partea echipei ITGuys. Îți transformăm ideea în produs funcțional, ne ocupăm de design și arhitectură, și ne asigurăm că e securizat din prima zi.",
         ideal: "Ideal pentru: Produse noi, MVP-uri sau construcții complete de sistem.",
       },
     ],

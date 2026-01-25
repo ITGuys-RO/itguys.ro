@@ -29,7 +29,7 @@ export const aboutContent = {
   mission: {
     title: "Our Mission",
     body: [
-      "At ITGuys, we care about two things: code that's organized and features that actually work. Reliable for you, simple for your users.",
+      "At ITGuys, we care about two things: code that's organized and features that are actually useful. Reliable for you, simple for your users.",
       "We build things that bring people together and keep them safe. Things people actually want to use and recommend.",
       "We take the work seriously. Every project gets our full attention.",
     ],
