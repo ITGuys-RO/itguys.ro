@@ -38,10 +38,10 @@ declare global {
   }
 }
 
-export function getDB(): D1Database {
+export async function getDB(): Promise<D1Database> {
   // Use OpenNext's getCloudflareContext to access bindings
-  // This works in both edge and nodejs runtimes
-  const { env } = getCloudflareContext();
+  // Using async mode for production compatibility
+  const { env } = await getCloudflareContext({ async: true });
 
   if (env.DB) {
     return env.DB;
@@ -52,7 +52,7 @@ export function getDB(): D1Database {
 
 // Helper to run a single query and return results
 export async function query<T>(sql: string, params: unknown[] = []): Promise<T[]> {
-  const db = getDB();
+  const db = await getDB();
   const stmt = db.prepare(sql);
   const bound = params.length > 0 ? stmt.bind(...params) : stmt;
   const result = await bound.all<T>();
@@ -61,7 +61,7 @@ export async function query<T>(sql: string, params: unknown[] = []): Promise<T[]
 
 // Helper to run a single query and return first result
 export async function queryFirst<T>(sql: string, params: unknown[] = []): Promise<T | null> {
-  const db = getDB();
+  const db = await getDB();
   const stmt = db.prepare(sql);
   const bound = params.length > 0 ? stmt.bind(...params) : stmt;
   return bound.first<T>();
@@ -69,7 +69,7 @@ export async function queryFirst<T>(sql: string, params: unknown[] = []): Promis
 
 // Helper to run an insert/update/delete and return affected rows info
 export async function execute(sql: string, params: unknown[] = []): Promise<{ changes: number; lastRowId: number }> {
-  const db = getDB();
+  const db = await getDB();
   const stmt = db.prepare(sql);
   const bound = params.length > 0 ? stmt.bind(...params) : stmt;
   const result = await bound.run();
@@ -81,7 +81,7 @@ export async function execute(sql: string, params: unknown[] = []): Promise<{ ch
 
 // Helper to run multiple statements in a batch
 export async function batch(statements: Array<{ sql: string; params?: unknown[] }>): Promise<D1Result[]> {
-  const db = getDB();
+  const db = await getDB();
   const prepared = statements.map(({ sql, params }) => {
     const stmt = db.prepare(sql);
     return params && params.length > 0 ? stmt.bind(...params) : stmt;
