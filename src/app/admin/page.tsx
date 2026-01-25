@@ -43,6 +43,12 @@ const sections = [
     href: '/admin/translations',
     count: null,
   },
+  {
+    title: 'IndexNow',
+    description: 'Search engine URL submissions',
+    href: '/admin/indexnow',
+    count: null,
+  },
 ];
 
 export default function AdminDashboard() {
