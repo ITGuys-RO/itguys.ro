@@ -3,18 +3,19 @@ compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 main = ".open-next/worker.js"
 routes = [
-  { pattern = "yourdomain.com", custom_domain = true }
+  { pattern = "itguys.ro", custom_domain = true },
+  { pattern = "www.itguys.ro", custom_domain = true }
 ]
 
 [assets]
 directory = ".open-next/assets"
 
 [vars]
-TELEGRAM_BOT_TOKEN = "your_bot_token_here"
-TELEGRAM_CHAT_ID = "your_chat_id_here"
-TURNSTILE_SECRET_KEY = "your_turnstile_secret_key_here"
+TELEGRAM_BOT_TOKEN = "${TELEGRAM_BOT_TOKEN}"
+TELEGRAM_CHAT_ID = "${TELEGRAM_CHAT_ID}"
+TURNSTILE_SECRET_KEY = "${TURNSTILE_SECRET_KEY}"
 
-[d1_databases]
+[[d1_databases]]
 binding = "DB"
-database_name = "your_database_name"
-database_id = "your_database_id"
+database_name = "itguys-ro"
+database_id = "${D1_DATABASE_ID}"

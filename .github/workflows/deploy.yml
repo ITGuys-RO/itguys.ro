@@ -26,7 +26,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "pnpm"
 
       - name: Cache Next.js build
@@ -42,40 +42,35 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate wrangler.toml
-        run: |
-          cat > wrangler.toml << 'EOF'
-          name = "itguys-website"
-          compatibility_date = "2024-09-23"
-          compatibility_flags = ["nodejs_compat"]
-          main = ".open-next/worker.js"
-          [[routes]]
-          pattern = "itguys.ro"
-          custom_domain = true
-
-          [[routes]]
-          pattern = "www.itguys.ro"
-          custom_domain = true
-
-          [assets]
-          directory = ".open-next/assets"
-
-          [vars]
-          TELEGRAM_BOT_TOKEN = "${{ secrets.TELEGRAM_BOT_TOKEN }}"
-          TELEGRAM_CHAT_ID = "${{ secrets.TELEGRAM_CHAT_ID }}"
-          TURNSTILE_SECRET_KEY = "${{ secrets.TURNSTILE_SECRET_KEY }}"
-          EOF
+      - name: Generate wrangler.toml from example
+        run: envsubst < wrangler.toml.example > wrangler.toml
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+          D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
 
       - name: Build
-        run: pnpm build:cloudflare
+        run: pnpm build
         env:
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
+
+      - name: Run D1 migrations
+        run: |
+          for migration in migrations/*.sql; do
+            if [ -f "$migration" ]; then
+              echo "Running migration: $migration"
+              pnpm wrangler d1 execute itguys-ro --remote --file="$migration"
+            fi
+          done
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
       - name: Generate sitemap URLs
         run: |
           BASE_URL="https://itguys.ro"
           LOCALES=("en" "ro" "fr" "de" "it" "es")
-          PAGES=("" "/development" "/services" "/about" "/portfolio" "/contact")
+          PAGES=("" "/development" "/services" "/about" "/portfolio" "/contact" "/blog")
 
           for page in "${PAGES[@]}"; do
             for locale in "${LOCALES[@]}"; do

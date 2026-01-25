@@ -17,12 +17,8 @@
     ]
   },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "build:cloudflare": "npx @opennextjs/cloudflare build",
-    "start": "next start",
-    "preview": "wrangler dev",
-    "deploy": "wrangler deploy",
+    "dev": "npx @opennextjs/cloudflare build && wrangler dev",
+    "build": "npx @opennextjs/cloudflare build",
     "lint": "eslint ."
   },
   "dependencies": {
