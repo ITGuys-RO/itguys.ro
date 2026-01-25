@@ -53,6 +53,7 @@ jobs:
       - name: Build
         run: pnpm build
         env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
 
       - name: Run D1 migrations
