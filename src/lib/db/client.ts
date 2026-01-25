@@ -28,9 +28,6 @@ export type D1ExecResult = {
   duration: number;
 };
 
-// Import getCloudflareContext from OpenNext for accessing D1 bindings
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-
 // Extend CloudflareEnv globally to include our D1 binding
 declare global {
   interface CloudflareEnv {
@@ -39,8 +36,10 @@ declare global {
 }
 
 export async function getDB(): Promise<D1Database> {
-  // Use OpenNext's getCloudflareContext to access bindings
-  // Using async mode for production compatibility
+  // Dynamic import to avoid bundling issues with OpenNext
+  const { getCloudflareContext } = await import('@opennextjs/cloudflare');
+
+  // Use async mode for production compatibility
   const { env } = await getCloudflareContext({ async: true });
 
   if (env.DB) {
