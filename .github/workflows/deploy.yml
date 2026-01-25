@@ -58,10 +58,27 @@ jobs:
 
       - name: Run D1 migrations
         run: |
+          # Ensure migrations tracking table exists
+          pnpm wrangler d1 execute itguys-ro --remote --file="migrations/0000_migrations_tracking.sql"
+
+          # Get list of applied migrations
+          APPLIED=$(pnpm wrangler d1 execute itguys-ro --remote --command "SELECT name FROM _migrations" --json | jq -r '.[0].results[].name' 2>/dev/null || echo "")
+
           for migration in migrations/*.sql; do
             if [ -f "$migration" ]; then
-              echo "Running migration: $migration"
+              MIGRATION_NAME=$(basename "$migration")
+
+              # Skip if already applied
+              if echo "$APPLIED" | grep -q "^${MIGRATION_NAME}$"; then
+                echo "Skipping (already applied): $MIGRATION_NAME"
+                continue
+              fi
+
+              echo "Running migration: $MIGRATION_NAME"
               pnpm wrangler d1 execute itguys-ro --remote --file="$migration"
+
+              # Record migration as applied
+              pnpm wrangler d1 execute itguys-ro --remote --command "INSERT INTO _migrations (name) VALUES ('$MIGRATION_NAME')"
             fi
           done
         env:

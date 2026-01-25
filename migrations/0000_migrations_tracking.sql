@@ -1,0 +1,6 @@
+-- Track applied migrations
+CREATE TABLE IF NOT EXISTS _migrations (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT UNIQUE NOT NULL,
+  applied_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
