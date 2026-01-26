@@ -37,6 +37,8 @@ jobs:
       - name: Publish to database
         run: |
           curl -X POST "${{ vars.SITE_URL }}/api/automation/posts" \
+            -H "CF-Access-Client-Id: ${{ secrets.CF_ACCESS_CLIENT_ID }}" \
+            -H "CF-Access-Client-Secret: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}" \
             -H "Authorization: Bearer ${{ secrets.AUTOMATION_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d @blog-post.json
