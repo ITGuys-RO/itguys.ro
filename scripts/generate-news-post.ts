@@ -49,16 +49,51 @@ function stripMarkdownFences(text: string): string {
   return text.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
 }
 
+function repairJson(jsonStr: string): string {
+  // Fix common JSON issues from LLM output
+  let fixed = jsonStr;
+
+  // Remove any trailing content after the closing brace
+  const lastBrace = fixed.lastIndexOf('}');
+  if (lastBrace !== -1 && lastBrace < fixed.length - 1) {
+    fixed = fixed.slice(0, lastBrace + 1);
+  }
+
+  // Fix unescaped newlines within strings (common LLM issue)
+  // This regex finds strings and escapes literal newlines inside them
+  fixed = fixed.replace(
+    /"([^"\\]|\\.)*"/g,
+    (match) => match.replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t')
+  );
+
+  // Remove trailing commas before } or ]
+  fixed = fixed.replace(/,(\s*[}\]])/g, '$1');
+
+  return fixed;
+}
+
 function parseJsonSafe(jsonStr: string, context: string): BlogPost {
   try {
     return JSON.parse(jsonStr) as BlogPost;
-  } catch (error) {
-    // Log the problematic JSON for debugging
-    console.error(`JSON parse error in ${context}:`);
-    console.error(`Error: ${error}`);
-    console.error(`JSON length: ${jsonStr.length}`);
-    console.error(`Last 200 chars: ${jsonStr.slice(-200)}`);
-    throw error;
+  } catch (firstError) {
+    // Try to repair the JSON
+    console.log(`JSON parse failed, attempting repair...`);
+    try {
+      const repaired = repairJson(jsonStr);
+      const result = JSON.parse(repaired) as BlogPost;
+      console.log(`JSON repair successful`);
+      return result;
+    } catch (repairError) {
+      // Log the problematic JSON for debugging
+      console.error(`JSON parse error in ${context}:`);
+      console.error(`Error: ${firstError}`);
+      console.error(`JSON length: ${jsonStr.length}`);
+      console.error(`Last 200 chars: ${jsonStr.slice(-200)}`);
+      // Write raw JSON to file for debugging
+      writeFileSync('debug-json-output.txt', jsonStr);
+      console.error(`Raw JSON written to debug-json-output.txt`);
+      throw firstError;
+    }
   }
 }
 
@@ -107,7 +142,13 @@ ${BRAND_VOICE_PROMPT}
 3. Include practical takeaways for readers
 
 ## Output Format
-Output a single JSON object (no markdown fencing) matching this exact structure:
+Output a single valid JSON object (no markdown fencing) matching this exact structure.
+
+CRITICAL JSON RULES:
+- All strings must use double quotes
+- Escape special characters: use \\n for newlines, \\" for quotes inside strings
+- No trailing commas
+- No comments
 
 {
   "slug": "YYYY-MM-DD-tech-news-roundup",
@@ -202,7 +243,8 @@ Rules summary: Remove AI vocabulary (additionally, crucial, delve, landscape, ta
 Process all 6 locale translations. For each, humanize: title, excerpt, content, meta_description.
 Do NOT change: slug, image_path, author_id, published_at, is_published, tags, meta_title.
 
-IMPORTANT: Output ONLY the JSON object. No explanation, no preamble, no markdown fencing.
+IMPORTANT: Output ONLY valid JSON. No explanation, no preamble, no markdown fencing.
+JSON RULES: Use double quotes, escape \\n for newlines and \\" for quotes in strings, no trailing commas.
 
 ${JSON.stringify(blogPost, null, 2)}`;
 
