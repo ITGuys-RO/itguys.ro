@@ -16,6 +16,19 @@ function stripMarkdownFences(text: string): string {
   return text.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
 }
 
+function parseJsonSafe(jsonStr: string, context: string): BlogPost {
+  try {
+    return JSON.parse(jsonStr) as BlogPost;
+  } catch (error) {
+    // Log the problematic JSON for debugging
+    console.error(`JSON parse error in ${context}:`);
+    console.error(`Error: ${error}`);
+    console.error(`JSON length: ${jsonStr.length}`);
+    console.error(`Last 200 chars: ${jsonStr.slice(-200)}`);
+    throw error;
+  }
+}
+
 function stripThinkingTags(text: string): string {
   // Remove <think>...</think> sections from sonar-reasoning-pro responses
   return text.replace(/<think>[\s\S]*?<\/think>\s*/gi, '').trim();
@@ -110,23 +123,31 @@ async function generateBlogPost(newsContent: string): Promise<BlogPost> {
 
   const response = await anthropic.messages.create({
     model: ANTHROPIC_MODEL,
-    max_tokens: 16000,
+    max_tokens: 32000,
     messages: [
       {
         role: 'user',
         content: BLOG_POST_PROMPT + newsContent,
       },
+      {
+        role: 'assistant',
+        content: '{',
+      },
     ],
   });
+
+  if (response.stop_reason !== 'end_turn') {
+    console.error(`Warning: Response stopped due to ${response.stop_reason}`);
+  }
 
   const textContent = response.content.find((block) => block.type === 'text');
   if (!textContent || textContent.type !== 'text') {
     throw new Error('No text content in response');
   }
 
-  // Parse the JSON response (strip markdown fences if present)
-  const jsonStr = stripMarkdownFences(textContent.text);
-  return JSON.parse(jsonStr) as BlogPost;
+  // Parse the JSON response (prepend the '{' we used as prefill)
+  const jsonStr = '{' + stripMarkdownFences(textContent.text);
+  return parseJsonSafe(jsonStr, 'generateBlogPost');
 }
 
 async function humanizeBlogPost(
@@ -148,7 +169,7 @@ ${JSON.stringify(blogPost, null, 2)}`;
 
   const response = await anthropic.messages.create({
     model: ANTHROPIC_MODEL,
-    max_tokens: 16000,
+    max_tokens: 32000,
     messages: [
       {
         role: 'user',
@@ -161,6 +182,10 @@ ${JSON.stringify(blogPost, null, 2)}`;
     ],
   });
 
+  if (response.stop_reason !== 'end_turn') {
+    console.error(`Warning: Response stopped due to ${response.stop_reason}`);
+  }
+
   const textContent = response.content.find((block) => block.type === 'text');
   if (!textContent || textContent.type !== 'text') {
     throw new Error('No text content in response');
@@ -168,7 +193,7 @@ ${JSON.stringify(blogPost, null, 2)}`;
 
   // Parse the JSON response (prepend the '{' we used as prefill)
   const jsonStr = '{' + stripMarkdownFences(textContent.text);
-  return JSON.parse(jsonStr) as BlogPost;
+  return parseJsonSafe(jsonStr, 'humanizeBlogPost');
 }
 
 async function main() {
