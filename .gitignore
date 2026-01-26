@@ -50,3 +50,4 @@ wrangler.toml
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+blog-post.json
