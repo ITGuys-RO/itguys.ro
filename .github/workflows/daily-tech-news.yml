@@ -1,0 +1,120 @@
+name: Daily Tech News Generator
+
+on:
+  schedule:
+    - cron: '0 10 * * *'  # 10:00 AM UTC daily
+  workflow_dispatch:  # Manual trigger for testing
+
+jobs:
+  generate-post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Clone humanizer skill
+        run: |
+          mkdir -p .claude/skills
+          gh repo clone blader/humanizer .claude/skills/humanizer
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Generate news report from Perplexity
+        id: perplexity
+        run: |
+          RESPONSE=$(curl -s "https://api.perplexity.ai/chat/completions" \
+            -H "Authorization: Bearer ${{ secrets.PERPLEXITY_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "model": "sonar-reasoning-pro",
+              "messages": [{
+                "role": "user",
+                "content": "Generate a comprehensive and structured news report focused on today'\''s tech news across web development, mobile development, security, AI/ML, and DevOps/cloud areas. For each area, provide 2-3 significant news items with brief explanations of why they matter. Focus on actionable insights and practical implications for developers and tech teams."
+              }]
+            }')
+
+          # Extract content from sonar-reasoning-pro response
+          # This model returns <think>...</think> followed by actual content
+          RAW_CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
+
+          # Strip the <think>...</think> section (multiline) to get the actual news report
+          echo "$RAW_CONTENT" | perl -0777 -pe 's/<think>.*?<\/think>\s*//gs' > perplexity-news.md
+          echo "News report generated"
+
+      - name: Generate blog post with Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            Read the tech news report from perplexity-news.md.
+
+            Generate a blog post following these requirements:
+
+            ## ITGuys Brand Voice
+            - Direct and honest - no fluff, no buzzwords
+            - Security-first perspective - weave security implications into the narrative
+            - Pragmatic - focus on practical implications for developers and teams
+            - Professionally casual tone - "Let's Talk" not "Contact Us"
+            - Experience-driven - reference real-world scenarios
+
+            ## Content Requirements
+            1. Transform the news report into an engaging daily tech roundup
+            2. Add ITGuys perspective on security implications where relevant
+            3. Include practical takeaways for readers
+
+            ## Output Format
+            Output a single JSON object (no markdown fencing) matching this exact structure:
+
+            {
+              "slug": "YYYY-MM-DD-tech-news-roundup",
+              "image_path": null,
+              "author_id": null,
+              "published_at": "ISO8601 timestamp",
+              "is_published": 1,
+              "tags": ["tech-news", "daily-roundup", ...relevant tags],
+              "translations": {
+                "en": {
+                  "title": "...",
+                  "excerpt": "2-3 sentence summary",
+                  "content": "Full markdown content",
+                  "meta_title": "Max 60 chars for SEO",
+                  "meta_description": "Max 155 chars for SEO"
+                },
+                "ro": { ...Romanian translation... },
+                "fr": { ...French translation... },
+                "de": { ...German translation... },
+                "it": { ...Italian translation... },
+                "es": { ...Spanish translation... }
+              }
+            }
+
+            Use today's date for the slug and published_at.
+          allowed_tools: "Read,Write"
+          output_file: "blog-post.json"
+
+      - name: Humanize blog post with Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          prompt: |
+            Read the humanizer skill from .claude/skills/humanizer/SKILL.md.
+            Read the blog post from blog-post.json.
+
+            Apply ALL humanizer patterns to the blog post content to remove AI writing artifacts.
+            Process all 6 locale translations (en, ro, fr, de, it, es).
+
+            For each translation, humanize:
+            - title
+            - excerpt
+            - content
+            - meta_description
+
+            Output the humanized blog post as a JSON object with the same structure.
+            Do not change the slug, image_path, author_id, published_at, is_published, or tags.
+          allowed_tools: "Read,Write"
+          output_file: "blog-post.json"
+
+      - name: Publish to database
+        run: |
+          curl -X POST "${{ vars.SITE_URL }}/api/automation/posts" \
+            -H "Authorization: Bearer ${{ secrets.AUTOMATION_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d @blog-post.json
