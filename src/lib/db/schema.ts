@@ -276,6 +276,7 @@ export interface PostLocalized {
   content: string;
   imagePath: string | null;
   publishedAt: string | null;
+  updatedAt: string;
   metaTitle: string | null;
   metaDescription: string | null;
   tags: string[];

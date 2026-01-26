@@ -206,6 +206,80 @@ export function CheckboxField({
   );
 }
 
+interface DateTimeFieldProps {
+  label: string;
+  name: string;
+  value: string | null;
+  onChange: (value: string | null) => void;
+  required?: boolean;
+  disabled?: boolean;
+  className?: string;
+  helpText?: string;
+}
+
+export function DateTimeField({
+  label,
+  name,
+  value,
+  onChange,
+  required = false,
+  disabled = false,
+  className,
+  helpText,
+}: DateTimeFieldProps) {
+  // Convert ISO string to datetime-local format (YYYY-MM-DDTHH:MM)
+  const toDateTimeLocal = (isoString: string | null): string => {
+    if (!isoString) return '';
+    // Handle both date-only (YYYY-MM-DD) and full ISO strings
+    if (isoString.length === 10) {
+      return `${isoString}T12:00`; // Default to noon if only date provided
+    }
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return '';
+    // Format as YYYY-MM-DDTHH:MM in local timezone
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  // Convert datetime-local format back to ISO string
+  const fromDateTimeLocal = (dateTimeLocal: string): string | null => {
+    if (!dateTimeLocal) return null;
+    const date = new Date(dateTimeLocal);
+    if (isNaN(date.getTime())) return null;
+    return date.toISOString();
+  };
+
+  return (
+    <div className={clsx('flex flex-col gap-1.5', className)}>
+      <label htmlFor={name} className="text-sm font-medium text-brand-200">
+        {label}
+        {required && <span className="text-neon-pink ml-1">*</span>}
+      </label>
+      <input
+        type="datetime-local"
+        id={name}
+        name={name}
+        value={toDateTimeLocal(value)}
+        onChange={(e) => onChange(fromDateTimeLocal(e.target.value))}
+        required={required}
+        disabled={disabled}
+        className={clsx(
+          'px-4 py-2.5 rounded-lg border bg-brand-900/60 backdrop-blur-sm text-white',
+          'focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-400/50',
+          'transition-all duration-200',
+          '[color-scheme:dark]', // Ensures dark theme for the calendar picker
+          disabled ? 'opacity-50 cursor-not-allowed border-brand-700/30' : 'border-brand-700/50'
+        )}
+      />
+      {helpText && <p className="text-xs text-brand-400">{helpText}</p>}
+    </div>
+  );
+}
+
 interface TagInputProps {
   label: string;
   value: string[];

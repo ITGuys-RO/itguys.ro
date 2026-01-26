@@ -1,11 +1,12 @@
 import { MetadataRoute } from 'next';
 import { locales, defaultLocale } from '@/i18n/config';
+import { getPosts } from '@/lib/db/posts';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://itguys.ro';
   // Use a static date for lastModified to avoid constant changes
   // Update this date when you make significant content updates
-  const lastModified = new Date('2026-01-24');
+  const staticLastModified = new Date('2026-01-24');
 
   const pages = [
     { path: '', priority: 1.0, changeFrequency: 'weekly' as const },
@@ -14,6 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/about', priority: 0.8, changeFrequency: 'monthly' as const },
     { path: '/portfolio', priority: 0.8, changeFrequency: 'weekly' as const },
     { path: '/contact', priority: 0.7, changeFrequency: 'monthly' as const },
+    { path: '/blog', priority: 0.8, changeFrequency: 'weekly' as const },
   ];
 
   const entries: MetadataRoute.Sitemap = [];
@@ -29,6 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     return alternates;
   };
 
+  // Add static pages
   for (const page of pages) {
     for (const locale of locales) {
       const url = locale === defaultLocale
@@ -37,11 +40,35 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
       entries.push({
         url,
-        lastModified,
+        lastModified: staticLastModified,
         changeFrequency: page.changeFrequency,
         priority: page.priority,
         alternates: {
           languages: createLanguageAlternates(page.path),
+        },
+      });
+    }
+  }
+
+  // Add blog posts dynamically from database
+  const posts = await getPosts(true); // Only published posts
+
+  for (const post of posts) {
+    const postPath = `/blog/${post.slug}`;
+    const postLastModified = new Date(post.updated_at);
+
+    for (const locale of locales) {
+      const url = locale === defaultLocale
+        ? `${baseUrl}${postPath}`
+        : `${baseUrl}/${locale}${postPath}`;
+
+      entries.push({
+        url,
+        lastModified: postLastModified,
+        changeFrequency: 'monthly' as const,
+        priority: 0.7,
+        alternates: {
+          languages: createLanguageAlternates(postPath),
         },
       });
     }

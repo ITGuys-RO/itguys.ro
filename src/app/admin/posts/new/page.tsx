@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { InputField, TextareaField, CheckboxField, TagInput, LocaleFields, MarkdownEditor } from '@/components/admin';
+import { InputField, TextareaField, CheckboxField, DateTimePicker, TagInput, LocaleFields, MarkdownEditor } from '@/components/admin';
 import type { PostInput } from '@/lib/db';
 import type { Locale } from '@/i18n/config';
 
@@ -14,6 +14,25 @@ type TranslationData = {
   meta_title: string | null;
   meta_description: string | null;
 };
+
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+    .trim()
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-'); // Remove consecutive hyphens
+}
+
+function truncateForMeta(text: string, maxLength: number = 155): string {
+  if (!text || text.length <= maxLength) return text;
+  // Truncate at word boundary
+  const truncated = text.slice(0, maxLength);
+  const lastSpace = truncated.lastIndexOf(' ');
+  return (lastSpace > maxLength - 30 ? truncated.slice(0, lastSpace) : truncated) + '...';
+}
 
 export default function NewPostPage() {
   const router = useRouter();
@@ -68,7 +87,7 @@ export default function NewPostPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <InputField label="Slug" name="slug" value={formData.slug} onChange={(v) => setFormData({ ...formData, slug: v })} required helpText="URL-friendly identifier" />
             <InputField label="Image Path" name="image_path" value={formData.image_path || ''} onChange={(v) => setFormData({ ...formData, image_path: v || null })} />
-            <InputField label="Published At" name="published_at" value={formData.published_at || ''} onChange={(v) => setFormData({ ...formData, published_at: v || null })} helpText="YYYY-MM-DD format" />
+            <DateTimePicker label="Published At" name="published_at" value={formData.published_at ?? null} onChange={(v) => setFormData({ ...formData, published_at: v })} />
             <div className="flex items-end">
               <CheckboxField label="Published" name="is_published" checked={formData.is_published === 1} onChange={(c) => setFormData({ ...formData, is_published: c ? 1 : 0 })} description="Make this post visible to the public" />
             </div>
@@ -83,17 +102,65 @@ export default function NewPostPage() {
             translations={formData.translations as Partial<Record<Locale, TranslationData>>}
             onChange={(locale, data) => setFormData({ ...formData, translations: { ...formData.translations, [locale]: data } })}
             defaultData={defaultTranslation}
-            renderFields={(locale, data, onChange) => (
-              <div className="space-y-4">
-                <InputField label="Title" name={`title-${locale}`} value={data.title} onChange={(v) => onChange({ ...data, title: v })} required />
-                <TextareaField label="Excerpt" name={`excerpt-${locale}`} value={data.excerpt || ''} onChange={(v) => onChange({ ...data, excerpt: v || null })} rows={2} helpText="Brief summary for listings" />
-                <MarkdownEditor label="Content" name={`content-${locale}`} value={data.content} onChange={(v) => onChange({ ...data, content: v })} required />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <InputField label="Meta Title" name={`meta_title-${locale}`} value={data.meta_title || ''} onChange={(v) => onChange({ ...data, meta_title: v || null })} helpText="SEO title" />
-                  <InputField label="Meta Description" name={`meta_description-${locale}`} value={data.meta_description || ''} onChange={(v) => onChange({ ...data, meta_description: v || null })} helpText="SEO description" />
+            renderFields={(locale, data, onChange) => {
+              // Auto-fill meta_title from title if meta_title is empty
+              const handleTitleChange = (v: string) => {
+                const updates: Partial<TranslationData> = { title: v };
+                // Only auto-fill if meta_title is currently empty
+                if (!data.meta_title) {
+                  updates.meta_title = v || null;
+                }
+                if (locale === 'en') {
+                  // For English, also update slug
+                  const newTranslations = {
+                    ...formData.translations,
+                    en: { ...formData.translations.en!, ...updates },
+                  };
+                  setFormData({
+                    ...formData,
+                    slug: generateSlug(v),
+                    translations: newTranslations,
+                  });
+                } else {
+                  onChange({ ...data, ...updates });
+                }
+              };
+
+              // Auto-fill meta_description from excerpt if meta_description is empty
+              const handleExcerptChange = (v: string) => {
+                const updates: Partial<TranslationData> = { excerpt: v || null };
+                // Only auto-fill if meta_description is currently empty
+                if (!data.meta_description && v) {
+                  updates.meta_description = truncateForMeta(v);
+                }
+                onChange({ ...data, ...updates });
+              };
+
+              return (
+                <div className="space-y-4">
+                  <InputField
+                    label="Title"
+                    name={`title-${locale}`}
+                    value={data.title}
+                    onChange={handleTitleChange}
+                    required
+                  />
+                  <TextareaField
+                    label="Excerpt"
+                    name={`excerpt-${locale}`}
+                    value={data.excerpt || ''}
+                    onChange={handleExcerptChange}
+                    rows={2}
+                    helpText="Brief summary for listings (auto-fills meta description)"
+                  />
+                  <MarkdownEditor label="Content" name={`content-${locale}`} value={data.content} onChange={(v) => onChange({ ...data, content: v })} required />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <InputField label="Meta Title" name={`meta_title-${locale}`} value={data.meta_title || ''} onChange={(v) => onChange({ ...data, meta_title: v || null })} helpText="SEO title (auto-filled from title)" />
+                    <InputField label="Meta Description" name={`meta_description-${locale}`} value={data.meta_description || ''} onChange={(v) => onChange({ ...data, meta_description: v || null })} helpText="SEO description (max 155 chars)" />
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            }}
           />
         </div>
         <div className="flex justify-end gap-3">

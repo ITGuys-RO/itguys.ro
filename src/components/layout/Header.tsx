@@ -13,6 +13,7 @@ import {
   UserGroupIcon,
   ChatBubbleLeftRightIcon,
   ShieldCheckIcon,
+  NewspaperIcon,
 } from "@heroicons/react/24/outline";
 
 const navigation = [
@@ -20,6 +21,7 @@ const navigation = [
   { name: { en: "Services", ro: "Servicii", fr: "Services", de: "Dienstleistungen", it: "Servizi", es: "Servicios" }, href: "/services", icon: ShieldCheckIcon },
   { name: { en: "Portfolio", ro: "Portofoliu", fr: "Portfolio", de: "Portfolio", it: "Portfolio", es: "Portafolio" }, href: "/portfolio", icon: BriefcaseIcon },
   { name: { en: "About", ro: "Despre", fr: "À propos", de: "Über uns", it: "Chi Siamo", es: "Nosotros" }, href: "/about", icon: UserGroupIcon },
+  { name: { en: "Blog", ro: "Blog", fr: "Blog", de: "Blog", it: "Blog", es: "Blog" }, href: "/blog", icon: NewspaperIcon },
 ];
 
 type Props = {
