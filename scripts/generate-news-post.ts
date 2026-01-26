@@ -175,7 +175,7 @@ ${HUMANIZER_RULES}
 1. Transform the news report into an engaging, well-structured blog post
 2. Keep the ITGuys service connections from the source - weave them naturally into the narrative
 3. Don't sound salesy - the connections should feel like helpful context, not a pitch
-4. End with a soft CTA like "If [specific challenge from the news] sounds familiar, let's talk"
+4. End with a soft CTA like "If [specific challenge from the news] sounds familiar, [let's talk](/contact)" - always make "let's talk" a markdown link to /contact
 
 ## Output Format
 Output a single valid JSON object (no markdown fencing) matching this exact structure.
@@ -209,7 +209,15 @@ CRITICAL JSON RULES:
   }
 }
 
-Use today's date for the slug and published_at.
+## CRITICAL DATE REQUIREMENT
+Today's date is: ${new Date().toISOString().split('T')[0]}
+- Use this EXACT date for the slug: ${new Date().toISOString().split('T')[0]}-tech-news-roundup
+- Use this EXACT timestamp for published_at: ${new Date().toISOString()}
+
+## STRICT LENGTH LIMITS (will be validated)
+- meta_title: MUST be 60 characters or less (aim for 50-55 to be safe)
+- meta_description: MUST be 155 characters or less (aim for 140-150 to be safe)
+These limits apply to ALL languages. Shorter is better for SEO.
 
 ## News Report to Transform:
 `;
@@ -266,15 +274,60 @@ async function generateBlogPost(newsContent: string): Promise<BlogPost> {
   }, 'generateBlogPost');
 }
 
+function validateAndFixBlogPost(post: BlogPost): BlogPost {
+  const today = new Date().toISOString().split('T')[0];
+  const warnings: string[] = [];
+
+  // Fix slug date
+  const slugDateMatch = post.slug.match(/^\d{4}-\d{2}-\d{2}/);
+  if (slugDateMatch && slugDateMatch[0] !== today) {
+    warnings.push(`Fixed slug date: ${slugDateMatch[0]} -> ${today}`);
+    post.slug = post.slug.replace(slugDateMatch[0], today);
+  }
+
+  // Fix published_at date
+  if (!post.published_at.startsWith(today)) {
+    warnings.push(`Fixed published_at date to ${today}`);
+    post.published_at = new Date().toISOString();
+  }
+
+  // Validate and truncate meta fields
+  const MAX_META_TITLE = 60;
+  const MAX_META_DESC = 155;
+
+  for (const [locale, translation] of Object.entries(post.translations)) {
+    if (translation) {
+      if (translation.meta_title && translation.meta_title.length > MAX_META_TITLE) {
+        warnings.push(`Truncated meta_title (${locale}): ${translation.meta_title.length} -> ${MAX_META_TITLE} chars`);
+        translation.meta_title = translation.meta_title.substring(0, MAX_META_TITLE - 3) + '...';
+      }
+      if (translation.meta_description && translation.meta_description.length > MAX_META_DESC) {
+        warnings.push(`Truncated meta_description (${locale}): ${translation.meta_description.length} -> ${MAX_META_DESC} chars`);
+        translation.meta_description = translation.meta_description.substring(0, MAX_META_DESC - 3) + '...';
+      }
+    }
+  }
+
+  if (warnings.length > 0) {
+    console.log('Validation fixes applied:');
+    warnings.forEach(w => console.log(`  - ${w}`));
+  }
+
+  return post;
+}
+
 async function main() {
   // 1. Fetch news from Perplexity
   const newsContent = await fetchTechNews();
 
   // 2. Generate blog post with brand voice + humanization in one call
-  const blogPost = await generateBlogPost(newsContent);
+  let blogPost = await generateBlogPost(newsContent);
   console.log(`Generated blog post with slug: ${blogPost.slug}`);
 
-  // 3. Write blog-post.json
+  // 3. Validate and fix any issues
+  blogPost = validateAndFixBlogPost(blogPost);
+
+  // 4. Write blog-post.json
   writeFileSync('blog-post.json', JSON.stringify(blogPost, null, 2));
   console.log('Wrote blog-post.json');
 }
