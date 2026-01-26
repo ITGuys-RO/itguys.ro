@@ -1,3 +1,5 @@
+import { config } from 'dotenv';
+config({ path: '.env.local' });
 import Anthropic from '@anthropic-ai/sdk';
 import { createPerplexity } from '@ai-sdk/perplexity';
 import { generateText } from 'ai';
