@@ -157,7 +157,7 @@ async function verifyPostRouting(post: BlogPost): Promise<void> {
 async function main() {
   console.log('=== News Post E2E Test ===\n');
   console.log(`Base URL: ${BASE_URL}`);
-  console.log(`API Key: ${AUTOMATION_API_KEY ? '***' + AUTOMATION_API_KEY.slice(-4) : 'NOT SET'}\n`);
+  console.log(`API Key: ${AUTOMATION_API_KEY ? 'SET' : 'NOT SET'}\n`);
 
   // Check if we should skip generation (for testing just the API)
   const skipGenerate = process.argv.includes('--skip-generate');
