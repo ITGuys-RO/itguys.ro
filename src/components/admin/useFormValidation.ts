@@ -17,7 +17,7 @@ export type ValidationSchema<T> = {
   [K in keyof T]?: FieldRules | ((value: T[K], formData: T) => string | null);
 };
 
-export function useFormValidation<T extends Record<string, unknown>>(
+export function useFormValidation<T extends object>(
   schema: ValidationSchema<T>
 ) {
   const [errors, setErrors] = useState<ValidationError[]>([]);
@@ -26,7 +26,7 @@ export function useFormValidation<T extends Record<string, unknown>>(
   const validateForm = useCallback((formData: T): ValidationResult => {
     const validationFns: Array<() => string | null> = [];
 
-    for (const [fieldName, rules] of Object.entries(schema)) {
+    for (const [fieldName, rulesOrFn] of Object.entries(schema)) {
       const value = formData[fieldName as keyof T];
       const displayName = fieldName
         .replace(/_/g, ' ')
@@ -34,11 +34,13 @@ export function useFormValidation<T extends Record<string, unknown>>(
         .replace(/^./, (s) => s.toUpperCase())
         .trim();
 
-      if (typeof rules === 'function') {
+      if (typeof rulesOrFn === 'function') {
         // Custom validation function
-        validationFns.push(() => rules(value as T[keyof T], formData));
-      } else if (rules) {
+        const fn = rulesOrFn as (value: unknown, formData: T) => string | null;
+        validationFns.push(() => fn(value, formData));
+      } else if (rulesOrFn) {
         // Standard rules
+        const rules = rulesOrFn as FieldRules;
         if (rules.required) {
           validationFns.push(() => validators.required(value, displayName));
         }
@@ -98,7 +100,7 @@ export function useFormValidation<T extends Record<string, unknown>>(
 }
 
 // Helper to validate translations
-export function validateTranslations<T extends Record<string, unknown>>(
+export function validateTranslations<T extends object>(
   translations: Partial<Record<string, T>>,
   requiredLocale: string,
   requiredFields: (keyof T)[],
