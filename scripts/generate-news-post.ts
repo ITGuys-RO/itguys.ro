@@ -4,6 +4,11 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 const client = new Anthropic();
 const MODEL = 'claude-opus-4-5-20251101';
 
+function stripMarkdownFences(text: string): string {
+  // Remove ```json ... ``` or ``` ... ``` wrapping
+  return text.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+}
+
 interface BlogPostTranslation {
   title: string;
   excerpt: string;
@@ -91,8 +96,8 @@ async function generateBlogPost(newsContent: string): Promise<BlogPost> {
     throw new Error('No text content in response');
   }
 
-  // Parse the JSON response
-  const jsonStr = textContent.text.trim();
+  // Parse the JSON response (strip markdown fences if present)
+  const jsonStr = stripMarkdownFences(textContent.text);
   return JSON.parse(jsonStr) as BlogPost;
 }
 
@@ -141,8 +146,8 @@ ${JSON.stringify(blogPost, null, 2)}
     throw new Error('No text content in response');
   }
 
-  // Parse the JSON response
-  const jsonStr = textContent.text.trim();
+  // Parse the JSON response (strip markdown fences if present)
+  const jsonStr = stripMarkdownFences(textContent.text);
   return JSON.parse(jsonStr) as BlogPost;
 }
 
