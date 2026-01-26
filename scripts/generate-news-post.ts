@@ -1,12 +1,24 @@
 import Anthropic from '@anthropic-ai/sdk';
+import { createPerplexity } from '@ai-sdk/perplexity';
+import { generateText } from 'ai';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 
-const client = new Anthropic();
-const MODEL = 'claude-opus-4-5-20251101';
+const anthropic = new Anthropic();
+const perplexity = createPerplexity({
+  apiKey: process.env.PERPLEXITY_API_KEY,
+});
+
+const ANTHROPIC_MODEL = 'claude-opus-4-5-20251101';
+const PERPLEXITY_MODEL = 'sonar-reasoning-pro';
 
 function stripMarkdownFences(text: string): string {
   // Remove ```json ... ``` or ``` ... ``` wrapping
   return text.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+}
+
+function stripThinkingTags(text: string): string {
+  // Remove <think>...</think> sections from sonar-reasoning-pro responses
+  return text.replace(/<think>[\s\S]*?<\/think>\s*/gi, '').trim();
 }
 
 interface BlogPostTranslation {
@@ -26,6 +38,8 @@ interface BlogPost {
   tags: string[];
   translations: Record<string, BlogPostTranslation>;
 }
+
+const NEWS_PROMPT = `Generate a comprehensive and structured news report focused on today's tech news across web development, mobile development, security, AI/ML, and DevOps/cloud areas. For each area, provide 2-3 significant news items with brief explanations of why they matter. Focus on actionable insights and practical implications for developers and tech teams.`;
 
 const BRAND_VOICE_PROMPT = `
 ## ITGuys Brand Voice
@@ -77,11 +91,25 @@ Use today's date for the slug and published_at.
 ## News Report to Transform:
 `;
 
+async function fetchTechNews(): Promise<string> {
+  console.log('Fetching tech news from Perplexity...');
+
+  const { text } = await generateText({
+    model: perplexity(PERPLEXITY_MODEL),
+    prompt: NEWS_PROMPT,
+  });
+
+  // Strip thinking tags from sonar-reasoning-pro response
+  const newsContent = stripThinkingTags(text);
+  console.log(`Fetched news content (${newsContent.length} chars)`);
+  return newsContent;
+}
+
 async function generateBlogPost(newsContent: string): Promise<BlogPost> {
   console.log('Generating blog post from news content...');
 
-  const response = await client.messages.create({
-    model: MODEL,
+  const response = await anthropic.messages.create({
+    model: ANTHROPIC_MODEL,
     max_tokens: 16000,
     messages: [
       {
@@ -130,8 +158,8 @@ Output the humanized blog post as a JSON object with the exact same structure.
 ${JSON.stringify(blogPost, null, 2)}
 `;
 
-  const response = await client.messages.create({
-    model: MODEL,
+  const response = await anthropic.messages.create({
+    model: ANTHROPIC_MODEL,
     max_tokens: 16000,
     messages: [
       {
@@ -152,13 +180,8 @@ ${JSON.stringify(blogPost, null, 2)}
 }
 
 async function main() {
-  // 1. Read news from perplexity-news.md
-  const newsPath = 'perplexity-news.md';
-  if (!existsSync(newsPath)) {
-    throw new Error(`News file not found: ${newsPath}`);
-  }
-  const newsContent = readFileSync(newsPath, 'utf-8');
-  console.log(`Read news content (${newsContent.length} chars)`);
+  // 1. Fetch news from Perplexity
+  const newsContent = await fetchTechNews();
 
   // 2. Generate blog post with brand voice
   const blogPost = await generateBlogPost(newsContent);

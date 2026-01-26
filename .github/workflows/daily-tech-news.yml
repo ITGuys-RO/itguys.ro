@@ -28,32 +28,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate news report from Perplexity
-        id: perplexity
-        run: |
-          RESPONSE=$(curl -s "https://api.perplexity.ai/chat/completions" \
-            -H "Authorization: Bearer ${{ secrets.PERPLEXITY_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "model": "sonar-reasoning-pro",
-              "messages": [{
-                "role": "user",
-                "content": "Generate a comprehensive and structured news report focused on today'\''s tech news across web development, mobile development, security, AI/ML, and DevOps/cloud areas. For each area, provide 2-3 significant news items with brief explanations of why they matter. Focus on actionable insights and practical implications for developers and tech teams."
-              }]
-            }')
-
-          # Extract content from sonar-reasoning-pro response
-          # This model returns <think>...</think> followed by actual content
-          RAW_CONTENT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
-
-          # Strip the <think>...</think> section (multiline) to get the actual news report
-          echo "$RAW_CONTENT" | perl -0777 -pe 's/<think>.*?<\/think>\s*//gs' > perplexity-news.md
-          echo "News report generated"
-
-      - name: Generate and humanize blog post
+      - name: Generate blog post
         run: pnpm tsx scripts/generate-news-post.ts
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
 
       - name: Publish to database
         run: |
