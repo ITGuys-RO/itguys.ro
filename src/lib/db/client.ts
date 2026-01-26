@@ -28,10 +28,11 @@ export type D1ExecResult = {
   duration: number;
 };
 
-// Extend CloudflareEnv globally to include our D1 binding
+// Extend CloudflareEnv globally to include our bindings
 declare global {
   interface CloudflareEnv {
     DB?: D1Database;
+    INDEXNOW_KEY?: string;
   }
 }
 

@@ -14,6 +14,7 @@ directory = ".open-next/assets"
 TELEGRAM_BOT_TOKEN = "${TELEGRAM_BOT_TOKEN}"
 TELEGRAM_CHAT_ID = "${TELEGRAM_CHAT_ID}"
 TURNSTILE_SECRET_KEY = "${TURNSTILE_SECRET_KEY}"
+INDEXNOW_KEY = "${INDEXNOW_KEY}"
 
 [[d1_databases]]
 binding = "DB"

@@ -5,6 +5,7 @@ import {
   updatePost,
   deletePost,
 } from '@/lib/db';
+import { submitBlogPostToIndexNow } from '@/lib/indexnow';
 import type { PostInput } from '@/lib/db';
 
 type RouteParams = { params: Promise<{ id: string }> };
@@ -31,7 +32,21 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
     const input = (await request.json()) as Partial<PostInput>;
 
+    // Get current post to check if publishing status changed
+    const currentPost = await getPostWithTranslations(parseInt(id, 10));
+    const wasUnpublished = currentPost && currentPost.is_published === 0;
+    const isNowPublished = input.is_published === 1;
+
     await updatePost(parseInt(id, 10), input);
+
+    // Submit to IndexNow if post is being published for the first time
+    if (wasUnpublished && isNowPublished && (input.slug || currentPost?.slug)) {
+      const slug = input.slug || currentPost!.slug;
+      submitBlogPostToIndexNow(slug).catch((err) => {
+        console.error('IndexNow submission failed:', err);
+      });
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     return handleApiError(error);

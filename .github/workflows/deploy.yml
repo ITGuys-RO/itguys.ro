@@ -49,6 +49,7 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
           D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
 
       - name: Build
         run: pnpm build
