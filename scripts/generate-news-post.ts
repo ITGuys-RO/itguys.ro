@@ -9,6 +9,39 @@ const perplexity = createPerplexity({
 });
 
 const ANTHROPIC_MODEL = 'claude-opus-4-5-20251101';
+const MAX_RETRIES = 3;
+const INITIAL_RETRY_DELAY_MS = 5000;
+
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  context: string
+): Promise<T> {
+  let lastError: Error | undefined;
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error as Error;
+      const isRetryable =
+        error instanceof Error &&
+        (error.message.includes('terminated') ||
+          error.message.includes('socket') ||
+          error.message.includes('ECONNRESET') ||
+          error.message.includes('other side closed'));
+
+      if (!isRetryable || attempt === MAX_RETRIES) {
+        throw error;
+      }
+
+      const delay = INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt - 1);
+      console.log(
+        `${context}: Attempt ${attempt} failed, retrying in ${delay}ms...`
+      );
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+  throw lastError;
+}
 const PERPLEXITY_MODEL = 'sonar-reasoning-pro';
 
 function stripMarkdownFences(text: string): string {
@@ -107,49 +140,53 @@ Use today's date for the slug and published_at.
 async function fetchTechNews(): Promise<string> {
   console.log('Fetching tech news from Perplexity...');
 
-  const { text } = await generateText({
-    model: perplexity(PERPLEXITY_MODEL),
-    prompt: NEWS_PROMPT,
-  });
+  return withRetry(async () => {
+    const { text } = await generateText({
+      model: perplexity(PERPLEXITY_MODEL),
+      prompt: NEWS_PROMPT,
+    });
 
-  // Strip thinking tags from sonar-reasoning-pro response
-  const newsContent = stripThinkingTags(text);
-  console.log(`Fetched news content (${newsContent.length} chars)`);
-  return newsContent;
+    // Strip thinking tags from sonar-reasoning-pro response
+    const newsContent = stripThinkingTags(text);
+    console.log(`Fetched news content (${newsContent.length} chars)`);
+    return newsContent;
+  }, 'fetchTechNews');
 }
 
 async function generateBlogPost(newsContent: string): Promise<BlogPost> {
   console.log('Generating blog post from news content...');
 
-  const stream = anthropic.messages.stream({
-    model: ANTHROPIC_MODEL,
-    max_tokens: 32000,
-    messages: [
-      {
-        role: 'user',
-        content: BLOG_POST_PROMPT + newsContent,
-      },
-      {
-        role: 'assistant',
-        content: '{',
-      },
-    ],
-  });
+  return withRetry(async () => {
+    const stream = anthropic.messages.stream({
+      model: ANTHROPIC_MODEL,
+      max_tokens: 32000,
+      messages: [
+        {
+          role: 'user',
+          content: BLOG_POST_PROMPT + newsContent,
+        },
+        {
+          role: 'assistant',
+          content: '{',
+        },
+      ],
+    });
 
-  const response = await stream.finalMessage();
+    const response = await stream.finalMessage();
 
-  if (response.stop_reason !== 'end_turn') {
-    console.error(`Warning: Response stopped due to ${response.stop_reason}`);
-  }
+    if (response.stop_reason !== 'end_turn') {
+      console.error(`Warning: Response stopped due to ${response.stop_reason}`);
+    }
 
-  const textContent = response.content.find((block) => block.type === 'text');
-  if (!textContent || textContent.type !== 'text') {
-    throw new Error('No text content in response');
-  }
+    const textContent = response.content.find((block) => block.type === 'text');
+    if (!textContent || textContent.type !== 'text') {
+      throw new Error('No text content in response');
+    }
 
-  // Parse the JSON response (prepend the '{' we used as prefill)
-  const jsonStr = '{' + stripMarkdownFences(textContent.text);
-  return parseJsonSafe(jsonStr, 'generateBlogPost');
+    // Parse the JSON response (prepend the '{' we used as prefill)
+    const jsonStr = '{' + stripMarkdownFences(textContent.text);
+    return parseJsonSafe(jsonStr, 'generateBlogPost');
+  }, 'generateBlogPost');
 }
 
 async function humanizeBlogPost(
@@ -169,35 +206,37 @@ IMPORTANT: Output ONLY the JSON object. No explanation, no preamble, no markdown
 
 ${JSON.stringify(blogPost, null, 2)}`;
 
-  const stream = anthropic.messages.stream({
-    model: ANTHROPIC_MODEL,
-    max_tokens: 32000,
-    messages: [
-      {
-        role: 'user',
-        content: humanizePrompt,
-      },
-      {
-        role: 'assistant',
-        content: '{',
-      },
-    ],
-  });
+  return withRetry(async () => {
+    const stream = anthropic.messages.stream({
+      model: ANTHROPIC_MODEL,
+      max_tokens: 32000,
+      messages: [
+        {
+          role: 'user',
+          content: humanizePrompt,
+        },
+        {
+          role: 'assistant',
+          content: '{',
+        },
+      ],
+    });
 
-  const response = await stream.finalMessage();
+    const response = await stream.finalMessage();
 
-  if (response.stop_reason !== 'end_turn') {
-    console.error(`Warning: Response stopped due to ${response.stop_reason}`);
-  }
+    if (response.stop_reason !== 'end_turn') {
+      console.error(`Warning: Response stopped due to ${response.stop_reason}`);
+    }
 
-  const textContent = response.content.find((block) => block.type === 'text');
-  if (!textContent || textContent.type !== 'text') {
-    throw new Error('No text content in response');
-  }
+    const textContent = response.content.find((block) => block.type === 'text');
+    if (!textContent || textContent.type !== 'text') {
+      throw new Error('No text content in response');
+    }
 
-  // Parse the JSON response (prepend the '{' we used as prefill)
-  const jsonStr = '{' + stripMarkdownFences(textContent.text);
-  return parseJsonSafe(jsonStr, 'humanizeBlogPost');
+    // Parse the JSON response (prepend the '{' we used as prefill)
+    const jsonStr = '{' + stripMarkdownFences(textContent.text);
+    return parseJsonSafe(jsonStr, 'humanizeBlogPost');
+  }, 'humanizeBlogPost');
 }
 
 async function main() {
