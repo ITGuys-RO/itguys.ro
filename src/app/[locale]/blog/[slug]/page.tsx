@@ -88,7 +88,7 @@ export default async function BlogPostPage({ params }: Props) {
       />
 
       <Section className="pt-24 pb-16">
-        <article className="max-w-3xl mx-auto">
+        <article className="max-w-6xl mx-auto">
           <AnimateOnScroll animation="fade-in-up">
             <Link
               href="/blog"

@@ -46,7 +46,14 @@ export default function PostsListPage() {
       header: 'Post',
       render: (p: PostWithTranslations) => (
         <div>
-          <div className="font-medium">{p.translations.en?.title ?? p.slug}</div>
+          <a
+            href={`/blog/${p.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium hover:text-neon transition-colors"
+          >
+            {p.translations.en?.title ?? p.slug}
+          </a>
           <div className="text-brand-400 text-xs mt-1">
             {p.published_at ? new Date(p.published_at).toLocaleDateString() : 'Draft'}
           </div>

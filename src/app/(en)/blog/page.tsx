@@ -59,7 +59,7 @@ export default async function BlogPage() {
       />
 
       <Section>
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {posts.length === 0 ? (
             <AnimateOnScroll animation="fade-in-up">
               <Card className="text-center py-16">
