@@ -135,28 +135,16 @@ async function humanizeBlogPost(
 ): Promise<BlogPost> {
   console.log('Applying humanizer patterns to blog post...');
 
-  const humanizePrompt = `
-You are an expert editor applying humanization patterns to remove AI writing artifacts.
+  const humanizePrompt = `Apply humanization patterns to remove AI writing artifacts from this blog post.
 
-## Humanizer Rules
-${humanizerRules}
+Rules summary: Remove AI vocabulary (additionally, crucial, delve, landscape, tapestry, testament, underscore, etc.), remove -ing phrase padding, remove em dash overuse, remove rule-of-three patterns, remove "Not only...but also" constructions, use simple "is/are" instead of "serves as/stands as", vary sentence rhythm, add personality.
 
-## Task
-Apply ALL humanizer patterns to the blog post content below. Process all 6 locale translations (en, ro, fr, de, it, es).
+Process all 6 locale translations. For each, humanize: title, excerpt, content, meta_description.
+Do NOT change: slug, image_path, author_id, published_at, is_published, tags, meta_title.
 
-For each translation, humanize:
-- title
-- excerpt
-- content
-- meta_description
+IMPORTANT: Output ONLY the JSON object. No explanation, no preamble, no markdown fencing.
 
-Do NOT change: slug, image_path, author_id, published_at, is_published, tags, or meta_title.
-
-Output the humanized blog post as a JSON object with the exact same structure.
-
-## Blog Post to Humanize:
-${JSON.stringify(blogPost, null, 2)}
-`;
+${JSON.stringify(blogPost, null, 2)}`;
 
   const response = await anthropic.messages.create({
     model: ANTHROPIC_MODEL,
@@ -166,6 +154,10 @@ ${JSON.stringify(blogPost, null, 2)}
         role: 'user',
         content: humanizePrompt,
       },
+      {
+        role: 'assistant',
+        content: '{',
+      },
     ],
   });
 
@@ -174,8 +166,8 @@ ${JSON.stringify(blogPost, null, 2)}
     throw new Error('No text content in response');
   }
 
-  // Parse the JSON response (strip markdown fences if present)
-  const jsonStr = stripMarkdownFences(textContent.text);
+  // Parse the JSON response (prepend the '{' we used as prefill)
+  const jsonStr = '{' + stripMarkdownFences(textContent.text);
   return JSON.parse(jsonStr) as BlogPost;
 }
 
