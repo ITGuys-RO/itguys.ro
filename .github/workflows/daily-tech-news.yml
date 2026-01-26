@@ -36,9 +36,35 @@ jobs:
 
       - name: Publish to database
         run: |
-          curl -X POST "${{ vars.SITE_URL }}/api/automation/posts" \
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${{ vars.SITE_URL }}/api/automation/posts" \
             -H "CF-Access-Client-Id: ${{ secrets.CF_ACCESS_CLIENT_ID }}" \
             -H "CF-Access-Client-Secret: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}" \
             -H "Authorization: Bearer ${{ secrets.AUTOMATION_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d @blog-post.json
+            -d @blog-post.json)
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          echo "HTTP Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          # Check for Cloudflare challenge page
+          if echo "$BODY" | grep -q "Just a moment"; then
+            echo "::error::Cloudflare Access challenge detected - service token authentication failed"
+            exit 1
+          fi
+
+          # Check for successful response
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::API request failed with status $HTTP_CODE"
+            exit 1
+          fi
+
+          # Verify success field in response
+          if ! echo "$BODY" | grep -q '"success":true'; then
+            echo "::error::API did not return success"
+            exit 1
+          fi
+
+          echo "Post published successfully"
