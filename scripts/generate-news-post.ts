@@ -68,6 +68,7 @@ interface BlogPostTranslation {
   content: string;
   meta_title: string;
   meta_description: string;
+  slug?: string;
 }
 
 interface BlogPostBase {
@@ -203,17 +204,54 @@ async function generateEnglishPost(): Promise<BlogPostEnglish> {
   }, 'generateEnglishPost');
 }
 
+const LOCALE_RULES: Record<string, { name: string; rules: string }> = {
+  ro: {
+    name: 'Romanian',
+    rules: `- Use Romanian diacritics: ă, â, î, ș, ț (notş, ţ with cedilla)
+- Quotation marks: „..." (99-66 style)
+- No space before punctuation marks
+- Decimal separator: comma (3,14)`,
+  },
+  fr: {
+    name: 'French',
+    rules: `- Add non-breaking space BEFORE: : ; ! ? » and AFTER: «
+- Quotation marks: « ... » (guillemets with spaces inside)
+- Decimal separator: comma (3,14)
+- Use « guillemets » not "English quotes"`,
+  },
+  de: {
+    name: 'German',
+    rules: `- Quotation marks: „..." (99-66 style) or »...«
+- Compound nouns: write as one word (Datenschutzrichtlinie, not Datenschutz Richtlinie)
+- Formal "Sie" for addressing readers
+- Decimal separator: comma (3,14)
+- No space before punctuation`,
+  },
+  it: {
+    name: 'Italian',
+    rules: `- Quotation marks: «...» (guillemets without inner spaces) or "..."
+- No space before punctuation marks
+- Decimal separator: comma (3,14)
+- Articles before company names where grammatically natural`,
+  },
+  es: {
+    name: 'Spanish',
+    rules: `- Inverted punctuation: ¿...? and ¡...!
+- Quotation marks: «...» or "..."
+- No space before punctuation marks
+- Decimal separator: comma (3,14)
+- Use "usted" form for professional tone`,
+  },
+};
+
 async function translateToLocale(
   englishContent: BlogPostTranslation,
   locale: string
 ): Promise<BlogPostTranslation> {
-  const localeNames: Record<string, string> = {
-    ro: 'Romanian',
-    fr: 'French',
-    de: 'German',
-    it: 'Italian',
-    es: 'Spanish',
-  };
+  const localeConfig = LOCALE_RULES[locale];
+  if (!localeConfig) {
+    throw new Error(`Unknown locale: ${locale}`);
+  }
 
   const response = await anthropic.messages.create({
     model: ANTHROPIC_MODEL,
@@ -221,24 +259,42 @@ async function translateToLocale(
     messages: [
       {
         role: 'user',
-        content: `Translate this blog post content to ${localeNames[locale]}.
+        content: `Translate this blog post to ${localeConfig.name}.
 
-Maintain the same tone, formatting, and markdown structure. Keep URLs unchanged.
+## Translation Quality Rules
+1. **Natural fluency over literal translation** - Write as a native speaker would, not word-for-word
+2. **Maintain tone** - Keep the direct, professional-casual voice
+3. **Keep unchanged**: URLs, code snippets, brand names (ITGuys, Samsung, Microsoft)
+4. **Markdown** - Preserve all formatting (headers, links, bold, lists)
 
-STRICT LENGTH LIMITS:
-- meta_title: MUST be 60 characters or less
-- meta_description: MUST be 155 characters or less
+## ${localeConfig.name} Punctuation & Typography Rules
+${localeConfig.rules}
 
-Output ONLY valid JSON with this structure:
+## Length Limits (STRICT)
+- meta_title: MAX 60 characters
+- meta_description: MAX 155 characters
+
+## Slug Generation
+Generate a URL-friendly slug in ${localeConfig.name} based on the translated title:
+- Lowercase only
+- Replace spaces with hyphens
+- Remove diacritics/accents (e.g., é→e, ñ→n, ü→u)
+- Remove special characters except hyphens
+- Keep the date prefix from English slug if present (e.g., "2025-01-26-")
+- Example: "Noticias de Tecnología" → "noticias-de-tecnologia"
+
+## Output
+Output ONLY valid JSON:
 {
-  "title": "translated title",
-  "excerpt": "translated excerpt",
-  "content": "translated content with \\n for newlines",
-  "meta_title": "translated meta title (max 60 chars)",
-  "meta_description": "translated meta description (max 155 chars)"
+  "title": "...",
+  "excerpt": "...",
+  "content": "... use \\n for newlines ...",
+  "meta_title": "...",
+  "meta_description": "...",
+  "slug": "..."
 }
 
-Content to translate:
+## Source Content
 ${JSON.stringify(englishContent, null, 2)}`,
       },
     ],
@@ -252,9 +308,20 @@ ${JSON.stringify(englishContent, null, 2)}`,
   const jsonStr = stripMarkdownFences(textContent.text);
   try {
     return JSON.parse(jsonStr) as BlogPostTranslation;
-  } catch {
-    const repaired = jsonrepair(jsonStr);
-    return JSON.parse(repaired) as BlogPostTranslation;
+  } catch (parseError) {
+    console.log(`  JSON parse failed for ${locale}, attempting repair...`);
+    try {
+      const repaired = jsonrepair(jsonStr);
+      return JSON.parse(repaired) as BlogPostTranslation;
+    } catch (repairError) {
+      console.error(`  Failed to repair JSON for ${locale}:`);
+      console.error(`  Raw response length: ${jsonStr.length}`);
+      console.error(`  First 500 chars: ${jsonStr.slice(0, 500)}`);
+      console.error(`  Last 500 chars: ${jsonStr.slice(-500)}`);
+      writeFileSync(`debug-translation-${locale}.txt`, jsonStr);
+      console.error(`  Full response saved to debug-translation-${locale}.txt`);
+      throw repairError;
+    }
   }
 }
 
@@ -286,6 +353,17 @@ async function translateAll(
   return translations;
 }
 
+function generateSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+    .trim()
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-'); // Remove consecutive hyphens
+}
+
 function validateAndFixBlogPost(post: BlogPost): BlogPost {
   const today = new Date().toISOString().split('T')[0];
   const warnings: string[] = [];
@@ -303,7 +381,7 @@ function validateAndFixBlogPost(post: BlogPost): BlogPost {
     post.published_at = new Date().toISOString();
   }
 
-  // Validate and truncate meta fields
+  // Validate and truncate meta fields, validate slugs
   const MAX_META_TITLE = 60;
   const MAX_META_DESC = 155;
 
@@ -316,6 +394,27 @@ function validateAndFixBlogPost(post: BlogPost): BlogPost {
       if (translation.meta_description && translation.meta_description.length > MAX_META_DESC) {
         warnings.push(`Truncated meta_description (${locale}): ${translation.meta_description.length} -> ${MAX_META_DESC} chars`);
         translation.meta_description = translation.meta_description.substring(0, MAX_META_DESC - 3) + '...';
+      }
+
+      // Set English slug to match main post slug
+      if (locale === 'en') {
+        translation.slug = post.slug;
+      } else if (translation.slug) {
+        // Validate and fix locale-specific slug
+        const datePrefix = post.slug.match(/^\d{4}-\d{2}-\d{2}-/)?.[0] || '';
+        const slugWithoutDate = translation.slug.replace(/^\d{4}-\d{2}-\d{2}-/, '');
+        const cleanSlug = generateSlug(slugWithoutDate);
+        const fixedSlug = datePrefix + cleanSlug;
+
+        if (fixedSlug !== translation.slug) {
+          warnings.push(`Fixed slug (${locale}): ${translation.slug} -> ${fixedSlug}`);
+          translation.slug = fixedSlug;
+        }
+      } else {
+        // Generate slug from title if missing
+        const datePrefix = post.slug.match(/^\d{4}-\d{2}-\d{2}-/)?.[0] || '';
+        translation.slug = datePrefix + generateSlug(translation.title);
+        warnings.push(`Generated slug (${locale}): ${translation.slug}`);
       }
     }
   }

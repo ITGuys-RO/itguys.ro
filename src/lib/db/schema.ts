@@ -154,6 +154,7 @@ export interface PostTranslation {
   content: string;
   meta_title: string | null;
   meta_description: string | null;
+  slug: string | null;
 }
 
 export interface PostTag {
@@ -380,6 +381,7 @@ export interface PostInput {
     content: string;
     meta_title?: string | null;
     meta_description?: string | null;
+    slug?: string | null;
   }>;
 }
 

@@ -173,6 +173,7 @@ CREATE TABLE IF NOT EXISTS post_translations (
   content TEXT NOT NULL,
   meta_title TEXT,
   meta_description TEXT,
+  slug TEXT,
   FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
   UNIQUE(post_id, locale)
 );
@@ -211,5 +212,7 @@ CREATE INDEX IF NOT EXISTS idx_company_translations_locale ON company_translatio
 CREATE INDEX IF NOT EXISTS idx_service_translations_locale ON service_translations(locale);
 CREATE INDEX IF NOT EXISTS idx_faq_translations_locale ON faq_translations(locale);
 CREATE INDEX IF NOT EXISTS idx_post_translations_locale ON post_translations(locale);
+CREATE INDEX IF NOT EXISTS idx_post_translations_locale_slug ON post_translations(locale, slug);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_post_translations_unique_slug ON post_translations(locale, slug) WHERE slug IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_translations_namespace_locale ON translations(namespace, locale);
 CREATE INDEX IF NOT EXISTS idx_posts_published ON posts(is_published, published_at);

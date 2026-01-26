@@ -12,7 +12,19 @@ type TranslationData = {
   content: string;
   meta_title: string | null;
   meta_description: string | null;
+  slug: string | null;
 };
+
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+    .trim()
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-'); // Remove consecutive hyphens
+}
 
 function truncateForMeta(text: string, maxLength: number = 155): string {
   if (!text || text.length <= maxLength) return text;
@@ -36,7 +48,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
     published_at: '',
     is_published: 0,
     tags: [],
-    translations: { en: { title: '', excerpt: null, content: '', meta_title: null, meta_description: null } },
+    translations: { en: { title: '', excerpt: null, content: '', meta_title: null, meta_description: null, slug: null } },
   });
 
   useEffect(() => {
@@ -53,6 +65,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
               content: t.content,
               meta_title: t.meta_title,
               meta_description: t.meta_description,
+              slug: t.slug,
             } : undefined
           ])
         ) as PostInput['translations'];
@@ -144,6 +157,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
     content: '',
     meta_title: '',
     meta_description: '',
+    slug: '',
   };
 
   return (
@@ -201,6 +215,10 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
                 if (!data.meta_title) {
                   updates.meta_title = v || null;
                 }
+                // For non-English, auto-generate slug if slug is empty
+                if (locale !== 'en' && !data.slug) {
+                  updates.slug = generateSlug(v);
+                }
                 onChange({ ...data, ...updates });
               };
 
@@ -223,6 +241,15 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
                     onChange={handleTitleChange}
                     required
                   />
+                  {locale !== 'en' && (
+                    <InputField
+                      label="URL Slug"
+                      name={`slug-${locale}`}
+                      value={data.slug || ''}
+                      onChange={(v) => onChange({ ...data, slug: v || null })}
+                      helpText="Locale-specific URL (auto-generated from title, can override)"
+                    />
+                  )}
                   <TextareaField
                     label="Excerpt"
                     name={`excerpt-${locale}`}

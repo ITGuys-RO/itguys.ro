@@ -13,6 +13,7 @@ type TranslationData = {
   content: string;
   meta_title: string | null;
   meta_description: string | null;
+  slug: string | null;
 };
 
 function generateSlug(title: string): string {
@@ -45,7 +46,7 @@ export default function NewPostPage() {
     published_at: new Date().toISOString().split('T')[0],
     is_published: 0,
     tags: [],
-    translations: { en: { title: '', excerpt: null, content: '', meta_title: null, meta_description: null } },
+    translations: { en: { title: '', excerpt: null, content: '', meta_title: null, meta_description: null, slug: null } },
   });
 
   const { errors, validateForm, clearErrors } = useFormValidation<PostInput>({
@@ -108,6 +109,7 @@ export default function NewPostPage() {
     content: '',
     meta_title: '',
     meta_description: '',
+    slug: '',
   };
 
   return (
@@ -148,17 +150,22 @@ export default function NewPostPage() {
                   updates.meta_title = v || null;
                 }
                 if (locale === 'en') {
-                  // For English, also update slug
+                  // For English, also update main slug and translation slug
+                  const newSlug = generateSlug(v);
                   const newTranslations = {
                     ...formData.translations,
-                    en: { ...formData.translations.en!, ...updates },
+                    en: { ...formData.translations.en!, ...updates, slug: newSlug },
                   };
                   setFormData({
                     ...formData,
-                    slug: generateSlug(v),
+                    slug: newSlug,
                     translations: newTranslations,
                   });
                 } else {
+                  // For non-English, auto-generate locale-specific slug if slug is empty
+                  if (!data.slug) {
+                    updates.slug = generateSlug(v);
+                  }
                   onChange({ ...data, ...updates });
                 }
               };
@@ -182,6 +189,15 @@ export default function NewPostPage() {
                     onChange={handleTitleChange}
                     required
                   />
+                  {locale !== 'en' && (
+                    <InputField
+                      label="URL Slug"
+                      name={`slug-${locale}`}
+                      value={data.slug || ''}
+                      onChange={(v) => onChange({ ...data, slug: v || null })}
+                      helpText="Locale-specific URL (auto-generated from title, can override)"
+                    />
+                  )}
                   <TextareaField
                     label="Excerpt"
                     name={`excerpt-${locale}`}

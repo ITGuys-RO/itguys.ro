@@ -80,13 +80,15 @@ export async function getAllPostsWithTranslations(): Promise<PostWithTranslation
 
 export async function getPostsLocalized(locale: Locale, limit?: number): Promise<PostLocalized[]> {
   // Use LEFT JOIN with COALESCE to fall back to English if translation is missing
+  // For slug: prefer locale-specific slug, then English locale slug, then posts.slug
   let sql = `
     SELECT p.*,
       COALESCE(t.title, t_en.title) as title,
       COALESCE(t.excerpt, t_en.excerpt) as excerpt,
       COALESCE(t.content, t_en.content) as content,
       COALESCE(t.meta_title, t_en.meta_title) as meta_title,
-      COALESCE(t.meta_description, t_en.meta_description) as meta_description
+      COALESCE(t.meta_description, t_en.meta_description) as meta_description,
+      COALESCE(t.slug, t_en.slug, p.slug) as resolved_slug
     FROM posts p
     LEFT JOIN post_translations t ON t.post_id = p.id AND t.locale = ?
     LEFT JOIN post_translations t_en ON t_en.post_id = p.id AND t_en.locale = 'en'
@@ -100,7 +102,7 @@ export async function getPostsLocalized(locale: Locale, limit?: number): Promise
     params.push(limit);
   }
 
-  const rows = await query<Post & PostTranslation>(sql, params);
+  const rows = await query<Post & PostTranslation & { resolved_slug: string }>(sql, params);
 
   const result: PostLocalized[] = [];
   for (const row of rows) {
@@ -112,7 +114,7 @@ export async function getPostsLocalized(locale: Locale, limit?: number): Promise
 
     result.push({
       id: row.id,
-      slug: row.slug,
+      slug: row.resolved_slug,
       title: row.title,
       excerpt: row.excerpt,
       content: row.content,
@@ -130,19 +132,22 @@ export async function getPostsLocalized(locale: Locale, limit?: number): Promise
 }
 
 export async function getPostLocalized(slug: string, locale: Locale): Promise<PostLocalized | null> {
-  // Use LEFT JOIN with COALESCE to fall back to English if translation is missing
-  const row = await queryFirst<Post & PostTranslation>(
+  // First try to find by locale-specific slug in post_translations
+  // Then fall back to posts.slug (canonical/English slug)
+  const row = await queryFirst<Post & PostTranslation & { resolved_slug: string }>(
     `SELECT p.*,
        COALESCE(t.title, t_en.title) as title,
        COALESCE(t.excerpt, t_en.excerpt) as excerpt,
        COALESCE(t.content, t_en.content) as content,
        COALESCE(t.meta_title, t_en.meta_title) as meta_title,
-       COALESCE(t.meta_description, t_en.meta_description) as meta_description
+       COALESCE(t.meta_description, t_en.meta_description) as meta_description,
+       COALESCE(t.slug, t_en.slug, p.slug) as resolved_slug
      FROM posts p
      LEFT JOIN post_translations t ON t.post_id = p.id AND t.locale = ?
      LEFT JOIN post_translations t_en ON t_en.post_id = p.id AND t_en.locale = 'en'
-     WHERE p.slug = ? AND p.is_published = 1`,
-    [locale, slug]
+     WHERE p.is_published = 1
+       AND (t.slug = ? OR (t.slug IS NULL AND t_en.slug = ?) OR (t.slug IS NULL AND t_en.slug IS NULL AND p.slug = ?))`,
+    [locale, slug, slug, slug]
   );
 
   if (!row) return null;
@@ -155,7 +160,7 @@ export async function getPostLocalized(slug: string, locale: Locale): Promise<Po
 
   return {
     id: row.id,
-    slug: row.slug,
+    slug: row.resolved_slug,
     title: row.title,
     excerpt: row.excerpt,
     content: row.content,
@@ -205,8 +210,8 @@ export async function createPost(input: PostInput): Promise<number> {
 
   // Insert translations
   const translationStatements = Object.entries(input.translations).map(([locale, t]) => ({
-    sql: `INSERT INTO post_translations (post_id, locale, title, excerpt, content, meta_title, meta_description)
-          VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    sql: `INSERT INTO post_translations (post_id, locale, title, excerpt, content, meta_title, meta_description, slug)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     params: [
       postId,
       locale,
@@ -215,6 +220,7 @@ export async function createPost(input: PostInput): Promise<number> {
       t!.content,
       t!.meta_title ?? null,
       t!.meta_description ?? null,
+      t!.slug ?? null,
     ],
   }));
 
@@ -268,15 +274,16 @@ export async function updatePost(id: number, input: Partial<PostInput>): Promise
     for (const [locale, t] of Object.entries(input.translations)) {
       if (t) {
         await execute(
-          `INSERT INTO post_translations (post_id, locale, title, excerpt, content, meta_title, meta_description)
-           VALUES (?, ?, ?, ?, ?, ?, ?)
+          `INSERT INTO post_translations (post_id, locale, title, excerpt, content, meta_title, meta_description, slug)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)
            ON CONFLICT(post_id, locale) DO UPDATE SET
              title = excluded.title,
              excerpt = excluded.excerpt,
              content = excluded.content,
              meta_title = excluded.meta_title,
-             meta_description = excluded.meta_description`,
-          [id, locale, t.title, t.excerpt ?? null, t.content, t.meta_title ?? null, t.meta_description ?? null]
+             meta_description = excluded.meta_description,
+             slug = excluded.slug`,
+          [id, locale, t.title, t.excerpt ?? null, t.content, t.meta_title ?? null, t.meta_description ?? null, t.slug ?? null]
         );
       }
     }
