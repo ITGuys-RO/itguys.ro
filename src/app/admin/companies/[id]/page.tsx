@@ -3,9 +3,8 @@
 import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { InputField, TextareaField, CheckboxField, LocaleFields, DeleteButton } from '@/components/admin';
+import { InputField, TextareaField, CheckboxField, LocaleFields, DeleteButton, ValidationSummary, useFormValidation, validateTranslations } from '@/components/admin';
 import type { CompanyWithTranslations, CompanyInput } from '@/lib/db';
-import type { Locale } from '@/i18n/config';
 
 type TranslationData = { name: string; description: string | null };
 
@@ -53,8 +52,25 @@ export default function EditCompanyPage({ params }: { params: Promise<{ id: stri
     })();
   }, [id]);
 
+  const { errors, validateForm, clearErrors } = useFormValidation<CompanyInput>({
+    slug: { required: true, slug: true },
+    logo_path: { imagePath: true },
+    external_url: { url: true },
+    translations: (translations) => validateTranslations(
+      translations as Partial<Record<string, TranslationData>>,
+      'en',
+      ['name'],
+      { name: 'Name' }
+    ),
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearErrors();
+
+    const result = validateForm(formData);
+    if (!result.valid) return;
+
     setSaving(true);
     setError(null);
     setSuccess(false);
@@ -90,6 +106,7 @@ export default function EditCompanyPage({ params }: { params: Promise<{ id: stri
         </div>
         <DeleteButton itemName="company" onDelete={handleDelete} />
       </div>
+      <ValidationSummary errors={errors} />
       {/* Toast notifications */}
       {(error || success) && (
         <div className="fixed bottom-6 right-6 z-50">

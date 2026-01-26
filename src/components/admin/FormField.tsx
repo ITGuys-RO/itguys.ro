@@ -13,6 +13,10 @@ interface InputFieldProps {
   disabled?: boolean;
   className?: string;
   helpText?: string;
+  /** Maximum character limit - shows countdown when set */
+  maxLength?: number;
+  /** Validation error message */
+  error?: string | null;
 }
 
 export function InputField({
@@ -26,13 +30,30 @@ export function InputField({
   disabled = false,
   className,
   helpText,
+  maxLength,
+  error,
 }: InputFieldProps) {
+  const stringValue = String(value);
+  const charCount = stringValue.length;
+  const isOverLimit = maxLength !== undefined && charCount > maxLength;
+  const hasError = !!error || isOverLimit;
+
   return (
     <div className={clsx('flex flex-col gap-1.5', className)}>
-      <label htmlFor={name} className="text-sm font-medium text-brand-200">
-        {label}
-        {required && <span className="text-neon-pink ml-1">*</span>}
-      </label>
+      <div className="flex items-center justify-between">
+        <label htmlFor={name} className="text-sm font-medium text-brand-200">
+          {label}
+          {required && <span className="text-neon-pink ml-1">*</span>}
+        </label>
+        {maxLength !== undefined && (
+          <span className={clsx(
+            'text-xs font-medium',
+            isOverLimit ? 'text-red-400' : charCount > maxLength * 0.9 ? 'text-yellow-400' : 'text-brand-400'
+          )}>
+            {charCount}/{maxLength}
+          </span>
+        )}
+      </div>
       <input
         type={type}
         id={name}
@@ -44,12 +65,15 @@ export function InputField({
         disabled={disabled}
         className={clsx(
           'px-4 py-2.5 rounded-lg border bg-brand-900/60 backdrop-blur-sm text-white placeholder:text-brand-500',
-          'focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-400/50',
-          'transition-all duration-200',
-          disabled ? 'opacity-50 cursor-not-allowed border-brand-700/30' : 'border-brand-700/50'
+          'focus:outline-none focus:ring-2 transition-all duration-200',
+          hasError
+            ? 'border-red-500 focus:ring-red-500/30 focus:border-red-500'
+            : 'focus:ring-brand-400/30 focus:border-brand-400/50',
+          disabled ? 'opacity-50 cursor-not-allowed border-brand-700/30' : !hasError && 'border-brand-700/50'
         )}
       />
-      {helpText && <p className="text-xs text-brand-400">{helpText}</p>}
+      {error && <p className="text-xs text-red-400">{error}</p>}
+      {!error && helpText && <p className="text-xs text-brand-400">{helpText}</p>}
     </div>
   );
 }
@@ -65,6 +89,10 @@ interface TextareaFieldProps {
   rows?: number;
   className?: string;
   helpText?: string;
+  /** Maximum character limit - shows countdown when set */
+  maxLength?: number;
+  /** Validation error message */
+  error?: string | null;
 }
 
 export function TextareaField({
@@ -78,13 +106,29 @@ export function TextareaField({
   rows = 4,
   className,
   helpText,
+  maxLength,
+  error,
 }: TextareaFieldProps) {
+  const charCount = value.length;
+  const isOverLimit = maxLength !== undefined && charCount > maxLength;
+  const hasError = !!error || isOverLimit;
+
   return (
     <div className={clsx('flex flex-col gap-1.5', className)}>
-      <label htmlFor={name} className="text-sm font-medium text-brand-200">
-        {label}
-        {required && <span className="text-neon-pink ml-1">*</span>}
-      </label>
+      <div className="flex items-center justify-between">
+        <label htmlFor={name} className="text-sm font-medium text-brand-200">
+          {label}
+          {required && <span className="text-neon-pink ml-1">*</span>}
+        </label>
+        {maxLength !== undefined && (
+          <span className={clsx(
+            'text-xs font-medium',
+            isOverLimit ? 'text-red-400' : charCount > maxLength * 0.9 ? 'text-yellow-400' : 'text-brand-400'
+          )}>
+            {charCount}/{maxLength}
+          </span>
+        )}
+      </div>
       <textarea
         id={name}
         name={name}
@@ -96,12 +140,15 @@ export function TextareaField({
         rows={rows}
         className={clsx(
           'px-4 py-2.5 rounded-lg border bg-brand-900/60 backdrop-blur-sm text-white placeholder:text-brand-500',
-          'focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-400/50',
-          'transition-all duration-200 resize-none',
-          disabled ? 'opacity-50 cursor-not-allowed border-brand-700/30' : 'border-brand-700/50'
+          'focus:outline-none focus:ring-2 transition-all duration-200 resize-none',
+          hasError
+            ? 'border-red-500 focus:ring-red-500/30 focus:border-red-500'
+            : 'focus:ring-brand-400/30 focus:border-brand-400/50',
+          disabled ? 'opacity-50 cursor-not-allowed border-brand-700/30' : !hasError && 'border-brand-700/50'
         )}
       />
-      {helpText && <p className="text-xs text-brand-400">{helpText}</p>}
+      {error && <p className="text-xs text-red-400">{error}</p>}
+      {!error && helpText && <p className="text-xs text-brand-400">{helpText}</p>}
     </div>
   );
 }

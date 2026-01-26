@@ -10,9 +10,11 @@ import {
   TagInput,
   LocaleFields,
   DeleteButton,
+  ValidationSummary,
+  useFormValidation,
+  validateTranslations,
 } from '@/components/admin';
 import type { ProjectWithTranslations, ProjectInput } from '@/lib/db';
-import type { Locale } from '@/i18n/config';
 
 type TranslationData = {
   name: string;
@@ -83,8 +85,25 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     }
   };
 
+  const { errors, validateForm, clearErrors } = useFormValidation<ProjectInput>({
+    slug: { required: true, slug: true },
+    image_path: { imagePath: true },
+    external_url: { url: true },
+    translations: (translations) => validateTranslations(
+      translations as Partial<Record<string, TranslationData>>,
+      'en',
+      ['name'],
+      { name: 'Name' }
+    ),
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearErrors();
+
+    const result = validateForm(formData);
+    if (!result.valid) return;
+
     setSaving(true);
     setError(null);
     setSuccess(false);
@@ -139,6 +158,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         <DeleteButton itemName="project" onDelete={handleDelete} />
       </div>
 
+      <ValidationSummary errors={errors} />
       {/* Toast notifications */}
       {(error || success) && (
         <div className="fixed bottom-6 right-6 z-50">

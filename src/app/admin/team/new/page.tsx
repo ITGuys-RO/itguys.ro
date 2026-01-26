@@ -8,6 +8,9 @@ import {
   TextareaField,
   CheckboxField,
   LocaleFields,
+  ValidationSummary,
+  useFormValidation,
+  validateTranslations,
 } from '@/components/admin';
 import type { TeamMemberInput } from '@/lib/db';
 import type { Locale } from '@/i18n/config';
@@ -30,8 +33,27 @@ export default function NewTeamMemberPage() {
     translations: { en: { name: '', role: '', bio: '' } },
   });
 
+  const { errors, validateForm, clearErrors } = useFormValidation<TeamMemberInput>({
+    slug: { required: true, slug: true },
+    email: { email: true },
+    gravatar_email: { email: true },
+    linkedin_url: { url: true },
+    image_path: { imagePath: true },
+    translations: (translations) => validateTranslations(
+      translations as Partial<Record<string, TranslationData>>,
+      'en',
+      ['name', 'role', 'bio'],
+      { name: 'Name', role: 'Role', bio: 'Bio' }
+    ),
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearErrors();
+
+    const result = validateForm(formData);
+    if (!result.valid) return;
+
     setSaving(true);
     setError(null);
 
@@ -71,6 +93,7 @@ export default function NewTeamMemberPage() {
           {error}
         </div>
       )}
+      <ValidationSummary errors={errors} />
 
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6">

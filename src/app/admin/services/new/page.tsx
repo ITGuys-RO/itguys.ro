@@ -3,7 +3,17 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { InputField, TextareaField, CheckboxField, TagInput, LocaleFields, SelectField } from '@/components/admin';
+import {
+  InputField,
+  TextareaField,
+  CheckboxField,
+  TagInput,
+  LocaleFields,
+  SelectField,
+  ValidationSummary,
+  useFormValidation,
+  validateTranslations,
+} from '@/components/admin';
 import type { ServiceInput, SubserviceInput } from '@/lib/db';
 import type { Locale } from '@/i18n/config';
 import { locales } from '@/i18n/config';
@@ -204,9 +214,25 @@ export default function NewServicePage() {
     translations: { en: { title: '', description: null, details: null, note: null } },
   });
 
+  const { errors, validateForm, clearErrors } = useFormValidation<ServiceInput>({
+    slug: { required: true, slug: true },
+    translations: (translations) => validateTranslations(
+      translations as Partial<Record<string, TranslationData>>,
+      'en',
+      ['title'],
+      { title: 'Title' }
+    ),
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearErrors();
+
+    const result = validateForm(formData);
+    if (!result.valid) return;
+
     setSaving(true);
+    setError(null);
     try {
       const res = await fetch('/api/admin/services', {
         method: 'POST',
@@ -229,6 +255,7 @@ export default function NewServicePage() {
         <h1 className="text-2xl font-bold text-white">New Service</h1>
       </div>
       {error && <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400">{error}</div>}
+      <ValidationSummary errors={errors} />
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6">
           <h2 className="text-lg font-semibold text-white mb-4">Basic Information</h2>

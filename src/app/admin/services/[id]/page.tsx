@@ -3,7 +3,19 @@
 import { useEffect, useState, use } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { InputField, TextareaField, CheckboxField, TagInput, LocaleFields, LocaleTabs, DeleteButton, SelectField } from '@/components/admin';
+import {
+  InputField,
+  TextareaField,
+  CheckboxField,
+  TagInput,
+  LocaleFields,
+  LocaleTabs,
+  DeleteButton,
+  SelectField,
+  ValidationSummary,
+  useFormValidation,
+  validateTranslations,
+} from '@/components/admin';
 import type { ServiceWithTranslations, ServiceInput, SubserviceInput } from '@/lib/db';
 import type { Locale } from '@/i18n/config';
 import { locales } from '@/i18n/config';
@@ -221,6 +233,16 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
     translations: { en: { title: '', description: null, details: null, note: null } },
   });
 
+  const { errors, validateForm, clearErrors } = useFormValidation<ServiceInput>({
+    slug: { required: true, slug: true },
+    translations: (translations) => validateTranslations(
+      translations as Partial<Record<string, TranslationData>>,
+      'en',
+      ['title'],
+      { title: 'Title' }
+    ),
+  });
+
   useEffect(() => {
     (async () => {
       try {
@@ -259,6 +281,11 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearErrors();
+
+    const result = validateForm(formData);
+    if (!result.valid) return;
+
     setSaving(true);
     setError(null);
     setSuccess(false);
@@ -294,6 +321,7 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
         </div>
         <DeleteButton itemName="service" onDelete={handleDelete} />
       </div>
+      <ValidationSummary errors={errors} />
       {/* Toast notifications */}
       {(error || success) && (
         <div className="fixed bottom-6 right-6 z-50">

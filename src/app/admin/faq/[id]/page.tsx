@@ -3,9 +3,8 @@
 import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { InputField, TextareaField, CheckboxField, LocaleFields, DeleteButton } from '@/components/admin';
+import { InputField, TextareaField, CheckboxField, LocaleFields, DeleteButton, ValidationSummary, useFormValidation, validateTranslations } from '@/components/admin';
 import type { FaqWithTranslations, FaqInput } from '@/lib/db';
-import type { Locale } from '@/i18n/config';
 
 type TranslationData = { question: string; answer: string };
 
@@ -51,8 +50,23 @@ export default function EditFaqPage({ params }: { params: Promise<{ id: string }
     })();
   }, [id]);
 
+  const { errors, validateForm, clearErrors } = useFormValidation<FaqInput>({
+    slug: { required: true, slug: true },
+    translations: (translations) => validateTranslations(
+      translations as Partial<Record<string, TranslationData>>,
+      'en',
+      ['question', 'answer'],
+      { question: 'Question', answer: 'Answer' }
+    ),
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearErrors();
+
+    const result = validateForm(formData);
+    if (!result.valid) return;
+
     setSaving(true);
     setError(null);
     setSuccess(false);
@@ -88,6 +102,7 @@ export default function EditFaqPage({ params }: { params: Promise<{ id: string }
         </div>
         <DeleteButton itemName="FAQ item" onDelete={handleDelete} />
       </div>
+      <ValidationSummary errors={errors} />
       {/* Toast notifications */}
       {(error || success) && (
         <div className="fixed bottom-6 right-6 z-50">

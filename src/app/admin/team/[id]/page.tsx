@@ -9,9 +9,11 @@ import {
   CheckboxField,
   LocaleFields,
   DeleteButton,
+  ValidationSummary,
+  useFormValidation,
+  validateTranslations,
 } from '@/components/admin';
 import type { TeamMemberWithTranslations, TeamMemberInput } from '@/lib/db';
-import type { Locale } from '@/i18n/config';
 
 type TranslationData = { name: string; role: string; bio: string };
 
@@ -68,8 +70,27 @@ export default function EditTeamMemberPage({ params }: { params: Promise<{ id: s
     }
   };
 
+  const { errors, validateForm, clearErrors } = useFormValidation<TeamMemberInput>({
+    slug: { required: true, slug: true },
+    email: { email: true },
+    gravatar_email: { email: true },
+    linkedin_url: { url: true },
+    image_path: { imagePath: true },
+    translations: (translations) => validateTranslations(
+      translations as Partial<Record<string, TranslationData>>,
+      'en',
+      ['name', 'role', 'bio'],
+      { name: 'Name', role: 'Role', bio: 'Bio' }
+    ),
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearErrors();
+
+    const result = validateForm(formData);
+    if (!result.valid) return;
+
     setSaving(true);
     setError(null);
     setSuccess(false);
@@ -119,6 +140,7 @@ export default function EditTeamMemberPage({ params }: { params: Promise<{ id: s
         <DeleteButton itemName="team member" onDelete={handleDelete} />
       </div>
 
+      <ValidationSummary errors={errors} />
       {/* Toast notifications */}
       {(error || success) && (
         <div className="fixed bottom-6 right-6 z-50">

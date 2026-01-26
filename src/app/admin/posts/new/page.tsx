@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { InputField, TextareaField, CheckboxField, DateTimePicker, TagInput, LocaleFields, MarkdownEditor } from '@/components/admin';
+import { InputField, TextareaField, CheckboxField, DateTimePicker, TagInput, LocaleFields, MarkdownEditor, ValidationSummary, useFormValidation, validateTranslations } from '@/components/admin';
 import type { PostInput } from '@/lib/db';
 import type { Locale } from '@/i18n/config';
 
@@ -48,8 +48,42 @@ export default function NewPostPage() {
     translations: { en: { title: '', excerpt: null, content: '', meta_title: null, meta_description: null } },
   });
 
+  const { errors, validateForm, clearErrors } = useFormValidation<PostInput>({
+    slug: { required: true, slug: true },
+    image_path: { imagePath: true },
+    translations: (translations) => validateTranslations(
+      translations as Partial<Record<string, TranslationData>>,
+      'en',
+      ['title', 'content'],
+      { title: 'Title', content: 'Content' }
+    ),
+  });
+
+  // Check for maxLength violations in translations
+  const getTranslationErrors = () => {
+    const errs: string[] = [];
+    for (const [locale, t] of Object.entries(formData.translations)) {
+      if (t?.meta_title && t.meta_title.length > 60) {
+        errs.push(`Meta Title (${locale.toUpperCase()}) exceeds 60 characters`);
+      }
+      if (t?.meta_description && t.meta_description.length > 155) {
+        errs.push(`Meta Description (${locale.toUpperCase()}) exceeds 155 characters`);
+      }
+    }
+    return errs;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearErrors();
+
+    const result = validateForm(formData);
+    const translationErrors = getTranslationErrors();
+
+    if (!result.valid || translationErrors.length > 0) {
+      return;
+    }
+
     setSaving(true);
     try {
       const res = await fetch('/api/admin/posts', {
@@ -66,6 +100,8 @@ export default function NewPostPage() {
     }
   };
 
+  const allErrors = [...errors, ...getTranslationErrors().map(msg => ({ field: 'translation', message: msg }))];
+
   const defaultTranslation: TranslationData = {
     title: '',
     excerpt: '',
@@ -81,6 +117,7 @@ export default function NewPostPage() {
         <h1 className="text-2xl font-bold text-white">New Post</h1>
       </div>
       {error && <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400">{error}</div>}
+      <ValidationSummary errors={allErrors} />
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6">
           <h2 className="text-lg font-semibold text-white mb-4">Basic Information</h2>
@@ -155,8 +192,8 @@ export default function NewPostPage() {
                   />
                   <MarkdownEditor label="Content" name={`content-${locale}`} value={data.content} onChange={(v) => onChange({ ...data, content: v })} required />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <InputField label="Meta Title" name={`meta_title-${locale}`} value={data.meta_title || ''} onChange={(v) => onChange({ ...data, meta_title: v || null })} helpText="SEO title (auto-filled from title)" />
-                    <InputField label="Meta Description" name={`meta_description-${locale}`} value={data.meta_description || ''} onChange={(v) => onChange({ ...data, meta_description: v || null })} helpText="SEO description (max 155 chars)" />
+                    <InputField label="Meta Title" name={`meta_title-${locale}`} value={data.meta_title || ''} onChange={(v) => onChange({ ...data, meta_title: v || null })} helpText="SEO title (auto-filled from title)" maxLength={60} />
+                    <InputField label="Meta Description" name={`meta_description-${locale}`} value={data.meta_description || ''} onChange={(v) => onChange({ ...data, meta_description: v || null })} helpText="SEO description" maxLength={155} />
                   </div>
                 </div>
               );

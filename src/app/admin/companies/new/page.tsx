@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { InputField, TextareaField, CheckboxField, LocaleFields } from '@/components/admin';
+import { InputField, TextareaField, CheckboxField, LocaleFields, ValidationSummary, useFormValidation, validateTranslations } from '@/components/admin';
 import type { CompanyInput } from '@/lib/db';
 import type { Locale } from '@/i18n/config';
 
@@ -22,8 +22,25 @@ export default function NewCompanyPage() {
     translations: { en: { name: '', description: null } },
   });
 
+  const { errors, validateForm, clearErrors } = useFormValidation<CompanyInput>({
+    slug: { required: true, slug: true },
+    logo_path: { imagePath: true },
+    external_url: { url: true },
+    translations: (translations) => validateTranslations(
+      translations as Partial<Record<string, TranslationData>>,
+      'en',
+      ['name'],
+      { name: 'Name' }
+    ),
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearErrors();
+
+    const result = validateForm(formData);
+    if (!result.valid) return;
+
     setSaving(true);
     try {
       const res = await fetch('/api/admin/companies', {
@@ -47,6 +64,7 @@ export default function NewCompanyPage() {
         <h1 className="text-2xl font-bold text-white">New Company</h1>
       </div>
       {error && <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400">{error}</div>}
+      <ValidationSummary errors={errors} />
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6">
           <h2 className="text-lg font-semibold text-white mb-4">Basic Information</h2>

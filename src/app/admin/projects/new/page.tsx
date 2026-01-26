@@ -9,6 +9,9 @@ import {
   CheckboxField,
   TagInput,
   LocaleFields,
+  ValidationSummary,
+  useFormValidation,
+  validateTranslations,
 } from '@/components/admin';
 import type { ProjectInput } from '@/lib/db';
 import type { Locale } from '@/i18n/config';
@@ -37,8 +40,25 @@ export default function NewProjectPage() {
     translations: { en: { name: '', client_type: null, industry: null, challenge: null, solution: null, result: null } },
   });
 
+  const { errors, validateForm, clearErrors } = useFormValidation<ProjectInput>({
+    slug: { required: true, slug: true },
+    image_path: { imagePath: true },
+    external_url: { url: true },
+    translations: (translations) => validateTranslations(
+      translations as Partial<Record<string, TranslationData>>,
+      'en',
+      ['name'],
+      { name: 'Name' }
+    ),
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearErrors();
+
+    const result = validateForm(formData);
+    if (!result.valid) return;
+
     setSaving(true);
     setError(null);
 
@@ -85,6 +105,7 @@ export default function NewProjectPage() {
           {error}
         </div>
       )}
+      <ValidationSummary errors={errors} />
 
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6">
