@@ -2,6 +2,9 @@ import { MetadataRoute } from 'next';
 import { locales, defaultLocale } from '@/i18n/config';
 import { getPosts } from '@/lib/db/posts';
 
+// Prevent pre-rendering during build (D1 is not available at build time)
+export const dynamic = 'force-dynamic';
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://itguys.ro';
   // Use a static date for lastModified to avoid constant changes
