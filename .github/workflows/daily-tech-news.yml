@@ -1,5 +1,8 @@
 name: Daily Tech News Generator
 
+permissions:
+  contents: read
+
 on:
   schedule:
     - cron: '0 10 * * *'  # 10:00 AM UTC daily
