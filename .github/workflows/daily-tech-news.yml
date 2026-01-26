@@ -5,22 +5,28 @@ on:
     - cron: '0 10 * * *'  # 10:00 AM UTC daily
   workflow_dispatch:  # Manual trigger for testing
 
-permissions:
-  contents: read
-
 jobs:
   generate-post:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
-      - name: Clone humanizer skill
-        run: |
-          mkdir -p .claude/skills
-          gh repo clone blader/humanizer .claude/skills/humanizer
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Generate news report from Perplexity
         id: perplexity
@@ -44,76 +50,10 @@ jobs:
           echo "$RAW_CONTENT" | perl -0777 -pe 's/<think>.*?<\/think>\s*//gs' > perplexity-news.md
           echo "News report generated"
 
-      - name: Generate blog post with Claude Code
-        uses: anthropics/claude-code-action@v1
-        with:
-          prompt: |
-            Read the tech news report from perplexity-news.md.
-
-            Generate a blog post following these requirements:
-
-            ## ITGuys Brand Voice
-            - Direct and honest - no fluff, no buzzwords
-            - Security-first perspective - weave security implications into the narrative
-            - Pragmatic - focus on practical implications for developers and teams
-            - Professionally casual tone - "Let's Talk" not "Contact Us"
-            - Experience-driven - reference real-world scenarios
-
-            ## Content Requirements
-            1. Transform the news report into an engaging daily tech roundup
-            2. Add ITGuys perspective on security implications where relevant
-            3. Include practical takeaways for readers
-
-            ## Output Format
-            Output a single JSON object (no markdown fencing) matching this exact structure:
-
-            {
-              "slug": "YYYY-MM-DD-tech-news-roundup",
-              "image_path": null,
-              "author_id": null,
-              "published_at": "ISO8601 timestamp",
-              "is_published": 1,
-              "tags": ["tech-news", "daily-roundup", ...relevant tags],
-              "translations": {
-                "en": {
-                  "title": "...",
-                  "excerpt": "2-3 sentence summary",
-                  "content": "Full markdown content",
-                  "meta_title": "Max 60 chars for SEO",
-                  "meta_description": "Max 155 chars for SEO"
-                },
-                "ro": { ...Romanian translation... },
-                "fr": { ...French translation... },
-                "de": { ...German translation... },
-                "it": { ...Italian translation... },
-                "es": { ...Spanish translation... }
-              }
-            }
-
-            Use today's date for the slug and published_at.
-          allowed_tools: "Read,Write"
-          output_file: "blog-post.json"
-
-      - name: Humanize blog post with Claude Code
-        uses: anthropics/claude-code-action@v1
-        with:
-          prompt: |
-            Read the humanizer skill from .claude/skills/humanizer/SKILL.md.
-            Read the blog post from blog-post.json.
-
-            Apply ALL humanizer patterns to the blog post content to remove AI writing artifacts.
-            Process all 6 locale translations (en, ro, fr, de, it, es).
-
-            For each translation, humanize:
-            - title
-            - excerpt
-            - content
-            - meta_description
-
-            Output the humanized blog post as a JSON object with the same structure.
-            Do not change the slug, image_path, author_id, published_at, is_published, or tags.
-          allowed_tools: "Read,Write"
-          output_file: "blog-post.json"
+      - name: Generate and humanize blog post
+        run: pnpm tsx scripts/generate-news-post.ts
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
       - name: Publish to database
         run: |

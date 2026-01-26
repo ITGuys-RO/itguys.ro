@@ -35,6 +35,7 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^0.71.2",
     "@opennextjs/cloudflare": "^1.15.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
@@ -44,6 +45,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.4",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5",
     "wrangler": "^4.60.0"
   }
