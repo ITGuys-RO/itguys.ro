@@ -4,6 +4,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { createPerplexity } from '@ai-sdk/perplexity';
 import { generateText } from 'ai';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { jsonrepair } from 'jsonrepair';
 
 const anthropic = new Anthropic();
 const perplexity = createPerplexity({
@@ -51,37 +52,14 @@ function stripMarkdownFences(text: string): string {
   return text.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
 }
 
-function repairJson(jsonStr: string): string {
-  // Fix common JSON issues from LLM output
-  let fixed = jsonStr;
-
-  // Remove any trailing content after the closing brace
-  const lastBrace = fixed.lastIndexOf('}');
-  if (lastBrace !== -1 && lastBrace < fixed.length - 1) {
-    fixed = fixed.slice(0, lastBrace + 1);
-  }
-
-  // Fix unescaped newlines within strings (common LLM issue)
-  // This regex finds strings and escapes literal newlines inside them
-  fixed = fixed.replace(
-    /"([^"\\]|\\.)*"/g,
-    (match) => match.replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t')
-  );
-
-  // Remove trailing commas before } or ]
-  fixed = fixed.replace(/,(\s*[}\]])/g, '$1');
-
-  return fixed;
-}
-
 function parseJsonSafe(jsonStr: string, context: string): BlogPost {
   try {
     return JSON.parse(jsonStr) as BlogPost;
   } catch (firstError) {
-    // Try to repair the JSON
-    console.log(`JSON parse failed, attempting repair...`);
+    // Try to repair the JSON using jsonrepair library
+    console.log(`JSON parse failed, attempting repair with jsonrepair...`);
     try {
-      const repaired = repairJson(jsonStr);
+      const repaired = jsonrepair(jsonStr);
       const result = JSON.parse(repaired) as BlogPost;
       console.log(`JSON repair successful`);
       return result;

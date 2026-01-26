@@ -29,6 +29,7 @@
     "clsx": "^2.1.1",
     "embla-carousel-auto-scroll": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
+    "jsonrepair": "^3.13.2",
     "next": "16.1.4",
     "react": "19.2.3",
     "react-datepicker": "^9.1.0",
