@@ -16,6 +16,24 @@ export function LanguageSwitcher({ locale }: Props) {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleChange = (newLocale: Locale) => {
+    // Check for hreflang alternate URL (for pages with locale-specific slugs like blog posts)
+    const hreflangLink = document.querySelector(`link[rel="alternate"][hreflang="${newLocale}"]`);
+    if (hreflangLink) {
+      const href = hreflangLink.getAttribute('href');
+      if (href) {
+        // Extract pathname only - href may be absolute URL with production domain
+        try {
+          const url = new URL(href, window.location.origin);
+          router.push(url.pathname);
+        } catch {
+          // If URL parsing fails, use href as-is (it's likely already a pathname)
+          router.push(href);
+        }
+        setIsOpen(false);
+        return;
+      }
+    }
+    // Fall back to simple locale swap for pages without locale-specific slugs
     router.replace(pathname, { locale: newLocale });
     setIsOpen(false);
   };

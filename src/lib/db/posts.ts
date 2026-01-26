@@ -305,3 +305,30 @@ export async function updatePost(id: number, input: Partial<PostInput>): Promise
 export async function deletePost(id: number): Promise<void> {
   await execute('DELETE FROM posts WHERE id = ?', [id]);
 }
+
+/**
+ * Get all locale-specific slugs for a post
+ * Returns a map of locale -> slug for generating hreflang alternates
+ */
+export async function getPostLocaleSlugs(postId: number): Promise<Record<string, string>> {
+  const post = await getPostById(postId);
+  if (!post) return {};
+
+  const translations = await getPostTranslations(postId);
+  const slugs: Record<string, string> = {};
+
+  // Start with the canonical slug for all locales as fallback
+  const allLocales = ['en', 'ro', 'fr', 'de', 'it', 'es'];
+  for (const locale of allLocales) {
+    slugs[locale] = post.slug;
+  }
+
+  // Override with locale-specific slugs where available
+  for (const t of translations) {
+    if (t.slug) {
+      slugs[t.locale] = t.slug;
+    }
+  }
+
+  return slugs;
+}

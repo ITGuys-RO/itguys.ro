@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Section, Card, AnimateOnScroll } from '@/components/ui';
 import { BreadcrumbSchema, OrganizationSchema, BlogPostingSchema } from '@/components/structured-data';
-import { getPostLocalized } from '@/lib/db';
+import { getPostLocalized, getPostLocaleSlugs } from '@/lib/db';
 import { Link } from '@/i18n/navigation';
 import { CalendarIcon, UserIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import type { Locale } from '@/i18n/config';
@@ -32,18 +32,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const baseUrl = locale === 'en' ? '' : `/${locale}`;
     const title = post.metaTitle || post.title;
 
+    // Get locale-specific slugs for hreflang alternates
+    const slugs = await getPostLocaleSlugs(post.id);
+
     return {
       title: `${title} | ITGuys Blog`,
       description: post.metaDescription || post.excerpt || undefined,
       openGraph: {
         title,
         description: post.metaDescription || post.excerpt || undefined,
-        url: `https://itguys.ro${baseUrl}/blog/${slug}`,
+        url: `https://itguys.ro${baseUrl}/blog/${post.slug}`,
         type: 'article',
         ...(post.imagePath && { images: [{ url: post.imagePath }] }),
       },
       alternates: {
-        canonical: `${baseUrl}/blog/${slug}`,
+        canonical: `${baseUrl}/blog/${post.slug}`,
+        languages: {
+          en: `/blog/${slugs.en || slug}`,
+          ro: `/ro/blog/${slugs.ro || slug}`,
+          fr: `/fr/blog/${slugs.fr || slug}`,
+          de: `/de/blog/${slugs.de || slug}`,
+          it: `/it/blog/${slugs.it || slug}`,
+          es: `/es/blog/${slugs.es || slug}`,
+        },
       },
     };
   } catch {
