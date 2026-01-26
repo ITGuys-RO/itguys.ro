@@ -121,7 +121,7 @@ async function fetchTechNews(): Promise<string> {
 async function generateBlogPost(newsContent: string): Promise<BlogPost> {
   console.log('Generating blog post from news content...');
 
-  const response = await anthropic.messages.create({
+  const stream = anthropic.messages.stream({
     model: ANTHROPIC_MODEL,
     max_tokens: 32000,
     messages: [
@@ -135,6 +135,8 @@ async function generateBlogPost(newsContent: string): Promise<BlogPost> {
       },
     ],
   });
+
+  const response = await stream.finalMessage();
 
   if (response.stop_reason !== 'end_turn') {
     console.error(`Warning: Response stopped due to ${response.stop_reason}`);
@@ -167,7 +169,7 @@ IMPORTANT: Output ONLY the JSON object. No explanation, no preamble, no markdown
 
 ${JSON.stringify(blogPost, null, 2)}`;
 
-  const response = await anthropic.messages.create({
+  const stream = anthropic.messages.stream({
     model: ANTHROPIC_MODEL,
     max_tokens: 32000,
     messages: [
@@ -181,6 +183,8 @@ ${JSON.stringify(blogPost, null, 2)}`;
       },
     ],
   });
+
+  const response = await stream.finalMessage();
 
   if (response.stop_reason !== 'end_turn') {
     console.error(`Warning: Response stopped due to ${response.stop_reason}`);
