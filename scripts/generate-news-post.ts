@@ -122,7 +122,35 @@ interface BlogPost {
   translations: Record<string, BlogPostTranslation>;
 }
 
-const NEWS_PROMPT = `Generate a comprehensive and structured news report focused on today's tech news across web development, mobile development, security, AI/ML, and DevOps/cloud areas. For each area, provide 2-3 significant news items with brief explanations of why they matter. Focus on actionable insights and practical implications for developers and tech teams.`;
+const NEWS_PROMPT = `Generate a comprehensive and structured news report focused on today's tech news across web development, mobile development, security, AI/ML, and DevOps/cloud areas. For each area, provide 2-3 significant news items with brief explanations of why they matter.
+
+## Important: Connect to ITGuys Services
+For each news item, add a "How ITGuys helps" section explaining how our services relate to this news. Be specific and practical, not salesy.
+
+### About ITGuys
+ITGuys is a tech consultancy with 30+ combined years of experience from Electronic Arts, TUI, and Nagarro.
+
+**Services:**
+- Web Applications: Custom web apps, APIs, cloud infrastructure (PHP, Docker, AWS)
+- Native Mobile Apps: iOS and Android (Swift, Kotlin) - real native development
+- Security Services: Penetration testing, Akamai/Cloudflare configuration, cloud security reviews, DDoS protection
+
+**Background:**
+- Penetration testing at Electronic Arts
+- DDoS protection systems at TUI
+- 5+ years native mobile at Nagarro (IoT, healthcare, e-commerce)
+- Swiss enterprise clients with compliance requirements
+
+**Who we help:** Startups (MVP to scale) and Enterprise teams (secure integrations, compliance)
+
+### Connection examples:
+- Security vulnerability news → "ITGuys helps teams identify these issues before attackers do through pen testing and security reviews"
+- Framework/library updates → "ITGuys helps teams plan and execute migrations safely"
+- Cloud/infrastructure news → "ITGuys builds and secures cloud infrastructure on AWS"
+- Mobile platform changes → "ITGuys develops native iOS/Android apps that stay current with platform requirements"
+- Compliance/regulation → "ITGuys works with Swiss enterprise clients on compliance-ready systems"
+
+Focus on actionable insights and practical implications for developers and tech teams.`;
 
 const BRAND_VOICE_PROMPT = `
 ## ITGuys Brand Voice
@@ -134,14 +162,15 @@ const BRAND_VOICE_PROMPT = `
 `;
 
 const BLOG_POST_PROMPT = `
-You are generating a blog post for ITGuys, a tech consultancy focused on web development, security, and DevOps.
+You are generating a blog post for ITGuys from a news report that already includes "How ITGuys helps" sections.
 
 ${BRAND_VOICE_PROMPT}
 
 ## Content Requirements
-1. Transform the news report into an engaging daily tech roundup
-2. Add ITGuys perspective on security implications where relevant
-3. Include practical takeaways for readers
+1. Transform the news report into an engaging, well-structured blog post
+2. Keep the ITGuys service connections from the source - weave them naturally into the narrative
+3. Don't sound salesy - the connections should feel like helpful context, not a pitch
+4. End with a soft CTA like "If [specific challenge from the news] sounds familiar, let's talk"
 
 ## Output Format
 Output a single valid JSON object (no markdown fencing) matching this exact structure.
