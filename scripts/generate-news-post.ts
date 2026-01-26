@@ -3,17 +3,25 @@ config({ path: '.env.local' });
 import Anthropic from '@anthropic-ai/sdk';
 import { createPerplexity } from '@ai-sdk/perplexity';
 import { generateText } from 'ai';
-import { writeFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { jsonrepair } from 'jsonrepair';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const anthropic = new Anthropic();
 const perplexity = createPerplexity({
   apiKey: process.env.PERPLEXITY_API_KEY,
 });
 
-const ANTHROPIC_MODEL = 'claude-opus-4-5-20251101';
+const ANTHROPIC_MODEL = 'claude-sonnet-4-20250514';
+const PERPLEXITY_MODEL = 'sonar-reasoning-pro';
 const MAX_RETRIES = 3;
 const INITIAL_RETRY_DELAY_MS = 5000;
+
+const LOCALES = ['ro', 'fr', 'de', 'it', 'es'] as const;
 
 async function withRetry<T>(
   fn: () => Promise<T>,
@@ -45,40 +53,12 @@ async function withRetry<T>(
   }
   throw lastError;
 }
-const PERPLEXITY_MODEL = 'sonar-reasoning-pro';
 
 function stripMarkdownFences(text: string): string {
-  // Remove ```json ... ``` or ``` ... ``` wrapping
   return text.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
 }
 
-function parseJsonSafe(jsonStr: string, context: string): BlogPost {
-  try {
-    return JSON.parse(jsonStr) as BlogPost;
-  } catch (firstError) {
-    // Try to repair the JSON using jsonrepair library
-    console.log(`JSON parse failed, attempting repair with jsonrepair...`);
-    try {
-      const repaired = jsonrepair(jsonStr);
-      const result = JSON.parse(repaired) as BlogPost;
-      console.log(`JSON repair successful`);
-      return result;
-    } catch (repairError) {
-      // Log the problematic JSON for debugging
-      console.error(`JSON parse error in ${context}:`);
-      console.error(`Error: ${firstError}`);
-      console.error(`JSON length: ${jsonStr.length}`);
-      console.error(`Last 200 chars: ${jsonStr.slice(-200)}`);
-      // Write raw JSON to file for debugging
-      writeFileSync('debug-json-output.txt', jsonStr);
-      console.error(`Raw JSON written to debug-json-output.txt`);
-      throw firstError;
-    }
-  }
-}
-
 function stripThinkingTags(text: string): string {
-  // Remove <think>...</think> sections from sonar-reasoning-pro responses
   return text.replace(/<think>[\s\S]*?<\/think>\s*/gi, '').trim();
 }
 
@@ -90,22 +70,49 @@ interface BlogPostTranslation {
   meta_description: string;
 }
 
-interface BlogPost {
+interface BlogPostBase {
   slug: string;
   image_path: string | null;
   author_id: string | null;
   published_at: string;
   is_published: number;
   tags: string[];
+}
+
+interface BlogPostEnglish extends BlogPostBase {
+  translations: {
+    en: BlogPostTranslation;
+  };
+}
+
+interface BlogPost extends BlogPostBase {
   translations: Record<string, BlogPostTranslation>;
 }
 
-const NEWS_PROMPT = `Generate a comprehensive and structured news report focused on today's tech news across web development, mobile development, security, AI/ML, and DevOps/cloud areas. For each area, provide 2-3 significant news items with brief explanations of why they matter.
+function loadHumanizerRules(): string {
+  const skillPath = join(__dirname, '..', 'vendor', 'humanizer', 'SKILL.md');
+  try {
+    const content = readFileSync(skillPath, 'utf-8');
+    const withoutFrontmatter = content.replace(/^---[\s\S]*?---\s*/, '');
+    return withoutFrontmatter;
+  } catch (error) {
+    console.error(`Warning: Could not load humanizer rules from ${skillPath}`);
+    console.error(error);
+    return '';
+  }
+}
 
-## Important: Connect to ITGuys Services
-For each news item, add a "How ITGuys helps" section explaining how our services relate to this news. Be specific and practical, not salesy.
+function getPerplexityPrompt(): string {
+  const today = new Date().toISOString().split('T')[0];
+  const timestamp = new Date().toISOString();
+  const humanizerRules = loadHumanizerRules();
 
-### About ITGuys
+  return `You are a tech news blogger for ITGuys. Your task is to:
+1. Research today's most significant tech news
+2. Write an engaging blog post about it
+3. Output valid JSON
+
+## About ITGuys
 ITGuys is a tech consultancy with 30+ combined years of experience from Electronic Arts, TUI, and Nagarro.
 
 **Services:**
@@ -121,64 +128,28 @@ ITGuys is a tech consultancy with 30+ combined years of experience from Electron
 
 **Who we help:** Startups (MVP to scale) and Enterprise teams (secure integrations, compliance)
 
-### Connection examples:
-- Security vulnerability news → "ITGuys helps teams identify these issues before attackers do through pen testing and security reviews"
-- Framework/library updates → "ITGuys helps teams plan and execute migrations safely"
-- Cloud/infrastructure news → "ITGuys builds and secures cloud infrastructure on AWS"
-- Mobile platform changes → "ITGuys develops native iOS/Android apps that stay current with platform requirements"
-- Compliance/regulation → "ITGuys works with Swiss enterprise clients on compliance-ready systems"
-
-Focus on actionable insights and practical implications for developers and tech teams.`;
-
-const BRAND_VOICE_PROMPT = `
 ## ITGuys Brand Voice
 - Direct and honest - no fluff, no buzzwords
 - Security-first perspective - weave security implications into the narrative
 - Pragmatic - focus on practical implications for developers and teams
 - Professionally casual tone - "Let's Talk" not "Contact Us"
 - Experience-driven - reference real-world scenarios
-`;
 
-const HUMANIZER_RULES = `
-## CRITICAL: Sound Human, Not AI
-
-**BANNED - Em dashes (—):** NEVER use em dashes. Replace with commas, periods, or colons.
-- BAD: "AI changed everything—developers now ship faster"
-- GOOD: "AI changed everything. Developers now ship faster"
-
-**BANNED - AI vocabulary:** additionally, crucial, delve, landscape, tapestry, testament, underscore, utilize, leverage, robust, seamless, cutting-edge, game-changer, paradigm, synergy, holistic, comprehensive, innovative, transformative, pivotal, vibrant, foster, enhance, showcase, interplay, intricate, enduring, garner
-
-**BANNED - Patterns:**
-- "Not only X, but also Y" → just say both things
-- "serves as / stands as / acts as" → use "is"
-- "It's worth noting that..." → delete, just say it
-- Rule-of-three lists for fake depth
-- -ing phrases tacked on sentences ("highlighting the importance of...")
-- "In order to" → "To"
-- "Due to the fact that" → "Because"
-
-**DO:**
-- Use contractions (it's, don't, we're, you'll)
-- Vary sentence length. Short sentences work. Longer ones that take their time also have their place.
-- Use commas and periods, not em dashes
-- Be specific, not vague ("a 2024 Google study" not "experts say")
-`;
-
-const BLOG_POST_PROMPT = `
-You are generating a blog post for ITGuys from a news report that already includes "How ITGuys helps" sections.
-
-${BRAND_VOICE_PROMPT}
-
-${HUMANIZER_RULES}
+## News Topics to Cover
+Focus on today's tech news across: web development, mobile development, security, AI/ML, and DevOps/cloud.
+For each topic, briefly explain why it matters and how ITGuys can help (be specific, not salesy).
 
 ## Content Requirements
-1. Transform the news report into an engaging, well-structured blog post
-2. Keep the ITGuys service connections from the source - weave them naturally into the narrative
-3. Don't sound salesy - the connections should feel like helpful context, not a pitch
-4. End with a soft CTA like "If [specific challenge from the news] sounds familiar, [let's talk](/contact)" - always make "let's talk" a markdown link to /contact
+1. Write an engaging, well-structured blog post
+2. Weave ITGuys service connections naturally into the narrative
+3. Don't sound salesy - connections should feel like helpful context
+4. End with a soft CTA like "If [specific challenge] sounds familiar, [let's talk](/contact)" - make "let's talk" a markdown link to /contact
+
+## Humanizer Rules - CRITICAL: Sound Human, Not AI
+${humanizerRules}
 
 ## Output Format
-Output a single valid JSON object (no markdown fencing) matching this exact structure.
+Output ONLY a valid JSON object (no markdown fencing, no explanation before or after).
 
 CRITICAL JSON RULES:
 - All strings must use double quotes
@@ -187,91 +158,132 @@ CRITICAL JSON RULES:
 - No comments
 
 {
-  "slug": "YYYY-MM-DD-tech-news-roundup",
+  "slug": "${today}-tech-news-roundup",
   "image_path": null,
   "author_id": null,
-  "published_at": "ISO8601 timestamp",
+  "published_at": "${timestamp}",
   "is_published": 1,
   "tags": ["tech-news", "daily-roundup", ...relevant tags],
   "translations": {
     "en": {
-      "title": "...",
+      "title": "Your title here",
       "excerpt": "2-3 sentence summary",
-      "content": "Full markdown content",
+      "content": "Full markdown content with \\n for newlines",
       "meta_title": "Max 60 chars for SEO",
       "meta_description": "Max 155 chars for SEO"
-    },
-    "ro": { ...Romanian translation... },
-    "fr": { ...French translation... },
-    "de": { ...German translation... },
-    "it": { ...Italian translation... },
-    "es": { ...Spanish translation... }
+    }
   }
 }
 
-## CRITICAL DATE REQUIREMENT
-Today's date is: ${new Date().toISOString().split('T')[0]}
-- Use this EXACT date for the slug: ${new Date().toISOString().split('T')[0]}-tech-news-roundup
-- Use this EXACT timestamp for published_at: ${new Date().toISOString()}
-
-## STRICT LENGTH LIMITS (will be validated)
-- meta_title: MUST be 60 characters or less (aim for 50-55 to be safe)
-- meta_description: MUST be 155 characters or less (aim for 140-150 to be safe)
-These limits apply to ALL languages. Shorter is better for SEO.
-
-## News Report to Transform:
+## STRICT LENGTH LIMITS
+- meta_title: MUST be 60 characters or less
+- meta_description: MUST be 155 characters or less
 `;
+}
 
-async function fetchTechNews(): Promise<string> {
-  console.log('Fetching tech news from Perplexity...');
+async function generateEnglishPost(): Promise<BlogPostEnglish> {
+  console.log('Generating English blog post from Perplexity...');
 
   return withRetry(async () => {
     const { text } = await generateText({
       model: perplexity(PERPLEXITY_MODEL),
-      prompt: NEWS_PROMPT,
+      prompt: getPerplexityPrompt(),
     });
 
-    // Strip thinking tags from sonar-reasoning-pro response
-    const newsContent = stripThinkingTags(text);
-    console.log(`Fetched news content (${newsContent.length} chars)`);
-    return newsContent;
-  }, 'fetchTechNews');
+    const cleaned = stripThinkingTags(text);
+    const jsonStr = stripMarkdownFences(cleaned);
+
+    try {
+      return JSON.parse(jsonStr) as BlogPostEnglish;
+    } catch {
+      console.log('JSON parse failed, attempting repair...');
+      const repaired = jsonrepair(jsonStr);
+      return JSON.parse(repaired) as BlogPostEnglish;
+    }
+  }, 'generateEnglishPost');
 }
 
-async function generateBlogPost(newsContent: string): Promise<BlogPost> {
-  console.log('Generating blog post from news content...');
+async function translateToLocale(
+  englishContent: BlogPostTranslation,
+  locale: string
+): Promise<BlogPostTranslation> {
+  const localeNames: Record<string, string> = {
+    ro: 'Romanian',
+    fr: 'French',
+    de: 'German',
+    it: 'Italian',
+    es: 'Spanish',
+  };
 
-  return withRetry(async () => {
-    const stream = anthropic.messages.stream({
-      model: ANTHROPIC_MODEL,
-      max_tokens: 32000,
-      messages: [
-        {
-          role: 'user',
-          content: BLOG_POST_PROMPT + newsContent,
-        },
-        {
-          role: 'assistant',
-          content: '{',
-        },
-      ],
-    });
+  const response = await anthropic.messages.create({
+    model: ANTHROPIC_MODEL,
+    max_tokens: 8000,
+    messages: [
+      {
+        role: 'user',
+        content: `Translate this blog post content to ${localeNames[locale]}.
 
-    const response = await stream.finalMessage();
+Maintain the same tone, formatting, and markdown structure. Keep URLs unchanged.
 
-    if (response.stop_reason !== 'end_turn') {
-      console.error(`Warning: Response stopped due to ${response.stop_reason}`);
-    }
+STRICT LENGTH LIMITS:
+- meta_title: MUST be 60 characters or less
+- meta_description: MUST be 155 characters or less
 
-    const textContent = response.content.find((block) => block.type === 'text');
-    if (!textContent || textContent.type !== 'text') {
-      throw new Error('No text content in response');
-    }
+Output ONLY valid JSON with this structure:
+{
+  "title": "translated title",
+  "excerpt": "translated excerpt",
+  "content": "translated content with \\n for newlines",
+  "meta_title": "translated meta title (max 60 chars)",
+  "meta_description": "translated meta description (max 155 chars)"
+}
 
-    // Parse the JSON response (prepend the '{' we used as prefill)
-    const jsonStr = '{' + stripMarkdownFences(textContent.text);
-    return parseJsonSafe(jsonStr, 'generateBlogPost');
-  }, 'generateBlogPost');
+Content to translate:
+${JSON.stringify(englishContent, null, 2)}`,
+      },
+    ],
+  });
+
+  const textContent = response.content.find((block) => block.type === 'text');
+  if (!textContent || textContent.type !== 'text') {
+    throw new Error('No text content in translation response');
+  }
+
+  const jsonStr = stripMarkdownFences(textContent.text);
+  try {
+    return JSON.parse(jsonStr) as BlogPostTranslation;
+  } catch {
+    const repaired = jsonrepair(jsonStr);
+    return JSON.parse(repaired) as BlogPostTranslation;
+  }
+}
+
+async function translateAll(
+  englishContent: BlogPostTranslation
+): Promise<Record<string, BlogPostTranslation>> {
+  console.log('Translating to other languages...');
+
+  const translations: Record<string, BlogPostTranslation> = {
+    en: englishContent,
+  };
+
+  // Translate in parallel
+  const results = await Promise.all(
+    LOCALES.map(async (locale) => {
+      console.log(`  Translating to ${locale}...`);
+      const translated = await withRetry(
+        () => translateToLocale(englishContent, locale),
+        `translate-${locale}`
+      );
+      return { locale, translated };
+    })
+  );
+
+  for (const { locale, translated } of results) {
+    translations[locale] = translated;
+  }
+
+  return translations;
 }
 
 function validateAndFixBlogPost(post: BlogPost): BlogPost {
@@ -317,17 +329,23 @@ function validateAndFixBlogPost(post: BlogPost): BlogPost {
 }
 
 async function main() {
-  // 1. Fetch news from Perplexity
-  const newsContent = await fetchTechNews();
+  // 1. Generate English blog post from Perplexity (news + writing in one call)
+  const englishPost = await generateEnglishPost();
+  console.log(`Generated English post with slug: ${englishPost.slug}`);
 
-  // 2. Generate blog post with brand voice + humanization in one call
-  let blogPost = await generateBlogPost(newsContent);
-  console.log(`Generated blog post with slug: ${blogPost.slug}`);
+  // 2. Translate to other languages using Claude
+  const allTranslations = await translateAll(englishPost.translations.en);
 
-  // 3. Validate and fix any issues
+  // 3. Combine into final blog post
+  let blogPost: BlogPost = {
+    ...englishPost,
+    translations: allTranslations,
+  };
+
+  // 4. Validate and fix any issues
   blogPost = validateAndFixBlogPost(blogPost);
 
-  // 4. Write blog-post.json
+  // 5. Write blog-post.json
   writeFileSync('blog-post.json', JSON.stringify(blogPost, null, 2));
   console.log('Wrote blog-post.json');
 }
