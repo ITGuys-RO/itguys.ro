@@ -3,7 +3,7 @@ config({ path: '.env.local' });
 import Anthropic from '@anthropic-ai/sdk';
 import { createPerplexity } from '@ai-sdk/perplexity';
 import { generateText } from 'ai';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { writeFileSync } from 'fs';
 import { jsonrepair } from 'jsonrepair';
 
 const anthropic = new Anthropic();
@@ -139,10 +139,37 @@ const BRAND_VOICE_PROMPT = `
 - Experience-driven - reference real-world scenarios
 `;
 
+const HUMANIZER_RULES = `
+## CRITICAL: Sound Human, Not AI
+
+**BANNED - Em dashes (—):** NEVER use em dashes. Replace with commas, periods, or colons.
+- BAD: "AI changed everything—developers now ship faster"
+- GOOD: "AI changed everything. Developers now ship faster"
+
+**BANNED - AI vocabulary:** additionally, crucial, delve, landscape, tapestry, testament, underscore, utilize, leverage, robust, seamless, cutting-edge, game-changer, paradigm, synergy, holistic, comprehensive, innovative, transformative, pivotal, vibrant, foster, enhance, showcase, interplay, intricate, enduring, garner
+
+**BANNED - Patterns:**
+- "Not only X, but also Y" → just say both things
+- "serves as / stands as / acts as" → use "is"
+- "It's worth noting that..." → delete, just say it
+- Rule-of-three lists for fake depth
+- -ing phrases tacked on sentences ("highlighting the importance of...")
+- "In order to" → "To"
+- "Due to the fact that" → "Because"
+
+**DO:**
+- Use contractions (it's, don't, we're, you'll)
+- Vary sentence length. Short sentences work. Longer ones that take their time also have their place.
+- Use commas and periods, not em dashes
+- Be specific, not vague ("a 2024 Google study" not "experts say")
+`;
+
 const BLOG_POST_PROMPT = `
 You are generating a blog post for ITGuys from a news report that already includes "How ITGuys helps" sections.
 
 ${BRAND_VOICE_PROMPT}
+
+${HUMANIZER_RULES}
 
 ## Content Requirements
 1. Transform the news report into an engaging, well-structured blog post
@@ -239,79 +266,16 @@ async function generateBlogPost(newsContent: string): Promise<BlogPost> {
   }, 'generateBlogPost');
 }
 
-async function humanizeBlogPost(
-  blogPost: BlogPost,
-  humanizerRules: string
-): Promise<BlogPost> {
-  console.log('Applying humanizer patterns to blog post...');
-
-  const humanizePrompt = `Apply humanization patterns to remove AI writing artifacts from this blog post.
-
-Rules summary: Remove AI vocabulary (additionally, crucial, delve, landscape, tapestry, testament, underscore, etc.), remove -ing phrase padding, remove em dash overuse, remove rule-of-three patterns, remove "Not only...but also" constructions, use simple "is/are" instead of "serves as/stands as", vary sentence rhythm, add personality.
-
-Process all 6 locale translations. For each, humanize: title, excerpt, content, meta_description.
-Do NOT change: slug, image_path, author_id, published_at, is_published, tags, meta_title.
-
-IMPORTANT: Output ONLY valid JSON. No explanation, no preamble, no markdown fencing.
-JSON RULES: Use double quotes, escape \\n for newlines and \\" for quotes in strings, no trailing commas.
-
-${JSON.stringify(blogPost, null, 2)}`;
-
-  return withRetry(async () => {
-    const stream = anthropic.messages.stream({
-      model: ANTHROPIC_MODEL,
-      max_tokens: 32000,
-      messages: [
-        {
-          role: 'user',
-          content: humanizePrompt,
-        },
-        {
-          role: 'assistant',
-          content: '{',
-        },
-      ],
-    });
-
-    const response = await stream.finalMessage();
-
-    if (response.stop_reason !== 'end_turn') {
-      console.error(`Warning: Response stopped due to ${response.stop_reason}`);
-    }
-
-    const textContent = response.content.find((block) => block.type === 'text');
-    if (!textContent || textContent.type !== 'text') {
-      throw new Error('No text content in response');
-    }
-
-    // Parse the JSON response (prepend the '{' we used as prefill)
-    const jsonStr = '{' + stripMarkdownFences(textContent.text);
-    return parseJsonSafe(jsonStr, 'humanizeBlogPost');
-  }, 'humanizeBlogPost');
-}
-
 async function main() {
   // 1. Fetch news from Perplexity
   const newsContent = await fetchTechNews();
 
-  // 2. Generate blog post with brand voice
+  // 2. Generate blog post with brand voice + humanization in one call
   const blogPost = await generateBlogPost(newsContent);
   console.log(`Generated blog post with slug: ${blogPost.slug}`);
 
-  // 3. Read humanizer skill
-  const humanizerPath = 'vendor/humanizer/SKILL.md';
-  if (!existsSync(humanizerPath)) {
-    throw new Error(`Humanizer skill not found: ${humanizerPath}`);
-  }
-  const humanizerRules = readFileSync(humanizerPath, 'utf-8');
-  console.log(`Read humanizer rules (${humanizerRules.length} chars)`);
-
-  // 4. Apply humanization
-  const humanizedPost = await humanizeBlogPost(blogPost, humanizerRules);
-  console.log('Humanization complete');
-
-  // 5. Write blog-post.json
-  writeFileSync('blog-post.json', JSON.stringify(humanizedPost, null, 2));
+  // 3. Write blog-post.json
+  writeFileSync('blog-post.json', JSON.stringify(blogPost, null, 2));
   console.log('Wrote blog-post.json');
 }
 
