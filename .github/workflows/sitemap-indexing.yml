@@ -1,0 +1,298 @@
+name: Sitemap Indexing
+
+on:
+  workflow_run:
+    workflows: ["Deploy to Cloudflare"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  index-sitemap:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            wrangler.toml.example
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Install wrangler
+        run: npm install -g wrangler
+
+      - name: Generate wrangler.toml
+        run: envsubst < wrangler.toml.example > wrangler.toml
+        env:
+          TELEGRAM_BOT_TOKEN: "unused"
+          TELEGRAM_CHAT_ID: "unused"
+          TURNSTILE_SECRET_KEY: "unused"
+          D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
+
+      - name: Wait for Cloudflare propagation
+        run: |
+          echo "Waiting 30s for Cloudflare edge propagation..."
+          sleep 30
+
+      - name: Fetch live sitemap
+        id: fetch-sitemap
+        run: |
+          MAX_RETRIES=3
+          RETRY_DELAY=10
+
+          for i in $(seq 1 $MAX_RETRIES); do
+            echo "Attempt $i of $MAX_RETRIES: Fetching sitemap..."
+
+            HTTP_CODE=$(curl -s -w "%{http_code}" -o sitemap.xml "https://itguys.ro/sitemap.xml")
+
+            if [ "$HTTP_CODE" = "200" ] && [ -s sitemap.xml ]; then
+              echo "Sitemap fetched successfully"
+              echo "success=true" >> $GITHUB_OUTPUT
+              break
+            fi
+
+            echo "Failed with HTTP $HTTP_CODE, retrying in ${RETRY_DELAY}s..."
+            sleep $RETRY_DELAY
+
+            if [ "$i" = "$MAX_RETRIES" ]; then
+              echo "Failed to fetch sitemap after $MAX_RETRIES attempts"
+              echo "success=false" >> $GITHUB_OUTPUT
+              exit 1
+            fi
+          done
+
+      - name: Parse sitemap URLs
+        run: |
+          # Extract URLs from sitemap XML using grep and sed
+          grep -oP '(?<=<loc>)[^<]+' sitemap.xml | sort -u > sitemap-urls.txt
+
+          URL_COUNT=$(wc -l < sitemap-urls.txt | tr -d ' ')
+          echo "Found $URL_COUNT URLs in sitemap:"
+          cat sitemap-urls.txt
+
+      - name: Get previously submitted URLs from D1
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          wrangler d1 execute itguys-ro --remote --command "SELECT url FROM indexnow_submitted" --json | \
+            jq -r '.[0].results[].url' 2>/dev/null | sort -u > submitted-urls.txt || touch submitted-urls.txt
+
+          echo "Previously submitted $(wc -l < submitted-urls.txt | tr -d ' ') URLs"
+
+      - name: Find new URLs
+        id: find-new
+        run: |
+          # Find URLs in sitemap that haven't been submitted
+          comm -23 sitemap-urls.txt submitted-urls.txt > new-urls.txt
+
+          NEW_COUNT=$(wc -l < new-urls.txt | tr -d ' ')
+
+          if [ "$NEW_COUNT" -eq 0 ] || [ ! -s new-urls.txt ]; then
+            echo "No new URLs to submit"
+            echo "has_new=false" >> $GITHUB_OUTPUT
+          else
+            echo "=== New URLs to submit ($NEW_COUNT) ==="
+            cat new-urls.txt
+            echo "has_new=true" >> $GITHUB_OUTPUT
+            echo "count=$NEW_COUNT" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Submit to IndexNow
+        if: steps.find-new.outputs.has_new == 'true'
+        id: indexnow
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: |
+          set -e
+
+          # IndexNow accepts up to 10,000 URLs per request, but we'll chunk to 100 for safety
+          CHUNK_SIZE=100
+          SUCCESS_COUNT=0
+          TOTAL=$(wc -l < new-urls.txt | tr -d ' ')
+
+          # Split into chunks
+          split -l $CHUNK_SIZE new-urls.txt chunk_
+
+          for chunk in chunk_*; do
+            CHUNK_COUNT=$(wc -l < "$chunk" | tr -d ' ')
+            echo "Submitting chunk with $CHUNK_COUNT URLs..."
+
+            URL_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0))' < "$chunk")
+
+            JSON_PAYLOAD=$(jq -n \
+              --arg host "itguys.ro" \
+              --arg key "$INDEXNOW_KEY" \
+              --arg keyLocation "https://itguys.ro/${INDEXNOW_KEY}.txt" \
+              --argjson urlList "$URL_ARRAY" \
+              '{host: $host, key: $key, keyLocation: $keyLocation, urlList: $urlList}')
+
+            HTTP_CODE=$(curl -s -w "%{http_code}" -o response.txt -X POST "https://api.indexnow.org/IndexNow" \
+              -H "Content-Type: application/json; charset=utf-8" \
+              -d "$JSON_PAYLOAD")
+
+            case $HTTP_CODE in
+              200|202)
+                echo "Chunk submitted successfully"
+                SUCCESS_COUNT=$((SUCCESS_COUNT + CHUNK_COUNT))
+                # Copy successful URLs to submitted list
+                cat "$chunk" >> indexnow-submitted.txt
+                ;;
+              429)
+                echo "Rate limited - skipping remaining chunks for this run"
+                break
+                ;;
+              *)
+                echo "Warning: Chunk failed with HTTP $HTTP_CODE"
+                if [ -s response.txt ]; then
+                  cat response.txt
+                fi
+                ;;
+            esac
+
+            # Small delay between chunks
+            sleep 1
+          done
+
+          echo "IndexNow: Submitted $SUCCESS_COUNT of $TOTAL URLs"
+          echo "success_count=$SUCCESS_COUNT" >> $GITHUB_OUTPUT
+
+          if [ "$SUCCESS_COUNT" -gt 0 ]; then
+            echo "success=true" >> $GITHUB_OUTPUT
+          else
+            echo "success=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Ping Bing sitemap
+        if: steps.find-new.outputs.has_new == 'true'
+        run: |
+          echo "Pinging Bing with sitemap URL..."
+          HTTP_CODE=$(curl -s -w "%{http_code}" -o /dev/null "https://www.bing.com/ping?sitemap=https://itguys.ro/sitemap.xml")
+
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "Bing sitemap ping successful"
+          else
+            echo "Warning: Bing ping returned HTTP $HTTP_CODE (non-blocking)"
+          fi
+
+      - name: Submit sitemap to Google Search Console
+        if: steps.find-new.outputs.has_new == 'true'
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_SEARCH_CONSOLE_CREDENTIALS }}
+        run: |
+          if [ -z "$GOOGLE_CREDENTIALS" ]; then
+            echo "Warning: GOOGLE_SEARCH_CONSOLE_CREDENTIALS not set, skipping Google submission"
+            exit 0
+          fi
+
+          # Write credentials to file
+          echo "$GOOGLE_CREDENTIALS" > /tmp/google-credentials.json
+
+          # Get access token using service account
+          ACCESS_TOKEN=$(curl -s -X POST "https://oauth2.googleapis.com/token" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer" \
+            -d "assertion=$(python3 -c "
+import json
+import time
+import base64
+import hmac
+import hashlib
+
+with open('/tmp/google-credentials.json') as f:
+    creds = json.load(f)
+
+header = base64.urlsafe_b64encode(json.dumps({'alg': 'RS256', 'typ': 'JWT'}).encode()).decode().rstrip('=')
+
+now = int(time.time())
+payload = {
+    'iss': creds['client_email'],
+    'scope': 'https://www.googleapis.com/auth/webmasters',
+    'aud': 'https://oauth2.googleapis.com/token',
+    'iat': now,
+    'exp': now + 3600
+}
+payload_b64 = base64.urlsafe_b64encode(json.dumps(payload).encode()).decode().rstrip('=')
+
+# Sign with private key
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+
+private_key = serialization.load_pem_private_key(creds['private_key'].encode(), password=None)
+signature = private_key.sign(
+    f'{header}.{payload_b64}'.encode(),
+    padding.PKCS1v15(),
+    hashes.SHA256()
+)
+signature_b64 = base64.urlsafe_b64encode(signature).decode().rstrip('=')
+
+print(f'{header}.{payload_b64}.{signature_b64}')
+")" | jq -r '.access_token')
+
+          if [ -z "$ACCESS_TOKEN" ] || [ "$ACCESS_TOKEN" = "null" ]; then
+            echo "Warning: Failed to get Google access token (non-blocking)"
+            rm -f /tmp/google-credentials.json
+            exit 0
+          fi
+
+          # Submit sitemap to Search Console
+          SITE_URL="https%3A%2F%2Fitguys.ro"
+          SITEMAP_URL="https%3A%2F%2Fitguys.ro%2Fsitemap.xml"
+
+          HTTP_CODE=$(curl -s -w "%{http_code}" -o google-response.txt \
+            -X PUT "https://www.googleapis.com/webmasters/v3/sites/${SITE_URL}/sitemaps/${SITEMAP_URL}" \
+            -H "Authorization: Bearer $ACCESS_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{}')
+
+          rm -f /tmp/google-credentials.json
+
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "204" ]; then
+            echo "Google Search Console sitemap submission successful"
+          else
+            echo "Warning: Google API returned HTTP $HTTP_CODE (non-blocking)"
+            if [ -s google-response.txt ]; then
+              cat google-response.txt
+            fi
+          fi
+
+      - name: Store submitted URLs in D1
+        if: steps.indexnow.outputs.success == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ ! -f indexnow-submitted.txt ] || [ ! -s indexnow-submitted.txt ]; then
+            echo "No URLs to store"
+            exit 0
+          fi
+
+          STORED_COUNT=0
+
+          while IFS= read -r url; do
+            if [ -n "$url" ]; then
+              # Use INSERT OR IGNORE for idempotency
+              wrangler d1 execute itguys-ro --remote \
+                --command "INSERT OR IGNORE INTO indexnow_submitted (url) VALUES ('$url')"
+              STORED_COUNT=$((STORED_COUNT + 1))
+            fi
+          done < indexnow-submitted.txt
+
+          echo "Stored $STORED_COUNT URLs in D1"
+
+      - name: Summary
+        run: |
+          echo "=== Sitemap Indexing Summary ==="
+          echo "Sitemap URLs: $(wc -l < sitemap-urls.txt | tr -d ' ')"
+          echo "Previously submitted: $(wc -l < submitted-urls.txt | tr -d ' ')"
+          echo "New URLs found: $(wc -l < new-urls.txt | tr -d ' ')"
+
+          if [ -f indexnow-submitted.txt ]; then
+            echo "Successfully submitted to IndexNow: $(wc -l < indexnow-submitted.txt | tr -d ' ')"
+          fi
