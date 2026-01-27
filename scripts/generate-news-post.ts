@@ -295,6 +295,74 @@ const LOCALE_RULES: Record<string, { name: string; rules: string }> = {
   },
 };
 
+async function humanizeEnglishPost(
+  englishContent: BlogPostTranslation
+): Promise<BlogPostTranslation> {
+  console.log('Humanizing English content with Claude...');
+  const humanizerRules = loadHumanizerRules();
+
+  const response = await anthropic.messages.create({
+    model: ANTHROPIC_MODEL,
+    max_tokens: 8000,
+    messages: [
+      {
+        role: 'user',
+        content: `You are a writing editor. Review and fix any AI writing patterns in this blog post.
+
+## Humanizer Rules - Fix These Patterns
+${humanizerRules}
+
+## Key Fixes to Apply
+- Replace em dashes (—) with commas or periods
+- Remove AI vocabulary (additionally, crucial, delve, landscape, testament, etc.)
+- Fix copula avoidance (replace "serves as", "stands as" with "is")
+- Remove promotional language (groundbreaking, vibrant, nestled, etc.)
+- Keep the same meaning and tone, just make it sound human
+
+## Length Limits (STRICT)
+- meta_title: MAX 60 characters
+- meta_description: MAX 155 characters
+
+## Output
+Output ONLY valid JSON with the fixed content. Keep all fields, just fix the text:
+{
+  "title": "...",
+  "excerpt": "...",
+  "content": "... use \\n for newlines ...",
+  "meta_title": "...",
+  "meta_description": "..."
+}
+
+## Content to Humanize
+${JSON.stringify(englishContent, null, 2)}`,
+      },
+    ],
+  });
+
+  const textContent = response.content.find((block) => block.type === 'text');
+  if (!textContent || textContent.type !== 'text') {
+    throw new Error('No text content in humanizer response');
+  }
+
+  const jsonStr = stripMarkdownFences(textContent.text);
+  try {
+    return JSON.parse(jsonStr) as BlogPostTranslation;
+  } catch (parseError) {
+    console.log('  JSON parse failed for humanizer, attempting repair...');
+    try {
+      const repaired = jsonrepair(jsonStr);
+      return JSON.parse(repaired) as BlogPostTranslation;
+    } catch (repairError) {
+      console.error('  Failed to repair JSON from humanizer:');
+      console.error(`  Raw response length: ${jsonStr.length}`);
+      console.error(`  First 500 chars: ${jsonStr.slice(0, 500)}`);
+      writeFileSync('debug-humanizer.txt', textContent.text);
+      console.error('  Full response saved to debug-humanizer.txt');
+      throw repairError;
+    }
+  }
+}
+
 async function translateToLocale(
   englishContent: BlogPostTranslation,
   locale: string
@@ -484,19 +552,26 @@ async function main() {
   const englishPost = await generateEnglishPost();
   console.log(`Generated English post with slug: ${englishPost.slug}`);
 
-  // 2. Translate to other languages using Claude
-  const allTranslations = await translateAll(englishPost.translations.en);
+  // 2. Humanize English content with Claude (fix AI writing patterns)
+  const humanizedEnglish = await withRetry(
+    () => humanizeEnglishPost(englishPost.translations.en),
+    'humanizeEnglishPost'
+  );
+  console.log('Humanized English content');
 
-  // 3. Combine into final blog post
+  // 3. Translate to other languages using Claude
+  const allTranslations = await translateAll(humanizedEnglish);
+
+  // 4. Combine into final blog post
   let blogPost: BlogPost = {
     ...englishPost,
     translations: allTranslations,
   };
 
-  // 4. Validate and fix any issues
+  // 5. Validate and fix any issues
   blogPost = validateAndFixBlogPost(blogPost);
 
-  // 5. Write blog-post.json
+  // 6. Write blog-post.json
   writeFileSync('blog-post.json', JSON.stringify(blogPost, null, 2));
   console.log('Wrote blog-post.json');
 }
