@@ -134,7 +134,7 @@ export function Header({ locale }: Props) {
                 <ThemeSwitcher locale={locale} />
                 <LanguageSwitcher locale={locale} />
               </div>
-              <Button href="/contact" variant="primary" className="mt-2 flex items-center gap-2">
+              <Button href="/contact" variant="primary" className="mt-2 flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
                 <ChatBubbleLeftRightIcon className="w-5 h-5" />
                 {locale === "ro" ? "Contact" : "Contact"}
               </Button>
