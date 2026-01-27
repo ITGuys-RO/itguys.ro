@@ -192,53 +192,57 @@ jobs:
             exit 0
           fi
 
+          # Install cryptography for JWT signing
+          pip install --quiet cryptography
+
           # Write credentials to file
           echo "$GOOGLE_CREDENTIALS" > /tmp/google-credentials.json
 
-          # Get access token using service account
+          # Create JWT signing script
+          cat > /tmp/create_jwt.py << 'PYTHON_SCRIPT'
+          import json
+          import time
+          import base64
+          from cryptography.hazmat.primitives import hashes, serialization
+          from cryptography.hazmat.primitives.asymmetric import padding
+
+          with open('/tmp/google-credentials.json') as f:
+              creds = json.load(f)
+
+          header = base64.urlsafe_b64encode(json.dumps({'alg': 'RS256', 'typ': 'JWT'}).encode()).decode().rstrip('=')
+
+          now = int(time.time())
+          payload = {
+              'iss': creds['client_email'],
+              'scope': 'https://www.googleapis.com/auth/webmasters',
+              'aud': 'https://oauth2.googleapis.com/token',
+              'iat': now,
+              'exp': now + 3600
+          }
+          payload_b64 = base64.urlsafe_b64encode(json.dumps(payload).encode()).decode().rstrip('=')
+
+          private_key = serialization.load_pem_private_key(creds['private_key'].encode(), password=None)
+          signature = private_key.sign(
+              f'{header}.{payload_b64}'.encode(),
+              padding.PKCS1v15(),
+              hashes.SHA256()
+          )
+          signature_b64 = base64.urlsafe_b64encode(signature).decode().rstrip('=')
+
+          print(f'{header}.{payload_b64}.{signature_b64}')
+          PYTHON_SCRIPT
+
+          # Generate JWT and get access token
+          JWT=$(python3 /tmp/create_jwt.py)
+
           ACCESS_TOKEN=$(curl -s -X POST "https://oauth2.googleapis.com/token" \
             -H "Content-Type: application/x-www-form-urlencoded" \
             -d "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer" \
-            -d "assertion=$(python3 -c "
-import json
-import time
-import base64
-import hmac
-import hashlib
-
-with open('/tmp/google-credentials.json') as f:
-    creds = json.load(f)
-
-header = base64.urlsafe_b64encode(json.dumps({'alg': 'RS256', 'typ': 'JWT'}).encode()).decode().rstrip('=')
-
-now = int(time.time())
-payload = {
-    'iss': creds['client_email'],
-    'scope': 'https://www.googleapis.com/auth/webmasters',
-    'aud': 'https://oauth2.googleapis.com/token',
-    'iat': now,
-    'exp': now + 3600
-}
-payload_b64 = base64.urlsafe_b64encode(json.dumps(payload).encode()).decode().rstrip('=')
-
-# Sign with private key
-from cryptography.hazmat.primitives import hashes, serialization
-from cryptography.hazmat.primitives.asymmetric import padding
-
-private_key = serialization.load_pem_private_key(creds['private_key'].encode(), password=None)
-signature = private_key.sign(
-    f'{header}.{payload_b64}'.encode(),
-    padding.PKCS1v15(),
-    hashes.SHA256()
-)
-signature_b64 = base64.urlsafe_b64encode(signature).decode().rstrip('=')
-
-print(f'{header}.{payload_b64}.{signature_b64}')
-")" | jq -r '.access_token')
+            -d "assertion=$JWT" | jq -r '.access_token')
 
           if [ -z "$ACCESS_TOKEN" ] || [ "$ACCESS_TOKEN" = "null" ]; then
             echo "Warning: Failed to get Google access token (non-blocking)"
-            rm -f /tmp/google-credentials.json
+            rm -f /tmp/google-credentials.json /tmp/create_jwt.py
             exit 0
           fi
 
@@ -252,7 +256,7 @@ print(f'{header}.{payload_b64}.{signature_b64}')
             -H "Content-Type: application/json" \
             -d '{}')
 
-          rm -f /tmp/google-credentials.json
+          rm -f /tmp/google-credentials.json /tmp/create_jwt.py
 
           if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "204" ]; then
             echo "Google Search Console sitemap submission successful"
