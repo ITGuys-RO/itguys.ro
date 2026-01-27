@@ -170,18 +170,6 @@ jobs:
             echo "success=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Ping Bing sitemap
-        if: steps.find-new.outputs.has_new == 'true'
-        run: |
-          echo "Pinging Bing with sitemap URL..."
-          HTTP_CODE=$(curl -s -w "%{http_code}" -o /dev/null "https://www.bing.com/ping?sitemap=https://itguys.ro/sitemap.xml")
-
-          if [ "$HTTP_CODE" = "200" ]; then
-            echo "Bing sitemap ping successful"
-          else
-            echo "Warning: Bing ping returned HTTP $HTTP_CODE (non-blocking)"
-          fi
-
       - name: Submit sitemap to Google Search Console
         if: steps.find-new.outputs.has_new == 'true'
         env:
