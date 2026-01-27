@@ -64,6 +64,11 @@ function stripThinkingTags(text: string): string {
   return text.replace(/<think>[\s\S]*?<\/think>\s*/gi, '').trim();
 }
 
+function stripCitationMarkers(text: string): string {
+  // Remove citation markers like [1], [2], etc. that can break JSON
+  return text.replace(/\[\d+\]/g, '');
+}
+
 interface BlogPostTranslation {
   title: string;
   excerpt: string;
@@ -216,7 +221,7 @@ async function generateEnglishPost(): Promise<BlogPostEnglish> {
     });
 
     const cleaned = stripThinkingTags(text);
-    const jsonStr = stripMarkdownFences(cleaned);
+    const jsonStr = stripCitationMarkers(stripMarkdownFences(cleaned));
 
     let parsed: unknown;
     try {
@@ -351,7 +356,8 @@ ${JSON.stringify(englishContent, null, 2)}`,
     throw new Error('No text content in translation response');
   }
 
-  const jsonStr = stripMarkdownFences(textContent.text);
+  // Strip markdown fences and citation markers that can break JSON
+  const jsonStr = stripCitationMarkers(stripMarkdownFences(textContent.text));
   try {
     return JSON.parse(jsonStr) as BlogPostTranslation;
   } catch (parseError) {
@@ -364,7 +370,7 @@ ${JSON.stringify(englishContent, null, 2)}`,
       console.error(`  Raw response length: ${jsonStr.length}`);
       console.error(`  First 500 chars: ${jsonStr.slice(0, 500)}`);
       console.error(`  Last 500 chars: ${jsonStr.slice(-500)}`);
-      writeFileSync(`debug-translation-${locale}.txt`, jsonStr);
+      writeFileSync(`debug-translation-${locale}.txt`, textContent.text);
       console.error(`  Full response saved to debug-translation-${locale}.txt`);
       throw repairError;
     }
