@@ -2,6 +2,16 @@ interface Env {
   GITHUB_TOKEN: string;
 }
 
+interface ScheduledEvent {
+  cron: string;
+  scheduledTime: number;
+}
+
+interface ExecutionContext {
+  waitUntil(promise: Promise<unknown>): void;
+  passThroughOnException(): void;
+}
+
 export default {
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
     const response = await fetch(
