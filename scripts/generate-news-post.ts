@@ -38,7 +38,9 @@ async function withRetry<T>(
         (error.message.includes('terminated') ||
           error.message.includes('socket') ||
           error.message.includes('ECONNRESET') ||
-          error.message.includes('other side closed'));
+          error.message.includes('other side closed') ||
+          error.message.includes('Failed to parse') ||
+          error.message.includes('missing required fields'));
 
       if (!isRetryable || attempt === MAX_RETRIES) {
         throw error;
@@ -46,7 +48,7 @@ async function withRetry<T>(
 
       const delay = INITIAL_RETRY_DELAY_MS * Math.pow(2, attempt - 1);
       console.log(
-        `${context}: Attempt ${attempt} failed, retrying in ${delay}ms...`
+        `${context}: Attempt ${attempt} failed (${error.message}), retrying in ${delay}ms...`
       );
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
@@ -88,6 +90,28 @@ interface BlogPostEnglish extends BlogPostBase {
 
 interface BlogPost extends BlogPostBase {
   translations: Record<string, BlogPostTranslation>;
+}
+
+function isValidBlogPostEnglish(obj: unknown): obj is BlogPostEnglish {
+  if (!obj || typeof obj !== 'object') return false;
+  const post = obj as Record<string, unknown>;
+
+  // Check required top-level fields
+  if (typeof post.slug !== 'string' || !post.slug) return false;
+  if (typeof post.is_published !== 'number') return false;
+  if (!Array.isArray(post.tags)) return false;
+
+  // Check translations.en exists and has required fields
+  if (!post.translations || typeof post.translations !== 'object') return false;
+  const translations = post.translations as Record<string, unknown>;
+  if (!translations.en || typeof translations.en !== 'object') return false;
+
+  const en = translations.en as Record<string, unknown>;
+  if (typeof en.title !== 'string' || !en.title) return false;
+  if (typeof en.content !== 'string' || !en.content) return false;
+  if (typeof en.excerpt !== 'string') return false;
+
+  return true;
 }
 
 function loadHumanizerRules(): string {
@@ -194,13 +218,35 @@ async function generateEnglishPost(): Promise<BlogPostEnglish> {
     const cleaned = stripThinkingTags(text);
     const jsonStr = stripMarkdownFences(cleaned);
 
+    let parsed: unknown;
     try {
-      return JSON.parse(jsonStr) as BlogPostEnglish;
+      parsed = JSON.parse(jsonStr);
     } catch {
       console.log('JSON parse failed, attempting repair...');
-      const repaired = jsonrepair(jsonStr);
-      return JSON.parse(repaired) as BlogPostEnglish;
+      try {
+        const repaired = jsonrepair(jsonStr);
+        parsed = JSON.parse(repaired);
+      } catch (repairError) {
+        console.error('JSON repair failed. Raw response:');
+        console.error(`Length: ${jsonStr.length}`);
+        console.error(`First 1000 chars: ${jsonStr.slice(0, 1000)}`);
+        console.error(`Last 500 chars: ${jsonStr.slice(-500)}`);
+        writeFileSync('debug-perplexity-response.txt', text);
+        console.error('Full response saved to debug-perplexity-response.txt');
+        throw new Error('Failed to parse Perplexity response as JSON');
+      }
     }
+
+    // Validate the parsed response has required structure
+    if (!isValidBlogPostEnglish(parsed)) {
+      console.error('Parsed JSON is missing required fields:');
+      console.error(JSON.stringify(parsed, null, 2).slice(0, 2000));
+      writeFileSync('debug-perplexity-response.txt', text);
+      console.error('Full response saved to debug-perplexity-response.txt');
+      throw new Error('Perplexity response missing required fields (slug, translations.en, etc.)');
+    }
+
+    return parsed;
   }, 'generateEnglishPost');
 }
 
