@@ -62,13 +62,27 @@ export async function submitToIndexNow(path: string): Promise<{ success: boolean
 
 /**
  * Submit a blog post URL to IndexNow.
- * Generates URLs for all locales.
+ * Only submits URLs for locales that have actual translations,
+ * using the correct locale-specific slug for each.
  */
 export async function submitBlogPostToIndexNow(slug: string): Promise<void> {
-  const locales = ['en', 'ro', 'fr', 'de', 'it', 'es'];
+  const { getPostBySlug, getPostTranslations, getPostLocaleSlugs } = await import('./db/posts');
 
-  for (const locale of locales) {
-    const path = locale === 'en' ? `/blog/${slug}` : `/${locale}/blog/${slug}`;
+  const post = await getPostBySlug(slug);
+  if (!post) {
+    console.error(`IndexNow: Post with slug "${slug}" not found`);
+    return;
+  }
+
+  const translations = await getPostTranslations(post.id);
+  const localeSlugs = await getPostLocaleSlugs(post.id);
+
+  // Get locales that have translations
+  const localesWithTranslations = translations.map(t => t.locale);
+
+  for (const locale of localesWithTranslations) {
+    const localeSlug = localeSlugs[locale] || slug;
+    const path = locale === 'en' ? `/blog/${localeSlug}` : `/${locale}/blog/${localeSlug}`;
     const result = await submitToIndexNow(path);
 
     if (result.success) {
