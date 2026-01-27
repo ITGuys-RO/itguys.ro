@@ -165,9 +165,18 @@ ITGuys is a tech consultancy with 30+ combined years of experience from Electron
 - Professionally casual tone - "Let's Talk" not "Contact Us"
 - Experience-driven - reference real-world scenarios
 
-## News Topics to Cover
-Focus on today's tech news across: web development, mobile development, security, AI/ML, and DevOps/cloud.
-For each topic, briefly explain why it matters and how ITGuys can help (be specific, not salesy).
+## News Selection - ONLY These Topics
+Find today's news strictly within these categories:
+- Security vulnerabilities, breaches, or patches
+- DDoS attacks, CDN, or WAF topics (Akamai, Cloudflare)
+- Cloud infrastructure: AWS, Docker, Kubernetes
+- PHP framework updates or vulnerabilities
+- Native iOS/Android development: Swift, Kotlin, mobile security
+- API security, authentication flaws, OAuth/JWT
+- Enterprise compliance: GDPR, SOC2, HIPAA
+- Web application security: XSS, SQLi, CSRF
+
+If nothing relevant is trending today, write about a recent security advisory or CVE affecting PHP, AWS, iOS, or Android.
 
 ## Content Requirements
 1. Write an engaging, well-structured blog post
