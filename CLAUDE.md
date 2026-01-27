@@ -21,11 +21,19 @@
 - `src/lib/admin-auth.ts` - Cloudflare Access authentication
 - Authentication: Cloudflare Access JWT (bypassed in development)
 
+**Admin API pattern:** Use `withAdmin()` wrapper or `requireAdmin()` + `handleApiError()` for auth and error handling. Dynamic params: `const { id } = await params` (Next.js 16 syntax).
+
 ### Database Layer
 - `src/lib/db/client.ts` - D1 client wrapper
 - `src/lib/db/schema.ts` - TypeScript types for all entities
 - `src/lib/db/*.ts` - Query functions for team, projects, companies, services, faq, posts, translations
 - `migrations/` - SQL migration files
+
+**DB client helpers** (`src/lib/db/client.ts`):
+- `query<T>(sql, params?)` - Returns `T[]`
+- `queryFirst<T>(sql, params?)` - Returns `T | null`
+- `execute(sql, params?)` - Returns `{ changes, lastRowId }`
+- `batch(statements[])` - Bulk operations
 
 ## Database Schema
 Tables with translation support (entity + entity_translations pattern):
@@ -53,8 +61,8 @@ Other tables:
 # Local dev with D1 (builds and runs Cloudflare worker)
 pnpm dev
 
-# Run migrations locally
-pnpm wrangler d1 execute itguys-ro --local --file=migrations/0001_initial_schema.sql
+# Run all migrations locally
+pnpm db:migrate:local
 
 # Lint
 pnpm lint
@@ -75,7 +83,31 @@ Local D1 data is stored in `.wrangler/state/` (SQLite).
 ## Locales
 Supported: en (default), ro, fr, de, it, es
 
+## Environment Variables
+**Public** (`.env`):
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` - Cloudflare Turnstile CAPTCHA
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID` - Google Analytics GA4
+
+**Secrets** (`wrangler.toml` vars):
+- `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` - Contact form notifications
+- `TURNSTILE_SECRET_KEY` - Validate Turnstile tokens
+- `INDEXNOW_KEY` - SEO index submission
+- `AUTOMATION_API_KEY` - External API auth for blog posts
+
+## Integrations
+- **Turnstile** - CAPTCHA for contact form
+- **Telegram Bot** - Contact form notifications
+- **IndexNow** - Auto-submits blog posts to search engines (`src/lib/indexnow.ts`)
+- **Gravatar** - Team member avatars (`src/lib/gravatar.ts`)
+- **Google Analytics GA4** - Site analytics
+
+## Utilities
+- `cn()` from `src/lib/utils.ts` - Tailwind className composition (clsx wrapper)
+- `getCombinedYears()` - Returns years since 2000 (for "25+ years experience" text)
+
 ## Notes
 - Admin panel uses dark theme (works in both light/dark site themes)
 - Cloudflare Access must be configured in Zero Trust dashboard to protect `/admin/*` in production
 - `NODE_ENV=development` bypasses admin auth for local testing
+- Image optimization disabled (`unoptimized: true`) for Cloudflare compatibility
+- Build limited to 1 CPU core for Cloudflare memory constraints

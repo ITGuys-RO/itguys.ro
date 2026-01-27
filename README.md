@@ -6,28 +6,58 @@ Next.js website deployed to Cloudflare Workers.
 
 ```mermaid
 graph TB
-    subgraph App
+    subgraph "Public Site"
         Pages[Pages]
-        API[API Routes]
+        Components[Components]
+        Content[Static Content]
+        ContactForm[Contact Form]
+        ContactAPI[Contact API]
     end
 
-    subgraph Components
-        Layout[Layout]
-        Sections[Sections]
-        UI[UI]
-        Illustrations[Illustrations]
+    subgraph "Admin Panel"
+        AdminUI[Admin UI]
+        AdminAPI[Admin API]
     end
 
-    Content[Content]
+    subgraph "Blog Automation"
+        GHA[GitHub Actions<br/>Daily 10:30 UTC]
+        Generator[generate-news-post.ts]
+        Perplexity[Perplexity API<br/>News Research + English]
+        Claude[Claude API<br/>Translations x5]
+        AutomationAPI[Automation API]
+    end
 
-    Pages --> Layout
-    Pages --> Sections
+    subgraph "Database"
+        D1[(Cloudflare D1)]
+    end
+
+    subgraph "External Services"
+        Turnstile[Cloudflare Turnstile]
+        Telegram[Telegram Bot]
+        IndexNow[IndexNow SEO]
+        Gravatar[Gravatar]
+        GA4[Google Analytics]
+    end
+
+    Pages --> Components
     Pages --> Content
-    Sections --> UI
-    Sections --> Illustrations
-
-    API --> Turnstile[Cloudflare Turnstile]
-    API --> Telegram[Telegram Bot]
+    Pages --> D1
+    Pages --> Gravatar
+    Pages --> GA4
+    ContactForm --> ContactAPI
+    ContactAPI --> Turnstile
+    ContactAPI --> Telegram
+    AdminUI --> AdminAPI
+    AdminAPI --> D1
+    AdminAPI --> IndexNow
+    GHA --> Generator
+    Generator --> Perplexity
+    Perplexity --> Generator
+    Generator --> Claude
+    Claude --> Generator
+    Generator --> AutomationAPI
+    AutomationAPI --> D1
+    AutomationAPI --> IndexNow
 ```
 
 ## Setup
