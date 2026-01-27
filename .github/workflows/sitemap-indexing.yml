@@ -235,7 +235,7 @@ jobs:
           fi
 
           # Submit sitemap to Search Console
-          SITE_URL="https%3A%2F%2Fitguys.ro"
+          SITE_URL="sc-domain%3Aitguys.ro"
           SITEMAP_URL="https%3A%2F%2Fitguys.ro%2Fsitemap.xml"
 
           HTTP_CODE=$(curl -s -w "%{http_code}" -o google-response.txt \
