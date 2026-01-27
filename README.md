@@ -20,7 +20,8 @@ graph TB
     end
 
     subgraph "Blog Automation"
-        GHA[GitHub Actions<br/>Daily 10:30 UTC]
+        CronWorker[Cloudflare Cron Worker<br/>Daily 10:30 UTC]
+        GHA[GitHub Actions]
         Generator[generate-news-post.ts]
         Perplexity[Perplexity API<br/>News Research + English]
         Claude[Claude API<br/>Translations x5]
@@ -50,6 +51,7 @@ graph TB
     AdminUI --> AdminAPI
     AdminAPI --> D1
     AdminAPI --> IndexNow
+    CronWorker --> GHA
     GHA --> Generator
     Generator --> Perplexity
     Perplexity --> Generator
