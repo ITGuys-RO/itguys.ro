@@ -165,8 +165,8 @@ async function researchNews(): Promise<ResearchResult> {
         prompt: getResearchPrompt(),
       });
       const sourceUrls = (result.sources || [])
-        .filter((s): s is { url: string } => 'url' in s && typeof s.url === 'string')
-        .map(s => s.url);
+        .filter(s => 'url' in s && typeof s.url === 'string')
+        .map(s => (s as { url: string }).url);
       return { text: stripThinkingTags(result.text), sourceUrls };
     }, 'researchNews');
   } catch (error) {
