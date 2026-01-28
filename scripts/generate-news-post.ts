@@ -151,20 +151,141 @@ Return your findings as PLAIN TEXT (not JSON) with:
 - Image: ONE landscape image URL (min 1200×630px) directly related to the topic. Must be from a source that allows hotlinking (vendor blogs, official press releases, GitHub, wikimedia). NOT from Getty, Shutterstock, or paywalled sites. If no suitable image, write "No image available."`;
 }
 
-async function researchNews(): Promise<string> {
+interface ResearchResult {
+  text: string;
+  sourceUrls: string[];
+}
+
+async function researchNews(): Promise<ResearchResult> {
   console.log('Step 1: Researching news with Perplexity...');
   try {
     return await withRetry(async () => {
-      const { text } = await generateText({
+      const result = await generateText({
         model: perplexity(PERPLEXITY_MODEL),
         prompt: getResearchPrompt(),
       });
-      return stripThinkingTags(text);
+      const sourceUrls = (result.sources || [])
+        .filter((s): s is { url: string } => 'url' in s && typeof s.url === 'string')
+        .map(s => s.url);
+      return { text: stripThinkingTags(result.text), sourceUrls };
     }, 'researchNews');
   } catch (error) {
     console.warn('Perplexity failed, falling back to Claude knowledge:', (error as Error).message);
-    return 'FALLBACK: No live research available. Write about a recent security advisory, CVE, or notable tech development from your knowledge. Focus on practical implications for web developers, mobile developers, and security teams.';
+    return {
+      text: 'FALLBACK: No live research available. Write about a recent security advisory, CVE, or notable tech development from your knowledge. Focus on practical implications for web developers, mobile developers, and security teams.',
+      sourceUrls: [],
+    };
   }
+}
+
+interface ImageCandidate {
+  imageUrl: string;
+  pageTitle: string;
+  sourceUrl: string;
+}
+
+async function extractImageCandidates(sourceUrls: string[]): Promise<ImageCandidate[]> {
+  const candidates: ImageCandidate[] = [];
+
+  const results = await Promise.allSettled(
+    sourceUrls.slice(0, 5).map(async (url) => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
+      const response = await fetch(url, {
+        signal: controller.signal,
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; bot)' },
+      });
+      clearTimeout(timeout);
+
+      if (!response.ok) return null;
+      const html = await response.text();
+
+      const ogMatch = html.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i)
+        || html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
+
+      if (!ogMatch?.[1]) return null;
+
+      const imageUrl = ogMatch[1].startsWith('http') ? ogMatch[1] : new URL(ogMatch[1], url).href;
+      const valid = await validateImageUrl(imageUrl);
+      if (!valid) return null;
+
+      const titleMatch = html.match(/<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']+)["']/i)
+        || html.match(/<title[^>]*>([^<]+)<\/title>/i);
+      const pageTitle = titleMatch?.[1]?.trim() || '';
+
+      return { imageUrl, pageTitle, sourceUrl: url };
+    })
+  );
+
+  for (const result of results) {
+    if (result.status === 'fulfilled' && result.value) {
+      candidates.push(result.value);
+    }
+  }
+
+  return candidates;
+}
+
+async function pickBestImage(
+  candidates: ImageCandidate[],
+  researchText: string
+): Promise<string | null> {
+  if (candidates.length === 0) return null;
+  if (candidates.length === 1) {
+    // Still validate relevance for single candidate
+    const c = candidates[0];
+    console.log(`  Single candidate: "${c.pageTitle}" from ${c.sourceUrl}`);
+    const response = await anthropic.messages.create({
+      model: ANTHROPIC_MODEL,
+      max_tokens: 10,
+      messages: [{
+        role: 'user',
+        content: `Does this image URL suggest it shows a brand, product, or company NOT mentioned in the article? Answer ONLY "yes" (it's mismatched) or "no" (it's fine to use).
+
+Article topic:
+${researchText.substring(0, 500)}
+
+Image URL: ${c.imageUrl}
+Source page: "${c.pageTitle}"`,
+      }],
+    });
+    const answer = response.content[0]?.type === 'text' ? response.content[0].text.trim().toLowerCase() : '';
+    if (answer.startsWith('no')) return c.imageUrl;
+    console.log(`  Image rejected: shows unrelated brand`);
+    return null;
+  }
+
+  // Multiple candidates: ask Claude to pick the best one
+  const listing = candidates.map((c, i) =>
+    `${i + 1}. Page: "${c.pageTitle}" | Image: ${c.imageUrl}`
+  ).join('\n');
+
+  const response = await anthropic.messages.create({
+    model: ANTHROPIC_MODEL,
+    max_tokens: 10,
+    messages: [{
+      role: 'user',
+      content: `Pick the best image for this article. Reject any image whose URL suggests it shows a brand or company NOT mentioned in the article. Generic/stock images are fine. Answer with ONLY the number (1-${candidates.length}), or "none" if all show unrelated brands.
+
+Article topic:
+${researchText.substring(0, 500)}
+
+Image candidates:
+${listing}`,
+    }],
+  });
+
+  const answer = response.content[0]?.type === 'text' ? response.content[0].text.trim() : '';
+  if (answer.toLowerCase() === 'none') {
+    console.log(`  All images rejected: unrelated brands`);
+    return null;
+  }
+  const idx = parseInt(answer, 10) - 1;
+  if (idx >= 0 && idx < candidates.length) {
+    console.log(`  Picked image from "${candidates[idx].pageTitle}"`);
+    return candidates[idx].imageUrl;
+  }
+  return null;
 }
 
 function getWritePostPrompt(research: string): string {
@@ -234,7 +355,7 @@ CRITICAL JSON RULES:
 
 {
   "slug": "${today}-descriptive-slug-here",
-  "image_path": "Extract a landscape image URL from the research if available, or null if none found",
+  "image_path": "A direct URL to a relevant landscape image (jpg/png/webp) from the research sources, or null if none available. Look for images in the source URLs mentioned in the research - check vendor blogs, press releases, or official announcements for hero/banner images.",
   "author_id": null,
   "published_at": "${timestamp}",
   "is_published": 1,
@@ -669,10 +790,24 @@ async function validateAndFixBlogPost(post: BlogPost): Promise<BlogPost> {
 async function main() {
   // Step 1: Research news (Perplexity, plain text)
   const research = await researchNews();
-  console.log(`Research complete (${research.length} chars)`);
+  console.log(`Research complete (${research.text.length} chars, ${research.sourceUrls.length} sources)`);
+
+  // Step 1b: Extract featured image from source URLs
+  console.log('Step 1b: Extracting featured image from sources...');
+  const candidates = await extractImageCandidates(research.sourceUrls);
+  console.log(`  Found ${candidates.length} image candidate(s)`);
+  const featuredImage = await pickBestImage(candidates, research.text);
+  if (featuredImage) {
+    console.log(`Found featured image: ${featuredImage}`);
+  } else {
+    console.log('No featured image found in sources');
+  }
 
   // Step 2: Write structured blog post (Claude)
-  const englishPost = await writeEnglishPost(research);
+  const englishPost = await writeEnglishPost(research.text);
+  if (featuredImage && !englishPost.image_path) {
+    englishPost.image_path = featuredImage;
+  }
   console.log(`Generated English post with slug: ${englishPost.slug}`);
 
   // Step 3: Humanize English content (Claude, with fallback to skip)

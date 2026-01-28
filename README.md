@@ -85,7 +85,7 @@ graph TB
 ## Development
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 ## Deployment
@@ -99,4 +99,8 @@ npm run deploy
 Or preview locally with Wrangler:
 ```bash
 npm run preview
+```
+Run blog post generation:
+```bash
+pnpm tsx scripts/generate-news-post.ts
 ```
