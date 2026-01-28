@@ -99,6 +99,7 @@ export async function getAllServicesWithTranslations(): Promise<ServiceWithTrans
 export async function getServicesLocalized(locale: Locale, category?: string): Promise<ServiceLocalized[]> {
   // Use LEFT JOIN with COALESCE to fall back to English if translation is missing
   const sql = `SELECT s.*,
+       COALESCE(t.slug, s.slug) as localized_slug,
        COALESCE(t.title, t_en.title) as title,
        COALESCE(t.description, t_en.description) as description,
        COALESCE(t.details, t_en.details) as details,
@@ -110,7 +111,7 @@ export async function getServicesLocalized(locale: Locale, category?: string): P
      WHERE s.is_active = 1${category ? ' AND s.category = ?' : ''}
      ORDER BY s.sort_order ASC`;
 
-  const rows = await query<Service & ServiceTranslation>(
+  const rows = await query<Service & ServiceTranslation & { localized_slug: string }>(
     sql,
     category ? [locale, category] : [locale]
   );
@@ -135,7 +136,7 @@ export async function getServicesLocalized(locale: Locale, category?: string): P
 
     result.push({
       id: row.slug,
-      slug: row.slug,
+      slug: row.localized_slug || row.slug,
       category: row.category,
       title: row.title,
       description: row.description,
