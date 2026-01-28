@@ -95,10 +95,12 @@ CREATE TABLE IF NOT EXISTS service_translations (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   service_id INTEGER NOT NULL,
   locale TEXT NOT NULL,
+  slug TEXT,
   title TEXT NOT NULL,
   description TEXT,
   details TEXT,
   note TEXT,
+  long_description TEXT,
   FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE,
   UNIQUE(service_id, locale)
 );

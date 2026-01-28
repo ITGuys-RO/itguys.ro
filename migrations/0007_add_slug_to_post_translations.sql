@@ -1,10 +1,7 @@
--- Add slug column to post_translations if it doesn't exist
--- SQLite doesn't support IF NOT EXISTS for ALTER TABLE, so we use a workaround
+-- Add slug column to post_translations
+-- NOTE: This column is now included in the initial schema (0001_initial_schema.sql)
+-- This migration is kept for backwards compatibility with existing databases
 
--- Check if column exists and add it if not
--- This will fail silently if the column already exists
-ALTER TABLE post_translations ADD COLUMN slug TEXT;
-
--- Create indexes for locale-specific slugs (ignore if already exists)
+-- Create indexes for locale-specific slugs (uses IF NOT EXISTS for idempotency)
 CREATE INDEX IF NOT EXISTS idx_post_translations_locale_slug ON post_translations(locale, slug);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_post_translations_unique_slug ON post_translations(locale, slug) WHERE slug IS NOT NULL;
