@@ -1,10 +1,14 @@
 name: Daily Tech News Generator
 
-permissions:
-  contents: read
-
 on:
   workflow_dispatch:  # Triggered by Cloudflare cron worker or manual
+
+concurrency:
+  group: daily-tech-news
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   generate-post:

@@ -6,6 +6,10 @@ on:
     types: [completed]
   workflow_dispatch:
 
+concurrency:
+  group: sitemap-indexing
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
