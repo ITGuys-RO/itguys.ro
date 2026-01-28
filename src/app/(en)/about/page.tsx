@@ -7,6 +7,7 @@ import { AboutIllustration } from "@/components/illustrations";
 import { getContent } from "@/content";
 import { getGravatarUrl } from "@/lib/gravatar";
 import { getTeamMembersLocalized, getCompaniesLocalized } from "@/lib/db";
+import { generateAlternates } from "@/i18n";
 import {
   AcademicCapIcon,
   UserGroupIcon,
@@ -26,17 +27,7 @@ export const metadata: Metadata = {
     url: "https://itguys.ro/about",
     type: "website",
   },
-  alternates: {
-    canonical: "/about",
-    languages: {
-      en: "/about",
-      ro: "/ro/about",
-      fr: "/fr/about",
-      de: "/de/about",
-      it: "/it/about",
-      es: "/es/about",
-    },
-  },
+  alternates: generateAlternates("/about"),
   twitter: {
     card: "summary_large_image",
     title: "About Us - ITGuys",

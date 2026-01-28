@@ -5,7 +5,7 @@ import { SecurityIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { getServicesLocalized } from "@/lib/db";
-import { type Locale } from "@/i18n/config";
+import { type Locale, generateAlternates } from "@/i18n/config";
 import {
   ShieldCheckIcon,
   BeakerIcon,
@@ -68,17 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/services`,
       type: "website",
     },
-    alternates: {
-      canonical: locale === "en" ? "/services" : `/${locale}/services`,
-      languages: {
-        en: "/services",
-        ro: "/ro/services",
-        fr: "/fr/services",
-        de: "/de/services",
-        it: "/it/services",
-        es: "/es/services",
-      },
-    },
+    alternates: generateAlternates("/services"),
     twitter: {
       card: "summary_large_image",
       description: servicesDescriptions[locale] || servicesDescriptions.en,

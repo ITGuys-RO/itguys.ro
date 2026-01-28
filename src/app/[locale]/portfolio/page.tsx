@@ -5,7 +5,7 @@ import { PortfolioIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { getProjectsLocalized } from "@/lib/db";
-import { type Locale } from "@/i18n/config";
+import { type Locale, generateAlternates } from "@/i18n/config";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 
 // Force dynamic rendering since we fetch from D1
@@ -45,17 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/portfolio`,
       type: "website",
     },
-    alternates: {
-      canonical: locale === "en" ? "/portfolio" : `/${locale}/portfolio`,
-      languages: {
-        en: "/portfolio",
-        ro: "/ro/portfolio",
-        fr: "/fr/portfolio",
-        de: "/de/portfolio",
-        it: "/it/portfolio",
-        es: "/es/portfolio",
-      },
-    },
+    alternates: generateAlternates("/portfolio"),
     twitter: {
       card: "summary_large_image",
       description: portfolioDescriptions[locale] || portfolioDescriptions.en,

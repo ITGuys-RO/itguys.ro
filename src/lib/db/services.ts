@@ -170,9 +170,9 @@ export async function createService(input: ServiceInput): Promise<number> {
 
   // Insert translations
   const translationStatements = Object.entries(input.translations).map(([locale, t]) => ({
-    sql: `INSERT INTO service_translations (service_id, locale, title, description, details, note, long_description)
-          VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    params: [serviceId, locale, t!.title, t!.description ?? null, t!.details ?? null, t!.note ?? null, t!.long_description ?? null],
+    sql: `INSERT INTO service_translations (service_id, locale, slug, title, description, details, note, long_description)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    params: [serviceId, locale, t!.slug ?? (locale === 'en' ? input.slug : null), t!.title, t!.description ?? null, t!.details ?? null, t!.note ?? null, t!.long_description ?? null],
   }));
 
   // Insert technologies
@@ -244,15 +244,16 @@ export async function updateService(id: number, input: Partial<ServiceInput>): P
     for (const [locale, t] of Object.entries(input.translations)) {
       if (t) {
         await execute(
-          `INSERT INTO service_translations (service_id, locale, title, description, details, note, long_description)
-           VALUES (?, ?, ?, ?, ?, ?, ?)
+          `INSERT INTO service_translations (service_id, locale, slug, title, description, details, note, long_description)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)
            ON CONFLICT(service_id, locale) DO UPDATE SET
+             slug = excluded.slug,
              title = excluded.title,
              description = excluded.description,
              details = excluded.details,
              note = excluded.note,
              long_description = excluded.long_description`,
-          [id, locale, t.title, t.description ?? null, t.details ?? null, t.note ?? null, t.long_description ?? null]
+          [id, locale, t.slug ?? null, t.title, t.description ?? null, t.details ?? null, t.note ?? null, t.long_description ?? null]
         );
       }
     }
@@ -294,7 +295,10 @@ export async function updateService(id: number, input: Partial<ServiceInput>): P
 }
 
 export async function getServiceLocalized(slug: string, locale: Locale): Promise<ServiceLocalized | null> {
+  // First, try to find service by localized slug for this locale
+  // Then fall back to searching by base service slug
   const sql = `SELECT s.*,
+       COALESCE(t.slug, s.slug) as localized_slug,
        COALESCE(t.title, t_en.title) as title,
        COALESCE(t.description, t_en.description) as description,
        COALESCE(t.details, t_en.details) as details,
@@ -303,9 +307,9 @@ export async function getServiceLocalized(slug: string, locale: Locale): Promise
      FROM services s
      LEFT JOIN service_translations t ON t.service_id = s.id AND t.locale = ?
      LEFT JOIN service_translations t_en ON t_en.service_id = s.id AND t_en.locale = 'en'
-     WHERE s.slug = ? AND s.is_active = 1`;
+     WHERE (s.slug = ? OR t.slug = ?) AND s.is_active = 1`;
 
-  const row = await queryFirst<Service & ServiceTranslation>(sql, [locale, slug]);
+  const row = await queryFirst<Service & ServiceTranslation & { localized_slug: string }>(sql, [locale, slug, slug]);
   if (!row) return null;
 
   const [technologies, subservices] = await Promise.all([
@@ -325,7 +329,7 @@ export async function getServiceLocalized(slug: string, locale: Locale): Promise
 
   return {
     id: row.slug,
-    slug: row.slug,
+    slug: row.localized_slug || row.slug,
     category: row.category,
     title: row.title,
     description: row.description,
@@ -341,11 +345,35 @@ export async function getServiceLocalized(slug: string, locale: Locale): Promise
 }
 
 export async function getServiceLocaleSlugs(slug: string): Promise<Record<Locale, string>> {
-  // Services use the same slug across all locales (unlike blog posts)
-  // Return the same slug for all locales
+  // Get the service ID first (search by base slug or any localized slug)
+  const service = await queryFirst<Service>(
+    `SELECT s.* FROM services s
+     LEFT JOIN service_translations t ON t.service_id = s.id
+     WHERE s.slug = ? OR t.slug = ?
+     LIMIT 1`,
+    [slug, slug]
+  );
+
+  if (!service) {
+    // Fallback: return the input slug for all locales
+    const locales: Locale[] = ['en', 'ro', 'fr', 'de', 'it', 'es'];
+    return locales.reduce((acc, locale) => {
+      acc[locale] = slug;
+      return acc;
+    }, {} as Record<Locale, string>);
+  }
+
+  // Get all translations with their slugs
+  const translations = await query<ServiceTranslation>(
+    `SELECT locale, slug FROM service_translations WHERE service_id = ?`,
+    [service.id]
+  );
+
   const locales: Locale[] = ['en', 'ro', 'fr', 'de', 'it', 'es'];
   return locales.reduce((acc, locale) => {
-    acc[locale] = slug;
+    const translation = translations.find((t) => t.locale === locale);
+    // Use the localized slug if available, otherwise fall back to the base service slug
+    acc[locale] = translation?.slug || service.slug;
     return acc;
   }, {} as Record<Locale, string>);
 }

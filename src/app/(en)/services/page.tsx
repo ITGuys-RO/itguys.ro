@@ -13,6 +13,7 @@ import {
   ArrowRightIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "@/i18n/navigation";
+import { generateAlternates } from "@/i18n";
 
 // Force dynamic rendering since we fetch from D1
 export const dynamic = 'force-dynamic';
@@ -33,17 +34,7 @@ export const metadata: Metadata = {
     url: "https://itguys.ro/services",
     type: "website",
   },
-  alternates: {
-    canonical: "/services",
-    languages: {
-      en: "/services",
-      ro: "/ro/services",
-      fr: "/fr/services",
-      de: "/de/services",
-      it: "/it/services",
-      es: "/es/services",
-    },
-  },
+  alternates: generateAlternates("/services"),
   twitter: {
     card: "summary_large_image",
     title: "Professional Services - QA, Security & Analytics",

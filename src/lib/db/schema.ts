@@ -88,6 +88,7 @@ export interface ServiceTranslation {
   id: number;
   service_id: number;
   locale: string;
+  slug: string | null;
   title: string;
   description: string | null;
   details: string | null;
@@ -352,6 +353,7 @@ export interface ServiceInput {
   technologies: string[];
   subservices: SubserviceInput[];
   translations: TranslationsWithRequiredEnglish<{
+    slug?: string | null;
     title: string;
     description?: string | null;
     details?: string | null;

@@ -5,6 +5,7 @@ import { Section, Card, CardTitle, CardDescription, AnimateOnScroll } from "@/co
 import { HeroIllustration } from "@/components/illustrations";
 import { getContent } from "@/content";
 import { Link } from "@/i18n/navigation";
+import { generateAlternates } from "@/i18n";
 import {
   SparklesIcon,
   RocketLaunchIcon,
@@ -23,15 +24,7 @@ const clientIcons = [RocketLaunchIcon, BuildingOffice2Icon];
 const buildIcons = [CodeBracketIcon, DevicePhoneMobileIcon, ServerStackIcon, ShieldCheckIcon];
 
 export const metadata: Metadata = {
-  alternates: {
-    canonical: "/",
-    languages: {
-      en: "/",
-      ro: "/ro",
-      fr: "/fr",
-      de: "/de",
-    },
-  },
+  alternates: generateAlternates("/"),
   openGraph: {
     url: "https://itguys.ro",
     images: [

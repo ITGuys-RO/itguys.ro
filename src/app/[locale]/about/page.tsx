@@ -7,7 +7,7 @@ import { AboutIllustration } from "@/components/illustrations";
 import { getContent } from "@/content";
 import { getGravatarUrl } from "@/lib/gravatar";
 import { getTeamMembersLocalized, getCompaniesLocalized } from "@/lib/db";
-import { locales, type Locale } from "@/i18n/config";
+import { locales, type Locale, generateAlternates } from "@/i18n/config";
 import {
   AcademicCapIcon,
   UserGroupIcon,
@@ -54,17 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/about`,
       type: "website",
     },
-    alternates: {
-      canonical: locale === "en" ? "/about" : `/${locale}/about`,
-      languages: {
-        en: "/about",
-        ro: "/ro/about",
-        fr: "/fr/about",
-        de: "/de/about",
-        it: "/it/about",
-        es: "/es/about",
-      },
-    },
+    alternates: generateAlternates("/about"),
   };
 }
 

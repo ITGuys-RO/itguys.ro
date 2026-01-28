@@ -5,7 +5,7 @@ import { ContactIllustration } from "@/components/illustrations";
 import { Section } from "@/components/ui";
 import { BreadcrumbSchema, OrganizationSchema, LocalBusinessSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
-import { locales, type Locale } from "@/i18n/config";
+import { locales, type Locale, generateAlternates } from "@/i18n/config";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -45,17 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/contact`,
       type: "website",
     },
-    alternates: {
-      canonical: locale === "en" ? "/contact" : `/${locale}/contact`,
-      languages: {
-        en: "/contact",
-        ro: "/ro/contact",
-        fr: "/fr/contact",
-        de: "/de/contact",
-        it: "/it/contact",
-        es: "/es/contact",
-      },
-    },
+    alternates: generateAlternates("/contact"),
     twitter: {
       card: "summary_large_image",
       description: contactDescriptions[locale] || contactDescriptions.en,

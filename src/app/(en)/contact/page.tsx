@@ -5,6 +5,7 @@ import { ContactIllustration } from "@/components/illustrations";
 import { Section } from "@/components/ui";
 import { BreadcrumbSchema, OrganizationSchema, LocalBusinessSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
+import { generateAlternates } from "@/i18n";
 
 export const metadata: Metadata = {
   title: "Contact Us - Free Project Consultation",
@@ -15,17 +16,7 @@ export const metadata: Metadata = {
     url: "https://itguys.ro/contact",
     type: "website",
   },
-  alternates: {
-    canonical: "/contact",
-    languages: {
-      en: "/contact",
-      ro: "/ro/contact",
-      fr: "/fr/contact",
-      de: "/de/contact",
-      it: "/it/contact",
-      es: "/es/contact",
-    },
-  },
+  alternates: generateAlternates("/contact"),
   twitter: {
     card: "summary_large_image",
     title: "Contact ITGuys - Free Consultation",

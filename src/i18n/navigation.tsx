@@ -3,12 +3,12 @@
 import NextLink from "next/link";
 import { usePathname as useNextPathname, useRouter as useNextRouter } from "next/navigation";
 import { forwardRef } from "react";
-import { defaultLocale, locales, type Locale } from "./config";
+import { defaultLocale, locales, type Locale, getLocalizedPath, getInternalPath } from "./config";
 
 /**
- * Custom Link component that handles locale-aware routing.
- * For the default locale (en), links like /about stay as /about
- * For other locales, links become /ro/about
+ * Custom Link component that handles locale-aware routing with localized URLs.
+ * For the default locale (en): /about stays as /about
+ * For other locales: /about becomes /ro/despre-noi (localized)
  */
 export const Link = forwardRef<
   HTMLAnchorElement,
@@ -26,11 +26,14 @@ export const Link = forwardRef<
 });
 
 /**
- * Hook to get the current pathname without the locale prefix
+ * Hook to get the current pathname without the locale prefix (returns internal path)
  */
 export function usePathname(): string {
   const pathname = useNextPathname();
-  return removeLocaleFromPathname(pathname);
+  const locale = getLocaleFromPathname(pathname);
+  const pathWithoutLocale = removeLocaleFromPathname(pathname);
+  // Convert localized path back to internal path
+  return getInternalPath(pathWithoutLocale, locale);
 }
 
 /**
@@ -85,7 +88,7 @@ function removeLocaleFromPathname(pathname: string): string {
 /**
  * Build a localized href
  * - For default locale (en): /about stays as /about
- * - For other locales: /about becomes /ro/about
+ * - For other locales: /about becomes /ro/despre-noi (localized path)
  */
 function getLocalizedHref(href: string, locale: Locale): string {
   // Handle external URLs
@@ -93,14 +96,40 @@ function getLocalizedHref(href: string, locale: Locale): string {
     return href;
   }
 
+  // Handle hash-only links
+  if (href.startsWith("#")) {
+    return href;
+  }
+
   // Ensure href starts with /
   const normalizedHref = href.startsWith("/") ? href : `/${href}`;
 
+  // Get the localized path
+  const localizedPath = getLocalizedPath(normalizedHref, locale);
+
   // For default locale, no prefix needed
   if (locale === defaultLocale) {
-    return normalizedHref;
+    return localizedPath;
   }
 
   // For other locales, add prefix
-  return `/${locale}${normalizedHref}`;
+  return `/${locale}${localizedPath}`;
+}
+
+/**
+ * Get the URL for switching to a different locale (for language switcher)
+ */
+export function getLocaleUrl(pathname: string, currentLocale: Locale, targetLocale: Locale): string {
+  // Get internal path from current localized path
+  const pathWithoutLocale = removeLocaleFromPathname(pathname);
+  const internalPath = getInternalPath(pathWithoutLocale, currentLocale);
+
+  // Get localized path for target locale
+  const localizedPath = getLocalizedPath(internalPath, targetLocale);
+
+  if (targetLocale === defaultLocale) {
+    return localizedPath;
+  }
+
+  return `/${targetLocale}${localizedPath}`;
 }

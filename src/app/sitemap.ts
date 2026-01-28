@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { locales, defaultLocale } from '@/i18n/config';
+import { locales, defaultLocale, getLocalizedPath, type Locale } from '@/i18n/config';
 import { getPosts } from '@/lib/db/posts';
 
 // Prevent pre-rendering during build (D1 is not available at build time)
@@ -23,13 +23,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const entries: MetadataRoute.Sitemap = [];
 
-  // Create language alternatives object dynamically
-  const createLanguageAlternates = (path: string) => {
+  // Create language alternatives object dynamically with localized paths
+  const createLanguageAlternates = (internalPath: string) => {
     const alternates: Record<string, string> = {};
     for (const locale of locales) {
+      const localizedPath = getLocalizedPath(internalPath || '/', locale as Locale);
       alternates[locale] = locale === defaultLocale
-        ? `${baseUrl}${path}`
-        : `${baseUrl}/${locale}${path}`;
+        ? `${baseUrl}${localizedPath}`
+        : `${baseUrl}/${locale}${localizedPath}`;
     }
     return alternates;
   };
@@ -37,9 +38,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Add static pages
   for (const page of pages) {
     for (const locale of locales) {
+      const localizedPath = getLocalizedPath(page.path || '/', locale as Locale);
       const url = locale === defaultLocale
-        ? `${baseUrl}${page.path}`
-        : `${baseUrl}/${locale}${page.path}`;
+        ? `${baseUrl}${localizedPath}`
+        : `${baseUrl}/${locale}${localizedPath}`;
 
       entries.push({
         url,
@@ -57,13 +59,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await getPosts(true); // Only published posts
 
   for (const post of posts) {
-    const postPath = `/blog/${post.slug}`;
+    const internalPostPath = `/blog/${post.slug}`;
     const postLastModified = new Date(post.updated_at);
 
     for (const locale of locales) {
+      const localizedBlogPath = getLocalizedPath('/blog', locale as Locale);
       const url = locale === defaultLocale
-        ? `${baseUrl}${postPath}`
-        : `${baseUrl}/${locale}${postPath}`;
+        ? `${baseUrl}${localizedBlogPath}/${post.slug}`
+        : `${baseUrl}/${locale}${localizedBlogPath}/${post.slug}`;
 
       entries.push({
         url,
@@ -71,7 +74,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: 'monthly' as const,
         priority: 0.7,
         alternates: {
-          languages: createLanguageAlternates(postPath),
+          languages: createLanguageAlternates(internalPostPath),
         },
       });
     }

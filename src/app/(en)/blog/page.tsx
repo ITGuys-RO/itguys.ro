@@ -5,6 +5,7 @@ import { BlogIllustration } from '@/components/illustrations';
 import { BreadcrumbSchema, OrganizationSchema } from '@/components/structured-data';
 import { getPostsLocalized } from '@/lib/db';
 import { Link } from '@/i18n/navigation';
+import { generateAlternates } from '@/i18n';
 import { CalendarIcon, UserIcon, TagIcon } from '@heroicons/react/24/outline';
 
 export const dynamic = 'force-dynamic';
@@ -18,17 +19,7 @@ export const metadata: Metadata = {
     url: 'https://itguys.ro/blog',
     type: 'website',
   },
-  alternates: {
-    canonical: '/blog',
-    languages: {
-      en: '/blog',
-      ro: '/ro/blog',
-      fr: '/fr/blog',
-      de: '/de/blog',
-      it: '/it/blog',
-      es: '/es/blog',
-    },
-  },
+  alternates: generateAlternates('/blog'),
   twitter: {
     card: 'summary_large_image',
     title: 'Blog - ITGuys',

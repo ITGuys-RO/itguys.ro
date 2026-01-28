@@ -5,6 +5,7 @@ import { PortfolioIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { getProjectsLocalized } from "@/lib/db";
+import { generateAlternates } from "@/i18n";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 
 // Force dynamic rendering since we fetch from D1
@@ -19,17 +20,7 @@ export const metadata: Metadata = {
     url: "https://itguys.ro/portfolio",
     type: "website",
   },
-  alternates: {
-    canonical: "/portfolio",
-    languages: {
-      en: "/portfolio",
-      ro: "/ro/portfolio",
-      fr: "/fr/portfolio",
-      de: "/de/portfolio",
-      it: "/it/portfolio",
-      es: "/es/portfolio",
-    },
-  },
+  alternates: generateAlternates("/portfolio"),
   twitter: {
     card: "summary_large_image",
     title: "Our Portfolio - ITGuys Projects",

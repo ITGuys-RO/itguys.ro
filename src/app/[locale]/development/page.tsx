@@ -5,7 +5,7 @@ import { DevelopmentIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { getServicesLocalized } from "@/lib/db";
-import { type Locale } from "@/i18n/config";
+import { type Locale, generateAlternates } from "@/i18n/config";
 import {
   CodeBracketIcon,
   CloudIcon,
@@ -61,17 +61,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/development`,
       type: "website",
     },
-    alternates: {
-      canonical: locale === "en" ? "/development" : `/${locale}/development`,
-      languages: {
-        en: "/development",
-        ro: "/ro/development",
-        fr: "/fr/development",
-        de: "/de/development",
-        it: "/it/development",
-        es: "/es/development",
-      },
-    },
+    alternates: generateAlternates("/development"),
     twitter: {
       card: "summary_large_image",
       description: devDescriptions[locale] || devDescriptions.en,

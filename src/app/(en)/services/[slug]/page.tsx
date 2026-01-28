@@ -4,6 +4,7 @@ import { Section, Card, CardTitle, CardDescription, AnimateOnScroll } from '@/co
 import { BreadcrumbSchema, OrganizationSchema, WebPageSchema } from '@/components/structured-data';
 import { getServiceLocalized, getServiceLocaleSlugs } from '@/lib/db';
 import { Link } from '@/i18n/navigation';
+import { getLocalizedPath, locales, type Locale } from '@/i18n/config';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 export const dynamic = 'force-dynamic';
@@ -36,14 +37,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
       alternates: {
         canonical: `/services/${slug}`,
-        languages: {
-          en: `/services/${slugs.en}`,
-          ro: `/ro/services/${slugs.ro}`,
-          fr: `/fr/services/${slugs.fr}`,
-          de: `/de/services/${slugs.de}`,
-          it: `/it/services/${slugs.it}`,
-          es: `/es/services/${slugs.es}`,
-        },
+        languages: Object.fromEntries(
+          locales.map((loc) => {
+            const localizedServicesPath = getLocalizedPath('/services', loc as Locale);
+            const slugForLocale = slugs[loc as Locale];
+            if (loc === 'en') {
+              return [loc, `${localizedServicesPath}/${slugForLocale}`];
+            }
+            return [loc, `/${loc}${localizedServicesPath}/${slugForLocale}`];
+          })
+        ),
       },
     };
   } catch {

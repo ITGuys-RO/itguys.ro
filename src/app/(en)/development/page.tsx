@@ -5,6 +5,7 @@ import { DevelopmentIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { getServicesLocalized } from "@/lib/db";
+import { generateAlternates } from "@/i18n";
 import {
   CodeBracketIcon,
   CloudIcon,
@@ -35,17 +36,7 @@ export const metadata: Metadata = {
     url: "https://itguys.ro/development",
     type: "website",
   },
-  alternates: {
-    canonical: "/development",
-    languages: {
-      en: "/development",
-      ro: "/ro/development",
-      fr: "/fr/development",
-      de: "/de/development",
-      it: "/it/development",
-      es: "/es/development",
-    },
-  },
+  alternates: generateAlternates("/development"),
   twitter: {
     card: "summary_large_image",
     title: "Development Services - Web, Mobile, Cloud & AI",

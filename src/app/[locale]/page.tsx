@@ -5,7 +5,7 @@ import { Section, Card, CardTitle, CardDescription, AnimateOnScroll } from "@/co
 import { HeroIllustration } from "@/components/illustrations";
 import { getContent } from "@/content";
 import { Link } from "@/i18n/navigation";
-import { locales, type Locale } from "@/i18n/config";
+import { locales, type Locale, generateAlternates } from "@/i18n/config";
 import {
   SparklesIcon,
   RocketLaunchIcon,
@@ -45,17 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     description: descriptions[locale] || descriptions.en,
-    alternates: {
-      canonical: locale === "en" ? "/" : `/${locale}`,
-      languages: {
-        en: "/",
-        ro: "/ro",
-        fr: "/fr",
-        de: "/de",
-        it: "/it",
-        es: "/es",
-      },
-    },
+    alternates: generateAlternates("/"),
     openGraph: {
       url: locale === "en" ? "https://itguys.ro" : `https://itguys.ro/${locale}`,
       description: descriptions[locale] || descriptions.en,

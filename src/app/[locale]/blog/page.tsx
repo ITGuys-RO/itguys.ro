@@ -6,7 +6,7 @@ import { BreadcrumbSchema, OrganizationSchema } from '@/components/structured-da
 import { getPostsLocalized } from '@/lib/db';
 import { Link } from '@/i18n/navigation';
 import { CalendarIcon, UserIcon, TagIcon } from '@heroicons/react/24/outline';
-import { locales, type Locale } from '@/i18n/config';
+import { locales, type Locale, generateAlternates } from '@/i18n/config';
 
 export const dynamic = 'force-dynamic';
 
@@ -63,17 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: 'Blog - ITGuys',
     description: content[locale]?.subheadline || content.en.subheadline,
-    alternates: {
-      canonical: locale === 'en' ? '/blog' : `/${locale}/blog`,
-      languages: {
-        en: '/blog',
-        ro: '/ro/blog',
-        fr: '/fr/blog',
-        de: '/de/blog',
-        it: '/it/blog',
-        es: '/es/blog',
-      },
-    },
+    alternates: generateAlternates('/blog'),
   };
 }
 
