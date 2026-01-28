@@ -701,6 +701,35 @@ async function main() {
 
   writeFileSync('blog-post.json', JSON.stringify(blogPost, null, 2));
   console.log(`Wrote blog-post.json with ${Object.keys(blogPost.translations).length} translations`);
+
+  // Submit to local API if running locally
+  const localApiUrl = process.env.LOCAL_API_URL || 'http://localhost:8789';
+  await submitToLocalApi(blogPost, localApiUrl);
+}
+
+async function submitToLocalApi(post: BlogPost, baseUrl: string): Promise<void> {
+  const url = `${baseUrl}/api/admin/posts`;
+  console.log(`Step 6: Submitting to ${url}...`);
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(post),
+    });
+
+    if (!response.ok) {
+      const body = await response.text();
+      console.error(`API responded ${response.status}: ${body}`);
+      return;
+    }
+
+    const result = (await response.json()) as { id: number };
+    console.log(`Post created with ID: ${result.id}`);
+  } catch (error) {
+    console.error(`Failed to submit to local API: ${(error as Error).message}`);
+    console.log('blog-post.json was still saved. You can submit it manually.');
+  }
 }
 
 main().catch((error) => {
