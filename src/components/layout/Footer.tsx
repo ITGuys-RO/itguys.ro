@@ -61,7 +61,7 @@ export function Footer({ locale }: Props) {
               <div className="relative">
                 <Image
                   src="/itguys_logo.png"
-                  alt="ITGuys"
+                  alt="ITGuys logo"
                   width={32}
                   height={32}
                   className="rounded-full transition-all duration-300 group-hover:shadow-[0_0_15px_rgba(0,212,255,0.4)]"

@@ -10,7 +10,9 @@ import {
   BeakerIcon,
   ChartBarIcon,
   ChatBubbleLeftRightIcon,
+  ArrowRightIcon,
 } from "@heroicons/react/24/outline";
+import { Link } from "@/i18n/navigation";
 
 // Force dynamic rendering since we fetch from D1
 export const dynamic = 'force-dynamic';
@@ -141,6 +143,14 @@ export default async function ProfessionalServicesPage() {
               {service.note}
             </p>
           )}
+
+          <Link
+            href={`/services/${service.slug}`}
+            className="mt-6 inline-flex items-center gap-2 text-neon hover:text-neon/80 font-medium transition-colors"
+          >
+            Learn more
+            <ArrowRightIcon className="w-4 h-4" />
+          </Link>
         </Section>
         );
       })}

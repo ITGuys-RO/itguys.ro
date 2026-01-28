@@ -102,7 +102,8 @@ export async function getServicesLocalized(locale: Locale, category?: string): P
        COALESCE(t.title, t_en.title) as title,
        COALESCE(t.description, t_en.description) as description,
        COALESCE(t.details, t_en.details) as details,
-       COALESCE(t.note, t_en.note) as note
+       COALESCE(t.note, t_en.note) as note,
+       COALESCE(t.long_description, t_en.long_description) as long_description
      FROM services s
      LEFT JOIN service_translations t ON t.service_id = s.id AND t.locale = ?
      LEFT JOIN service_translations t_en ON t_en.service_id = s.id AND t_en.locale = 'en'
@@ -140,6 +141,7 @@ export async function getServicesLocalized(locale: Locale, category?: string): P
       description: row.description,
       details: row.details,
       note: row.note,
+      longDescription: row.long_description,
       technologies,
       subservices: subservices.map((sub) => ({
         title: sub.title,
@@ -168,9 +170,9 @@ export async function createService(input: ServiceInput): Promise<number> {
 
   // Insert translations
   const translationStatements = Object.entries(input.translations).map(([locale, t]) => ({
-    sql: `INSERT INTO service_translations (service_id, locale, title, description, details, note)
-          VALUES (?, ?, ?, ?, ?, ?)`,
-    params: [serviceId, locale, t!.title, t!.description ?? null, t!.details ?? null, t!.note ?? null],
+    sql: `INSERT INTO service_translations (service_id, locale, title, description, details, note, long_description)
+          VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    params: [serviceId, locale, t!.title, t!.description ?? null, t!.details ?? null, t!.note ?? null, t!.long_description ?? null],
   }));
 
   // Insert technologies
@@ -242,14 +244,15 @@ export async function updateService(id: number, input: Partial<ServiceInput>): P
     for (const [locale, t] of Object.entries(input.translations)) {
       if (t) {
         await execute(
-          `INSERT INTO service_translations (service_id, locale, title, description, details, note)
-           VALUES (?, ?, ?, ?, ?, ?)
+          `INSERT INTO service_translations (service_id, locale, title, description, details, note, long_description)
+           VALUES (?, ?, ?, ?, ?, ?, ?)
            ON CONFLICT(service_id, locale) DO UPDATE SET
              title = excluded.title,
              description = excluded.description,
              details = excluded.details,
-             note = excluded.note`,
-          [id, locale, t.title, t.description ?? null, t.details ?? null, t.note ?? null]
+             note = excluded.note,
+             long_description = excluded.long_description`,
+          [id, locale, t.title, t.description ?? null, t.details ?? null, t.note ?? null, t.long_description ?? null]
         );
       }
     }
@@ -288,6 +291,63 @@ export async function updateService(id: number, input: Partial<ServiceInput>): P
       }
     }
   }
+}
+
+export async function getServiceLocalized(slug: string, locale: Locale): Promise<ServiceLocalized | null> {
+  const sql = `SELECT s.*,
+       COALESCE(t.title, t_en.title) as title,
+       COALESCE(t.description, t_en.description) as description,
+       COALESCE(t.details, t_en.details) as details,
+       COALESCE(t.note, t_en.note) as note,
+       COALESCE(t.long_description, t_en.long_description) as long_description
+     FROM services s
+     LEFT JOIN service_translations t ON t.service_id = s.id AND t.locale = ?
+     LEFT JOIN service_translations t_en ON t_en.service_id = s.id AND t_en.locale = 'en'
+     WHERE s.slug = ? AND s.is_active = 1`;
+
+  const row = await queryFirst<Service & ServiceTranslation>(sql, [locale, slug]);
+  if (!row) return null;
+
+  const [technologies, subservices] = await Promise.all([
+    getServiceTechnologies(row.id),
+    query<Subservice & SubserviceTranslation>(
+      `SELECT sub.*,
+         COALESCE(st.title, st_en.title) as title,
+         COALESCE(st.description, st_en.description) as description
+       FROM subservices sub
+       LEFT JOIN subservice_translations st ON st.subservice_id = sub.id AND st.locale = ?
+       LEFT JOIN subservice_translations st_en ON st_en.subservice_id = sub.id AND st_en.locale = 'en'
+       WHERE sub.service_id = ?
+       ORDER BY sub.sort_order ASC`,
+      [locale, row.id]
+    ),
+  ]);
+
+  return {
+    id: row.slug,
+    slug: row.slug,
+    category: row.category,
+    title: row.title,
+    description: row.description,
+    details: row.details,
+    note: row.note,
+    longDescription: row.long_description,
+    technologies,
+    subservices: subservices.map((sub) => ({
+      title: sub.title,
+      description: sub.description,
+    })),
+  };
+}
+
+export async function getServiceLocaleSlugs(slug: string): Promise<Record<Locale, string>> {
+  // Services use the same slug across all locales (unlike blog posts)
+  // Return the same slug for all locales
+  const locales: Locale[] = ['en', 'ro', 'fr', 'de', 'it', 'es'];
+  return locales.reduce((acc, locale) => {
+    acc[locale] = slug;
+    return acc;
+  }, {} as Record<Locale, string>);
 }
 
 export async function deleteService(id: number): Promise<void> {

@@ -21,7 +21,7 @@ import type { Locale } from '@/i18n/config';
 import { locales } from '@/i18n/config';
 import { TrashIcon, PlusIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 
-type TranslationData = { title: string; description: string | null; details: string | null; note: string | null };
+type TranslationData = { title: string; description: string | null; details: string | null; note: string | null; long_description: string | null };
 
 function slugify(text: string): string {
   return text
@@ -230,7 +230,7 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
     is_active: 1,
     technologies: [],
     subservices: [],
-    translations: { en: { title: '', description: null, details: null, note: null } },
+    translations: { en: { title: '', description: null, details: null, note: null, long_description: null } },
   });
 
   const { errors, validateForm, clearErrors } = useFormValidation<ServiceInput>({
@@ -251,7 +251,7 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
         const service: ServiceWithTranslations = await res.json();
         const translations = Object.fromEntries(
           Object.entries(service.translations).map(([locale, t]) => [
-            locale, t ? { title: t.title, description: t.description, details: t.details, note: t.note } : undefined
+            locale, t ? { title: t.title, description: t.description, details: t.details, note: t.note, long_description: t.long_description } : undefined
           ])
         ) as ServiceInput['translations'];
 
@@ -358,13 +358,14 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
           <LocaleFields
             translations={formData.translations}
             onChange={(locale, data) => setFormData({ ...formData, translations: { ...formData.translations, [locale]: data } })}
-            defaultData={{ title: '', description: '', details: '', note: '' }}
+            defaultData={{ title: '', description: '', details: '', note: '', long_description: '' }}
             renderFields={(locale, data, onChange) => (
               <div className="space-y-4">
                 <InputField label="Title" name={`title-${locale}`} value={data.title} onChange={(v) => onChange({ ...data, title: v })} required />
                 <TextareaField label="Description" name={`description-${locale}`} value={data.description || ''} onChange={(v) => onChange({ ...data, description: v || null })} rows={2} />
                 <TextareaField label="Details" name={`details-${locale}`} value={data.details || ''} onChange={(v) => onChange({ ...data, details: v || null })} rows={3} />
                 <InputField label="Note" name={`note-${locale}`} value={data.note || ''} onChange={(v) => onChange({ ...data, note: v || null })} />
+                <TextareaField label="Long Description (Markdown)" name={`long_description-${locale}`} value={data.long_description || ''} onChange={(v) => onChange({ ...data, long_description: v || null })} rows={12} hint="Markdown supported. Used on dedicated service detail pages for SEO." />
               </div>
             )}
           />

@@ -184,6 +184,21 @@ If nothing relevant is trending today, write about a recent security advisory or
 3. Don't sound salesy - connections should feel like helpful context
 4. End with a soft CTA like "If [specific challenge] sounds familiar, [let's talk](/contact)" - make "let's talk" a markdown link to /contact
 
+## Internal Linking (SEO)
+Include 1-3 relevant internal links naturally within the content. Use these pages:
+- /services - General services overview
+- /development - Web & mobile development services
+- /portfolio - Case studies and past work
+- /about - Team background and experience
+- /contact - Contact page
+
+Examples of natural internal linking:
+- "...requires [proper security configuration](/services)..."
+- "...similar to challenges we solved in our [recent projects](/portfolio)..."
+- "...our team's [experience at EA and TUI](/about) taught us..."
+
+Don't force links - only include them where contextually relevant to the topic.
+
 ## Humanizer Rules - CRITICAL: Sound Human, Not AI
 ${humanizerRules}
 

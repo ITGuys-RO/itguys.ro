@@ -92,6 +92,7 @@ export interface ServiceTranslation {
   description: string | null;
   details: string | null;
   note: string | null;
+  long_description: string | null;
 }
 
 export interface ServiceTechnology {
@@ -247,6 +248,7 @@ export interface ServiceLocalized {
   description: string | null;
   details: string | null;
   note: string | null;
+  longDescription: string | null;
   technologies: string[];
   subservices: SubserviceLocalized[];
 }
@@ -354,6 +356,7 @@ export interface ServiceInput {
     description?: string | null;
     details?: string | null;
     note?: string | null;
+    long_description?: string | null;
   }>;
 }
 

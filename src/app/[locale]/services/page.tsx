@@ -11,7 +11,9 @@ import {
   BeakerIcon,
   ChartBarIcon,
   ChatBubbleLeftRightIcon,
+  ArrowRightIcon,
 } from "@heroicons/react/24/outline";
+import { Link } from "@/i18n/navigation";
 
 // Force dynamic rendering since we fetch from D1
 export const dynamic = 'force-dynamic';
@@ -43,6 +45,15 @@ const servicesDescriptions: Record<string, string> = {
   de: "QA-Tests, Sicherheitsaudits, Penetrationstests und Datenanalyse. Expertendienste von EA- und TUI-Veteranen.",
   it: "Test QA, audit di sicurezza, penetration test e analisi dati. Servizi esperti da veterani EA e TUI.",
   es: "Pruebas QA, auditorias de seguridad, pentesting y analisis de datos. Servicios de expertos de EA y TUI.",
+};
+
+const learnMoreText: Record<string, string> = {
+  en: "Learn more",
+  ro: "Află mai multe",
+  fr: "En savoir plus",
+  de: "Mehr erfahren",
+  it: "Scopri di più",
+  es: "Más información",
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -169,6 +180,14 @@ export default async function ProfessionalServicesPage({ params }: Props) {
               {service.note}
             </p>
           )}
+
+          <Link
+            href={`/services/${service.slug}`}
+            className="mt-6 inline-flex items-center gap-2 text-neon hover:text-neon/80 font-medium transition-colors"
+          >
+            {learnMoreText[locale] || learnMoreText.en}
+            <ArrowRightIcon className="w-4 h-4" />
+          </Link>
         </Section>
         );
       })}
