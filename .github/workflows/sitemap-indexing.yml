@@ -2,7 +2,7 @@ name: Sitemap Indexing
 
 on:
   workflow_run:
-    workflows: ["Deploy to Cloudflare"]
+    workflows: ["Deploy to Cloudflare", "Daily Tech News Generator"]
     types: [completed]
   workflow_dispatch:
 

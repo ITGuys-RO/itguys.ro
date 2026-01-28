@@ -86,7 +86,7 @@ Supported: en (default), ro, fr, de, it, es
 ## Environment Variables
 **Public** (`.env`):
 - `NEXT_PUBLIC_TURNSTILE_SITE_KEY` - Cloudflare Turnstile CAPTCHA
-- `NEXT_PUBLIC_GA_MEASUREMENT_ID` - Google Analytics GA4
+- `NEXT_PUBLIC_GTM_ID` - Google Tag Manager container ID
 
 **Secrets** (`wrangler.toml` vars):
 - `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` - Contact form notifications
@@ -99,7 +99,7 @@ Supported: en (default), ro, fr, de, it, es
 - **Telegram Bot** - Contact form notifications
 - **IndexNow** - Auto-submits blog posts to search engines (`src/lib/indexnow.ts`)
 - **Gravatar** - Team member avatars (`src/lib/gravatar.ts`)
-- **Google Analytics GA4** - Site analytics
+- **Google Tag Manager** - Tag management (analytics, conversion tracking, etc.)
 
 ## Utilities
 - `cn()` from `src/lib/utils.ts` - Tailwind className composition (clsx wrapper)
@@ -111,3 +111,8 @@ Supported: en (default), ro, fr, de, it, es
 - `NODE_ENV=development` bypasses admin auth for local testing
 - Image optimization disabled (`unoptimized: true`) for Cloudflare compatibility
 - Build limited to 1 CPU core for Cloudflare memory constraints
+
+## CLI Tools Available
+You have access to these CLIs and should use them proactively:
+- **GitHub CLI (`gh`)** - Manage secrets, PRs, issues, workflows (e.g., `gh secret set`, `gh workflow run`)
+- **Wrangler (`pnpm wrangler`)** - Cloudflare D1 queries, deployments, secrets (e.g., `wrangler d1 execute`)

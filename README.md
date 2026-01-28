@@ -26,6 +26,7 @@ graph TB
         Perplexity[Perplexity API<br/>News Research + English]
         Claude[Claude API<br/>Translations x5]
         AutomationAPI[Automation API]
+        SitemapIndexing[Sitemap Indexing Workflow]
     end
 
     subgraph "Database"
@@ -36,6 +37,7 @@ graph TB
         Turnstile[Cloudflare Turnstile]
         Telegram[Telegram Bot]
         IndexNow[IndexNow SEO]
+        GSC[Google Search Console]
         Gravatar[Gravatar]
         GA4[Google Analytics]
     end
@@ -50,7 +52,6 @@ graph TB
     ContactAPI --> Telegram
     AdminUI --> AdminAPI
     AdminAPI --> D1
-    AdminAPI --> IndexNow
     CronWorker --> GHA
     GHA --> Generator
     Generator --> Perplexity
@@ -59,7 +60,9 @@ graph TB
     Claude --> Generator
     Generator --> AutomationAPI
     AutomationAPI --> D1
-    AutomationAPI --> IndexNow
+    GHA --> SitemapIndexing
+    SitemapIndexing --> IndexNow
+    SitemapIndexing --> GSC
 ```
 
 ## Setup

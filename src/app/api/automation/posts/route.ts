@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createPost, getPostBySlug, updatePost } from '@/lib/db/posts';
-import { submitBlogPostToIndexNow } from '@/lib/indexnow';
 import { PostInput } from '@/lib/db/schema';
 
 function validateApiKey(request: NextRequest): boolean {
@@ -39,11 +38,6 @@ export async function POST(request: NextRequest) {
       // Create new post
       postId = await createPost(input);
       action = 'created';
-    }
-
-    // Trigger IndexNow if published
-    if (input.is_published === 1) {
-      submitBlogPostToIndexNow(input.slug).catch(console.error);
     }
 
     return NextResponse.json({ id: postId, success: true, action });

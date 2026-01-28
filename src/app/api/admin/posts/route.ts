@@ -4,7 +4,6 @@ import {
   getAllPostsWithTranslations,
   createPost,
 } from '@/lib/db';
-import { submitBlogPostToIndexNow } from '@/lib/indexnow';
 import type { PostInput } from '@/lib/db';
 
 export async function GET(request: NextRequest) {
@@ -27,13 +26,6 @@ export async function POST(request: NextRequest) {
     }
 
     const id = await createPost(input);
-
-    // Submit to IndexNow if post is published (fire and forget)
-    if (input.is_published === 1) {
-      submitBlogPostToIndexNow(input.slug).catch((err) => {
-        console.error('IndexNow submission failed:', err);
-      });
-    }
 
     return NextResponse.json({ id }, { status: 201 });
   } catch (error) {
