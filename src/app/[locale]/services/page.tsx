@@ -138,9 +138,9 @@ export default async function ProfessionalServicesPage({ params }: Props) {
             <div className="p-2 rounded-lg bg-brand-800/50 border border-brand-700/30">
               <Icon className="w-6 h-6 text-neon" />
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-white">
+            <Link href={`/services/${service.slug}`} className="text-2xl md:text-3xl font-bold text-white hover:text-neon transition-colors">
               {service.title}
-            </h2>
+            </Link>
           </div>
           <p className="mt-4 text-lg text-brand-200">
             {service.description}

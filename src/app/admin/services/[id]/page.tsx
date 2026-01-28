@@ -365,7 +365,7 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
                 <TextareaField label="Description" name={`description-${locale}`} value={data.description || ''} onChange={(v) => onChange({ ...data, description: v || null })} rows={2} />
                 <TextareaField label="Details" name={`details-${locale}`} value={data.details || ''} onChange={(v) => onChange({ ...data, details: v || null })} rows={3} />
                 <InputField label="Note" name={`note-${locale}`} value={data.note || ''} onChange={(v) => onChange({ ...data, note: v || null })} />
-                <TextareaField label="Long Description (Markdown)" name={`long_description-${locale}`} value={data.long_description || ''} onChange={(v) => onChange({ ...data, long_description: v || null })} rows={12} hint="Markdown supported. Used on dedicated service detail pages for SEO." />
+                <TextareaField label="Long Description (Markdown)" name={`long_description-${locale}`} value={data.long_description || ''} onChange={(v) => onChange({ ...data, long_description: v || null })} rows={12} helpText="Markdown supported. Used on dedicated service detail pages for SEO." />
               </div>
             )}
           />
