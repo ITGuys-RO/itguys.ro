@@ -591,13 +591,13 @@ We don''t use complex features unless they''re needed. Simple schemas are easier
 -- FAQ items linked to services via category field
 
 -- Security FAQs
-INSERT INTO faq_items (slug, category, sort_order, is_active) VALUES
+INSERT OR IGNORE INTO faq_items (slug, category, sort_order, is_active) VALUES
 ('security-pentest-frequency', 'security', 1, 1),
 ('security-pentest-duration', 'security', 2, 1),
 ('security-compliance', 'security', 3, 1),
 ('security-cloud-audit', 'security', 4, 1);
 
-INSERT INTO faq_translations (faq_id, locale, question, answer) VALUES
+INSERT OR IGNORE INTO faq_translations (faq_id, locale, question, answer) VALUES
 ((SELECT id FROM faq_items WHERE slug = 'security-pentest-frequency'), 'en',
 'How often should we do penetration testing?',
 'At minimum, annually and after any significant changes to your application or infrastructure. High-risk applications (handling payments, health data, or financial information) should consider quarterly testing. We also recommend testing before major product launches.'),
@@ -615,12 +615,12 @@ INSERT INTO faq_translations (faq_id, locale, question, answer) VALUES
 'We review IAM configurations, network security, encryption settings, logging and monitoring, data protection, and compliance with security benchmarks like CIS. You receive a prioritized list of findings with remediation guidance.');
 
 -- Web Development FAQs
-INSERT INTO faq_items (slug, category, sort_order, is_active) VALUES
+INSERT OR IGNORE INTO faq_items (slug, category, sort_order, is_active) VALUES
 ('web-timeline', 'web-applications', 1, 1),
 ('web-technology-choice', 'web-applications', 2, 1),
 ('web-maintenance', 'web-applications', 3, 1);
 
-INSERT INTO faq_translations (faq_id, locale, question, answer) VALUES
+INSERT OR IGNORE INTO faq_translations (faq_id, locale, question, answer) VALUES
 ((SELECT id FROM faq_items WHERE slug = 'web-timeline'), 'en',
 'How long does it take to build a web application?',
 'A simple MVP might take 6-8 weeks. A full-featured SaaS product typically takes 3-6 months. Complex enterprise applications can take longer. We provide detailed estimates after understanding your requirements.'),
@@ -634,12 +634,12 @@ INSERT INTO faq_translations (faq_id, locale, question, answer) VALUES
 'Yes. We offer maintenance packages that include security updates, bug fixes, performance monitoring, and feature development. Many clients start with a build project and transition to ongoing support.');
 
 -- Mobile Development FAQs
-INSERT INTO faq_items (slug, category, sort_order, is_active) VALUES
+INSERT OR IGNORE INTO faq_items (slug, category, sort_order, is_active) VALUES
 ('mobile-native-vs-cross', 'mobile', 1, 1),
 ('mobile-timeline', 'mobile', 2, 1),
 ('mobile-app-store', 'mobile', 3, 1);
 
-INSERT INTO faq_translations (faq_id, locale, question, answer) VALUES
+INSERT OR IGNORE INTO faq_translations (faq_id, locale, question, answer) VALUES
 ((SELECT id FROM faq_items WHERE slug = 'mobile-native-vs-cross'), 'en',
 'Why native development instead of React Native or Flutter?',
 'Native apps perform better, have full access to platform features, and are easier to maintain long-term. Cross-platform frameworks add a layer of complexity and often require native code anyway for advanced features. For apps that need to feel premium, native is worth the investment.'),
@@ -653,12 +653,12 @@ INSERT INTO faq_translations (faq_id, locale, question, answer) VALUES
 'Yes. We prepare all required assets, handle the submission process, respond to review feedback, and make any required changes. We have experience navigating Apple''s review process and Google''s policies.');
 
 -- DevOps FAQs
-INSERT INTO faq_items (slug, category, sort_order, is_active) VALUES
+INSERT OR IGNORE INTO faq_items (slug, category, sort_order, is_active) VALUES
 ('devops-cloud-choice', 'cloud', 1, 1),
 ('devops-kubernetes', 'cloud', 2, 1),
 ('devops-cost', 'cloud', 3, 1);
 
-INSERT INTO faq_translations (faq_id, locale, question, answer) VALUES
+INSERT OR IGNORE INTO faq_translations (faq_id, locale, question, answer) VALUES
 ((SELECT id FROM faq_items WHERE slug = 'devops-cloud-choice'), 'en',
 'Which cloud provider do you recommend?',
 'AWS for most projects - it has the broadest service offering and best documentation. We also work with GCP and Cloudflare Workers for specific use cases. The right choice depends on your technical requirements, compliance needs, and team expertise.'),
@@ -672,11 +672,11 @@ INSERT INTO faq_translations (faq_id, locale, question, answer) VALUES
 'Common optimizations include right-sizing instances, using reserved or spot instances, implementing auto-scaling, optimizing data transfer, and removing unused resources. We typically find 20-40% savings in existing AWS deployments.');
 
 -- Consulting FAQs
-INSERT INTO faq_items (slug, category, sort_order, is_active) VALUES
+INSERT OR IGNORE INTO faq_items (slug, category, sort_order, is_active) VALUES
 ('consulting-engagement', 'consulting', 1, 1),
 ('consulting-deliverables', 'consulting', 2, 1);
 
-INSERT INTO faq_translations (faq_id, locale, question, answer) VALUES
+INSERT OR IGNORE INTO faq_translations (faq_id, locale, question, answer) VALUES
 ((SELECT id FROM faq_items WHERE slug = 'consulting-engagement'), 'en',
 'How do consulting engagements typically work?',
 'Most engagements start with a discovery phase (1-2 weeks) to understand your situation. Then we deliver recommendations, documentation, and often hands-on implementation support. Engagements can be fixed-scope projects or ongoing advisory relationships.'),
@@ -686,11 +686,11 @@ INSERT INTO faq_translations (faq_id, locale, question, answer) VALUES
 'Typical deliverables include architecture documentation, technology recommendations with rationale, implementation roadmaps, and often working prototypes or proof-of-concepts. Everything is documented so your team can execute independently.');
 
 -- QA FAQs
-INSERT INTO faq_items (slug, category, sort_order, is_active) VALUES
+INSERT OR IGNORE INTO faq_items (slug, category, sort_order, is_active) VALUES
 ('qa-automation-worth', 'qa-testing', 1, 1),
 ('qa-integration', 'qa-testing', 2, 1);
 
-INSERT INTO faq_translations (faq_id, locale, question, answer) VALUES
+INSERT OR IGNORE INTO faq_translations (faq_id, locale, question, answer) VALUES
 ((SELECT id FROM faq_items WHERE slug = 'qa-automation-worth'), 'en',
 'Is test automation worth the investment?',
 'For applications that are actively developed and will be maintained long-term, yes. Automated tests catch regressions, enable confident refactoring, and speed up releases. The ROI typically becomes positive within 6-12 months for active projects.'),
