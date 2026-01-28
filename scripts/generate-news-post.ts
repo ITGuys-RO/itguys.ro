@@ -65,7 +65,6 @@ function stripThinkingTags(text: string): string {
 }
 
 function stripCitationMarkers(text: string): string {
-  // Remove citation markers like [1], [2], etc. that can break JSON
   return text.replace(/\[\d+\]/g, '');
 }
 
@@ -101,12 +100,10 @@ function isValidBlogPostEnglish(obj: unknown): obj is BlogPostEnglish {
   if (!obj || typeof obj !== 'object') return false;
   const post = obj as Record<string, unknown>;
 
-  // Check required top-level fields
   if (typeof post.slug !== 'string' || !post.slug) return false;
   if (typeof post.is_published !== 'number') return false;
   if (!Array.isArray(post.tags)) return false;
 
-  // Check translations.en exists and has required fields
   if (!post.translations || typeof post.translations !== 'object') return false;
   const translations = post.translations as Record<string, unknown>;
   if (!translations.en || typeof translations.en !== 'object') return false;
@@ -132,15 +129,52 @@ function loadHumanizerRules(): string {
   }
 }
 
-function getPerplexityPrompt(): string {
+function getResearchPrompt(): string {
+  return `Search for today's most significant tech news in these categories ONLY:
+- Security vulnerabilities, breaches, or patches
+- DDoS attacks, CDN, or WAF topics (Akamai, Cloudflare)
+- Cloud infrastructure: AWS, Docker, Kubernetes
+- PHP framework updates or vulnerabilities
+- Native iOS/Android development: Swift, Kotlin, mobile security
+- API security, authentication flaws, OAuth/JWT
+- Enterprise compliance: GDPR, SOC2, HIPAA
+- Web application security: XSS, SQLi, CSRF
+
+If nothing relevant is trending today, find the most recent security advisory or CVE affecting PHP, AWS, iOS, or Android.
+
+Return your findings as PLAIN TEXT (not JSON) with:
+- Headline: what happened
+- Summary: 2-3 paragraphs explaining the news
+- Key facts: bullet points of important details
+- Sources: URLs where you found this information
+- Why it matters: practical implications for developers and teams`;
+}
+
+async function researchNews(): Promise<string> {
+  console.log('Step 1: Researching news with Perplexity...');
+  try {
+    return await withRetry(async () => {
+      const { text } = await generateText({
+        model: perplexity(PERPLEXITY_MODEL),
+        prompt: getResearchPrompt(),
+      });
+      return stripThinkingTags(text);
+    }, 'researchNews');
+  } catch (error) {
+    console.warn('Perplexity failed, falling back to Claude knowledge:', (error as Error).message);
+    return 'FALLBACK: No live research available. Write about a recent security advisory, CVE, or notable tech development from your knowledge. Focus on practical implications for web developers, mobile developers, and security teams.';
+  }
+}
+
+function getWritePostPrompt(research: string): string {
   const today = new Date().toISOString().split('T')[0];
   const timestamp = new Date().toISOString();
   const humanizerRules = loadHumanizerRules();
 
-  return `You are a tech news blogger for ITGuys. Your task is to:
-1. Research today's most significant tech news
-2. Write an engaging blog post about it
-3. Output valid JSON
+  return `You are a tech news blogger for ITGuys. Write a blog post based on the research below.
+
+## Research
+${research}
 
 ## About ITGuys
 ITGuys is a tech consultancy with 30+ combined years of experience from Electronic Arts, TUI, and Nagarro.
@@ -165,19 +199,6 @@ ITGuys is a tech consultancy with 30+ combined years of experience from Electron
 - Professionally casual tone - "Let's Talk" not "Contact Us"
 - Experience-driven - reference real-world scenarios
 
-## News Selection - ONLY These Topics
-Find today's news strictly within these categories:
-- Security vulnerabilities, breaches, or patches
-- DDoS attacks, CDN, or WAF topics (Akamai, Cloudflare)
-- Cloud infrastructure: AWS, Docker, Kubernetes
-- PHP framework updates or vulnerabilities
-- Native iOS/Android development: Swift, Kotlin, mobile security
-- API security, authentication flaws, OAuth/JWT
-- Enterprise compliance: GDPR, SOC2, HIPAA
-- Web application security: XSS, SQLi, CSRF
-
-If nothing relevant is trending today, write about a recent security advisory or CVE affecting PHP, AWS, iOS, or Android.
-
 ## Content Requirements
 1. Write an engaging, well-structured blog post
 2. Weave ITGuys service connections naturally into the narrative
@@ -185,22 +206,21 @@ If nothing relevant is trending today, write about a recent security advisory or
 4. End with a soft CTA like "If [specific challenge] sounds familiar, [let's talk](/contact)" - make "let's talk" a markdown link to /contact
 
 ## Internal Linking (SEO)
-Include 1-3 relevant internal links naturally within the content. Use these pages:
+Include 1-3 relevant internal links naturally within the content:
 - /services - General services overview
 - /development - Web & mobile development services
 - /portfolio - Case studies and past work
 - /about - Team background and experience
 - /contact - Contact page
 
-Examples of natural internal linking:
-- "...requires [proper security configuration](/services)..."
-- "...similar to challenges we solved in our [recent projects](/portfolio)..."
-- "...our team's [experience at EA and TUI](/about) taught us..."
-
-Don't force links - only include them where contextually relevant to the topic.
-
-## Humanizer Rules - CRITICAL: Sound Human, Not AI
+## Humanizer Rules - Sound Human, Not AI
 ${humanizerRules}
+
+## Key Writing Fixes
+- Replace em dashes (—) with commas or periods
+- Remove AI vocabulary (additionally, crucial, delve, landscape, testament, etc.)
+- Fix copula avoidance (replace "serves as", "stands as" with "is")
+- Remove promotional language (groundbreaking, vibrant, nestled, etc.)
 
 ## Output Format
 Output ONLY a valid JSON object (no markdown fencing, no explanation before or after).
@@ -212,7 +232,7 @@ CRITICAL JSON RULES:
 - No comments
 
 {
-  "slug": "${today}-tech-news-roundup",
+  "slug": "${today}-descriptive-slug-here",
   "image_path": null,
   "author_id": null,
   "published_at": "${timestamp}",
@@ -231,99 +251,112 @@ CRITICAL JSON RULES:
 
 ## STRICT LENGTH LIMITS
 - meta_title: MUST be 60 characters or less
-- meta_description: MUST be 155 characters or less
-`;
+- meta_description: MUST be 155 characters or less`;
 }
 
-async function generateEnglishPost(): Promise<BlogPostEnglish> {
-  console.log('Generating English blog post from Perplexity...');
+function buildMinimalPost(title: string, excerpt: string, content: string): BlogPostEnglish {
+  const today = new Date().toISOString().split('T')[0];
+  const slug = today + '-' + generateSlug(title);
+  return {
+    slug,
+    image_path: null,
+    author_id: null,
+    published_at: new Date().toISOString(),
+    is_published: 1,
+    tags: ['tech-news', 'daily-roundup'],
+    translations: {
+      en: {
+        title,
+        excerpt,
+        content,
+        meta_title: title.length > 60 ? title.substring(0, 57) + '...' : title,
+        meta_description: excerpt.length > 155 ? excerpt.substring(0, 152) + '...' : excerpt,
+      },
+    },
+  };
+}
 
-  return withRetry(async () => {
-    const { text } = await generateText({
-      model: perplexity(PERPLEXITY_MODEL),
-      prompt: getPerplexityPrompt(),
-    });
+async function writeEnglishPost(research: string): Promise<BlogPostEnglish> {
+  console.log('Step 2: Writing blog post with Claude...');
 
-    const cleaned = stripThinkingTags(text);
-    const jsonStr = stripCitationMarkers(stripMarkdownFences(cleaned));
+  try {
+    return await withRetry(async () => {
+      const response = await anthropic.messages.create({
+        model: ANTHROPIC_MODEL,
+        max_tokens: 8000,
+        messages: [
+          {
+            role: 'user',
+            content: getWritePostPrompt(research),
+          },
+        ],
+      });
 
-    let parsed: unknown;
-    try {
-      parsed = JSON.parse(jsonStr);
-    } catch {
-      console.log('JSON parse failed, attempting repair...');
+      const textContent = response.content.find((block) => block.type === 'text');
+      if (!textContent || textContent.type !== 'text') {
+        throw new Error('No text content in Claude response');
+      }
+
+      const jsonStr = stripCitationMarkers(stripMarkdownFences(textContent.text));
+
+      let parsed: unknown;
       try {
+        parsed = JSON.parse(jsonStr);
+      } catch {
+        console.log('JSON parse failed, attempting repair...');
         const repaired = jsonrepair(jsonStr);
         parsed = JSON.parse(repaired);
-      } catch (repairError) {
-        console.error('JSON repair failed. Raw response:');
-        console.error(`Length: ${jsonStr.length}`);
-        console.error(`First 1000 chars: ${jsonStr.slice(0, 1000)}`);
-        console.error(`Last 500 chars: ${jsonStr.slice(-500)}`);
-        writeFileSync('debug-perplexity-response.txt', text);
-        console.error('Full response saved to debug-perplexity-response.txt');
-        throw new Error('Failed to parse Perplexity response as JSON');
       }
+
+      if (!isValidBlogPostEnglish(parsed)) {
+        console.error('Parsed JSON is missing required fields');
+        writeFileSync('debug-write-response.txt', textContent.text);
+        throw new Error('Claude response missing required fields');
+      }
+
+      return parsed;
+    }, 'writeEnglishPost');
+  } catch (error) {
+    console.warn('Full structured write failed, trying minimal schema...', (error as Error).message);
+
+    // Fallback: ask for just title/excerpt/content, build the rest programmatically
+    const response = await anthropic.messages.create({
+      model: ANTHROPIC_MODEL,
+      max_tokens: 8000,
+      messages: [
+        {
+          role: 'user',
+          content: `Write a blog post based on this research. Return ONLY a JSON object with exactly three fields: "title", "excerpt", "content". Use \\n for newlines in content. No other fields, no markdown fencing.
+
+Research:
+${research}`,
+        },
+      ],
+    });
+
+    const textContent = response.content.find((block) => block.type === 'text');
+    if (!textContent || textContent.type !== 'text') {
+      throw new Error('No text content in minimal fallback response');
     }
 
-    // Validate the parsed response has required structure
-    if (!isValidBlogPostEnglish(parsed)) {
-      console.error('Parsed JSON is missing required fields:');
-      console.error(JSON.stringify(parsed, null, 2).slice(0, 2000));
-      writeFileSync('debug-perplexity-response.txt', text);
-      console.error('Full response saved to debug-perplexity-response.txt');
-      throw new Error('Perplexity response missing required fields (slug, translations.en, etc.)');
+    const jsonStr = stripMarkdownFences(textContent.text);
+    let minimal: { title: string; excerpt: string; content: string };
+    try {
+      minimal = JSON.parse(jsonStr);
+    } catch {
+      const repaired = jsonrepair(jsonStr);
+      minimal = JSON.parse(repaired);
     }
 
-    return parsed;
-  }, 'generateEnglishPost');
+    console.log('Built post from minimal fallback');
+    return buildMinimalPost(minimal.title, minimal.excerpt, minimal.content);
+  }
 }
-
-const LOCALE_RULES: Record<string, { name: string; rules: string }> = {
-  ro: {
-    name: 'Romanian',
-    rules: `- Use Romanian diacritics: ă, â, î, ș, ț (notş, ţ with cedilla)
-- Quotation marks: „..." (99-66 style)
-- No space before punctuation marks
-- Decimal separator: comma (3,14)`,
-  },
-  fr: {
-    name: 'French',
-    rules: `- Add non-breaking space BEFORE: : ; ! ? » and AFTER: «
-- Quotation marks: « ... » (guillemets with spaces inside)
-- Decimal separator: comma (3,14)
-- Use « guillemets » not "English quotes"`,
-  },
-  de: {
-    name: 'German',
-    rules: `- Quotation marks: „..." (99-66 style) or »...«
-- Compound nouns: write as one word (Datenschutzrichtlinie, not Datenschutz Richtlinie)
-- Formal "Sie" for addressing readers
-- Decimal separator: comma (3,14)
-- No space before punctuation`,
-  },
-  it: {
-    name: 'Italian',
-    rules: `- Quotation marks: «...» (guillemets without inner spaces) or "..."
-- No space before punctuation marks
-- Decimal separator: comma (3,14)
-- Articles before company names where grammatically natural`,
-  },
-  es: {
-    name: 'Spanish',
-    rules: `- Inverted punctuation: ¿...? and ¡...!
-- Quotation marks: «...» or "..."
-- No space before punctuation marks
-- Decimal separator: comma (3,14)
-- Use "usted" form for professional tone`,
-  },
-};
 
 async function humanizeEnglishPost(
   englishContent: BlogPostTranslation
 ): Promise<BlogPostTranslation> {
-  console.log('Humanizing English content with Claude...');
-  const humanizerRules = loadHumanizerRules();
+  console.log('Step 3: Humanizing English content with Claude...');
 
   const response = await anthropic.messages.create({
     model: ANTHROPIC_MODEL,
@@ -333,14 +366,13 @@ async function humanizeEnglishPost(
         role: 'user',
         content: `You are a writing editor. Review and fix any AI writing patterns in this blog post.
 
-## Humanizer Rules - Fix These Patterns
-${humanizerRules}
-
 ## Key Fixes to Apply
 - Replace em dashes (—) with commas or periods
-- Remove AI vocabulary (additionally, crucial, delve, landscape, testament, etc.)
-- Fix copula avoidance (replace "serves as", "stands as" with "is")
-- Remove promotional language (groundbreaking, vibrant, nestled, etc.)
+- Remove AI vocabulary (additionally, crucial, delve, landscape, testament, revolutionize, robust, comprehensive, cutting-edge, leverage, streamline, spearhead, paradigm, synergy, elevate, foster, empower, navigate, seamlessly, holistic)
+- Fix copula avoidance (replace "serves as", "stands as", "acts as a" with "is")
+- Remove promotional language (groundbreaking, vibrant, nestled, game-changing, world-class)
+- Don't start sentences with "In today's..." or "In the ever..."
+- Avoid "It's worth noting that" and "It's important to note that"
 - Keep the same meaning and tone, just make it sound human
 
 ## Length Limits (STRICT)
@@ -386,6 +418,46 @@ ${JSON.stringify(englishContent, null, 2)}`,
     }
   }
 }
+
+const LOCALE_RULES: Record<string, { name: string; rules: string }> = {
+  ro: {
+    name: 'Romanian',
+    rules: `- Use Romanian diacritics: ă, â, î, ș, ț (notş, ţ with cedilla)
+- Quotation marks: „..." (99-66 style)
+- No space before punctuation marks
+- Decimal separator: comma (3,14)`,
+  },
+  fr: {
+    name: 'French',
+    rules: `- Add non-breaking space BEFORE: : ; ! ? » and AFTER: «
+- Quotation marks: « ... » (guillemets with spaces inside)
+- Decimal separator: comma (3,14)
+- Use « guillemets » not "English quotes"`,
+  },
+  de: {
+    name: 'German',
+    rules: `- Quotation marks: „..." (99-66 style) or »...«
+- Compound nouns: write as one word (Datenschutzrichtlinie, not Datenschutz Richtlinie)
+- Formal "Sie" for addressing readers
+- Decimal separator: comma (3,14)
+- No space before punctuation`,
+  },
+  it: {
+    name: 'Italian',
+    rules: `- Quotation marks: «...» (guillemets without inner spaces) or "..."
+- No space before punctuation marks
+- Decimal separator: comma (3,14)
+- Articles before company names where grammatically natural`,
+  },
+  es: {
+    name: 'Spanish',
+    rules: `- Inverted punctuation: ¿...? and ¡...!
+- Quotation marks: «...» or "..."
+- No space before punctuation marks
+- Decimal separator: comma (3,14)
+- Use "usted" form for professional tone`,
+  },
+};
 
 async function translateToLocale(
   englishContent: BlogPostTranslation,
@@ -448,7 +520,6 @@ ${JSON.stringify(englishContent, null, 2)}`,
     throw new Error('No text content in translation response');
   }
 
-  // Strip markdown fences and citation markers that can break JSON
   const jsonStr = stripCitationMarkers(stripMarkdownFences(textContent.text));
   try {
     return JSON.parse(jsonStr) as BlogPostTranslation;
@@ -472,14 +543,13 @@ ${JSON.stringify(englishContent, null, 2)}`,
 async function translateAll(
   englishContent: BlogPostTranslation
 ): Promise<Record<string, BlogPostTranslation>> {
-  console.log('Translating to other languages...');
+  console.log('Step 4: Translating to other languages...');
 
   const translations: Record<string, BlogPostTranslation> = {
     en: englishContent,
   };
 
-  // Translate in parallel
-  const results = await Promise.all(
+  const results = await Promise.allSettled(
     LOCALES.map(async (locale) => {
       console.log(`  Translating to ${locale}...`);
       const translated = await withRetry(
@@ -490,8 +560,12 @@ async function translateAll(
     })
   );
 
-  for (const { locale, translated } of results) {
-    translations[locale] = translated;
+  for (const result of results) {
+    if (result.status === 'fulfilled') {
+      translations[result.value.locale] = result.value.translated;
+    } else {
+      console.warn(`  Translation failed, skipping: ${result.reason}`);
+    }
   }
 
   return translations;
@@ -501,31 +575,29 @@ function generateSlug(text: string): string {
   return text
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
     .trim()
-    .replace(/\s+/g, '-') // Replace spaces with hyphens
-    .replace(/-+/g, '-'); // Remove consecutive hyphens
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
 }
 
 function validateAndFixBlogPost(post: BlogPost): BlogPost {
+  console.log('Step 5: Validating and fixing blog post...');
   const today = new Date().toISOString().split('T')[0];
   const warnings: string[] = [];
 
-  // Fix slug date
   const slugDateMatch = post.slug.match(/^\d{4}-\d{2}-\d{2}/);
   if (slugDateMatch && slugDateMatch[0] !== today) {
     warnings.push(`Fixed slug date: ${slugDateMatch[0]} -> ${today}`);
     post.slug = post.slug.replace(slugDateMatch[0], today);
   }
 
-  // Fix published_at date
   if (!post.published_at.startsWith(today)) {
     warnings.push(`Fixed published_at date to ${today}`);
     post.published_at = new Date().toISOString();
   }
 
-  // Validate and truncate meta fields, validate slugs
   const MAX_META_TITLE = 60;
   const MAX_META_DESC = 155;
 
@@ -540,11 +612,9 @@ function validateAndFixBlogPost(post: BlogPost): BlogPost {
         translation.meta_description = translation.meta_description.substring(0, MAX_META_DESC - 3) + '...';
       }
 
-      // Set English slug to match main post slug
       if (locale === 'en') {
         translation.slug = post.slug;
       } else if (translation.slug) {
-        // Validate and fix locale-specific slug
         const datePrefix = post.slug.match(/^\d{4}-\d{2}-\d{2}-/)?.[0] || '';
         const slugWithoutDate = translation.slug.replace(/^\d{4}-\d{2}-\d{2}-/, '');
         const cleanSlug = generateSlug(slugWithoutDate);
@@ -555,7 +625,6 @@ function validateAndFixBlogPost(post: BlogPost): BlogPost {
           translation.slug = fixedSlug;
         }
       } else {
-        // Generate slug from title if missing
         const datePrefix = post.slug.match(/^\d{4}-\d{2}-\d{2}-/)?.[0] || '';
         translation.slug = datePrefix + generateSlug(translation.title);
         warnings.push(`Generated slug (${locale}): ${translation.slug}`);
@@ -572,32 +641,40 @@ function validateAndFixBlogPost(post: BlogPost): BlogPost {
 }
 
 async function main() {
-  // 1. Generate English blog post from Perplexity (news + writing in one call)
-  const englishPost = await generateEnglishPost();
+  // Step 1: Research news (Perplexity, plain text)
+  const research = await researchNews();
+  console.log(`Research complete (${research.length} chars)`);
+
+  // Step 2: Write structured blog post (Claude)
+  const englishPost = await writeEnglishPost(research);
   console.log(`Generated English post with slug: ${englishPost.slug}`);
 
-  // 2. Humanize English content with Claude (fix AI writing patterns)
-  const humanizedEnglish = await withRetry(
-    () => humanizeEnglishPost(englishPost.translations.en),
-    'humanizeEnglishPost'
-  );
-  console.log('Humanized English content');
+  // Step 3: Humanize English content (Claude, with fallback to skip)
+  let humanized: BlogPostTranslation;
+  try {
+    humanized = await withRetry(
+      () => humanizeEnglishPost(englishPost.translations.en),
+      'humanizeEnglishPost'
+    );
+    console.log('Humanized English content');
+  } catch (error) {
+    console.warn('Humanizer failed, using original content:', (error as Error).message);
+    humanized = englishPost.translations.en;
+  }
 
-  // 3. Translate to other languages using Claude
-  const allTranslations = await translateAll(humanizedEnglish);
+  // Step 4: Translate to other languages (parallel, partial OK)
+  const allTranslations = await translateAll(humanized);
 
-  // 4. Combine into final blog post
+  // Step 5: Combine and validate
   let blogPost: BlogPost = {
     ...englishPost,
     translations: allTranslations,
   };
 
-  // 5. Validate and fix any issues
   blogPost = validateAndFixBlogPost(blogPost);
 
-  // 6. Write blog-post.json
   writeFileSync('blog-post.json', JSON.stringify(blogPost, null, 2));
-  console.log('Wrote blog-post.json');
+  console.log(`Wrote blog-post.json with ${Object.keys(blogPost.translations).length} translations`);
 }
 
 main().catch((error) => {
