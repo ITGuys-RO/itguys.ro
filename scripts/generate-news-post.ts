@@ -147,7 +147,8 @@ Return your findings as PLAIN TEXT (not JSON) with:
 - Summary: 2-3 paragraphs explaining the news
 - Key facts: bullet points of important details
 - Sources: URLs where you found this information
-- Why it matters: practical implications for developers and teams`;
+- Why it matters: practical implications for developers and teams
+- Image: ONE landscape image URL (min 1200×630px) directly related to the topic. Must be from a source that allows hotlinking (vendor blogs, official press releases, GitHub, wikimedia). NOT from Getty, Shutterstock, or paywalled sites. If no suitable image, write "No image available."`;
 }
 
 async function researchNews(): Promise<string> {
@@ -233,7 +234,7 @@ CRITICAL JSON RULES:
 
 {
   "slug": "${today}-descriptive-slug-here",
-  "image_path": null,
+  "image_path": "Extract a landscape image URL from the research if available, or null if none found",
   "author_id": null,
   "published_at": "${timestamp}",
   "is_published": 1,
@@ -582,7 +583,24 @@ function generateSlug(text: string): string {
     .replace(/-+/g, '-');
 }
 
-function validateAndFixBlogPost(post: BlogPost): BlogPost {
+async function validateImageUrl(url: string): Promise<boolean> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    const response = await fetch(url, {
+      method: 'HEAD',
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    if (response.status !== 200) return false;
+    const contentType = response.headers.get('content-type') || '';
+    return contentType.startsWith('image/');
+  } catch {
+    return false;
+  }
+}
+
+async function validateAndFixBlogPost(post: BlogPost): Promise<BlogPost> {
   console.log('Step 5: Validating and fixing blog post...');
   const today = new Date().toISOString().split('T')[0];
   const warnings: string[] = [];
@@ -596,6 +614,14 @@ function validateAndFixBlogPost(post: BlogPost): BlogPost {
   if (!post.published_at.startsWith(today)) {
     warnings.push(`Fixed published_at date to ${today}`);
     post.published_at = new Date().toISOString();
+  }
+
+  if (typeof post.image_path === 'string') {
+    const valid = await validateImageUrl(post.image_path);
+    if (!valid) {
+      warnings.push(`Invalid image URL, setting to null: ${post.image_path}`);
+      post.image_path = null;
+    }
   }
 
   const MAX_META_TITLE = 60;
@@ -671,7 +697,7 @@ async function main() {
     translations: allTranslations,
   };
 
-  blogPost = validateAndFixBlogPost(blogPost);
+  blogPost = await validateAndFixBlogPost(blogPost);
 
   writeFileSync('blog-post.json', JSON.stringify(blogPost, null, 2));
   console.log(`Wrote blog-post.json with ${Object.keys(blogPost.translations).length} translations`);

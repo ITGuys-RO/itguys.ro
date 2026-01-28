@@ -96,6 +96,9 @@ Local D1 stored in `.wrangler/state/`.
 - Build limited to 1 CPU core for memory constraints
 - Admin panel uses dark theme
 
+## Workflow
+When working on any task, create a corresponding task in the repo's GitHub Project (`gh project`), and transition it through statuses (e.g. Todo → In Progress → Done) as work progresses. When a priority is specified (e.g. "critical"), set it using the project's priority field (`gh project item-edit`) instead of putting it in the title.
+
 ## CLI Tools
-- **GitHub CLI (`gh`)** - PRs, secrets, workflows
+- **GitHub CLI (`gh`)** - PRs, secrets, workflows, project task tracking
 - **Wrangler (`pnpm wrangler`)** - D1 queries, deployments
