@@ -25,18 +25,18 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@marsidev/react-turnstile": "^1.4.1",
-    "@next/third-parties": "^16.1.5",
+    "@next/third-parties": "^16.1.6",
     "clsx": "^2.1.1",
     "embla-carousel-auto-scroll": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "jsonrepair": "^3.13.2",
-    "next": "16.1.5",
+    "next": "16.1.6",
     "react": "19.2.4",
     "react-datepicker": "^9.1.0",
     "react-dom": "19.2.4"
   },
   "devDependencies": {
-    "@ai-sdk/perplexity": "^3.0.11",
+    "@ai-sdk/perplexity": "^3.0.12",
     "@anthropic-ai/sdk": "^0.71.2",
     "@opennextjs/cloudflare": "^1.16.0",
     "@tailwindcss/postcss": "^4",
@@ -44,13 +44,13 @@
     "@types/react": "^19",
     "@types/react-datepicker": "^7.0.0",
     "@types/react-dom": "^19",
-    "ai": "^6.0.50",
+    "ai": "^6.0.57",
     "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "16.1.5",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5",
-    "wrangler": "^4.60.0"
+    "wrangler": "^4.61.0"
   }
 }
