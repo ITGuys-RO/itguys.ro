@@ -3,7 +3,16 @@ main = "workers/blog-trigger/index.ts"
 compatibility_date = "2024-09-23"
 
 [triggers]
-crons = ["30 10 * * *"]  # 10:30 AM UTC daily
+crons = ["30 10 * * *", "0 3 1 * *"]  # Daily blog + monthly cleanup
 
 [vars]
 # GITHUB_TOKEN is set via wrangler secret
+
+[[r2_buckets]]
+binding = "BLOG_IMAGES"
+bucket_name = "itguys-blog-images"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "itguys-ro"
+database_id = "${D1_DATABASE_ID}"

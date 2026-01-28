@@ -3,8 +3,8 @@ config({ path: '.env.local' });
 import Anthropic from '@anthropic-ai/sdk';
 import { createPerplexity } from '@ai-sdk/perplexity';
 import { generateText } from 'ai';
-import { readFileSync, writeFileSync } from 'fs';
-import { join, dirname } from 'path';
+import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { join, dirname, extname } from 'path';
 import { fileURLToPath } from 'url';
 import { jsonrepair } from 'jsonrepair';
 
@@ -721,6 +721,59 @@ async function validateImageUrl(url: string): Promise<boolean> {
   }
 }
 
+async function storeImage(imageUrl: string, slug: string): Promise<string | null> {
+  try {
+    const response = await fetch(imageUrl);
+    if (!response.ok) return null;
+    const buffer = Buffer.from(await response.arrayBuffer());
+    const contentType = response.headers.get('content-type') || 'image/jpeg';
+
+    // Determine extension from content-type or URL
+    const extMap: Record<string, string> = {
+      'image/jpeg': '.jpg',
+      'image/png': '.png',
+      'image/webp': '.webp',
+      'image/gif': '.gif',
+    };
+    const ext = extMap[contentType] || extname(new URL(imageUrl).pathname) || '.jpg';
+    const filename = `${slug}${ext}`;
+
+    if (process.env.GITHUB_ACTIONS) {
+      // Production: upload to R2 via S3-compatible API
+      const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3');
+      const s3 = new S3Client({
+        region: 'auto',
+        endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+        credentials: {
+          accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+        },
+      });
+      await s3.send(new PutObjectCommand({
+        Bucket: 'itguys-blog-images',
+        Key: `blog/${filename}`,
+        Body: buffer,
+        ContentType: contentType,
+      }));
+      const publicUrl = `${process.env.R2_PUBLIC_URL}/blog/${filename}`;
+      console.log(`Uploaded image to R2: ${publicUrl}`);
+      return publicUrl;
+    } else {
+      // Local: save to public/images/blog/
+      const dir = join(__dirname, '..', 'public', 'images', 'blog');
+      mkdirSync(dir, { recursive: true });
+      const filePath = join(dir, filename);
+      writeFileSync(filePath, buffer);
+      const localPath = `/images/blog/${filename}`;
+      console.log(`Saved image locally: ${filePath}`);
+      return localPath;
+    }
+  } catch (err) {
+    console.warn(`Failed to store image: ${(err as Error).message}`);
+    return null;
+  }
+}
+
 async function validateAndFixBlogPost(post: BlogPost): Promise<BlogPost> {
   console.log('Step 5: Validating and fixing blog post...');
   const today = new Date().toISOString().split('T')[0];
@@ -805,8 +858,13 @@ async function main() {
 
   // Step 2: Write structured blog post (Claude)
   const englishPost = await writeEnglishPost(research.text);
-  if (featuredImage && !englishPost.image_path) {
-    englishPost.image_path = featuredImage;
+
+  // Step 2b: Store featured image (R2 in CI, local disk otherwise)
+  if (featuredImage) {
+    const storedUrl = await storeImage(featuredImage, englishPost.slug);
+    if (storedUrl) {
+      englishPost.image_path = storedUrl;
+    }
   }
   console.log(`Generated English post with slug: ${englishPost.slug}`);
 

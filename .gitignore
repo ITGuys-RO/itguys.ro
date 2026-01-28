@@ -51,3 +51,4 @@ wrangler.toml
 *.tsbuildinfo
 next-env.d.ts
 blog-post.json
+public/images/blog/
