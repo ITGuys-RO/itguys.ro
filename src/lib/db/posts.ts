@@ -308,6 +308,26 @@ export async function deletePost(id: number): Promise<void> {
 }
 
 /**
+ * Backfill missing translation slugs by generating them from titles.
+ * Returns the number of translations updated.
+ */
+export async function backfillTranslationSlugs(): Promise<number> {
+  const rows = await query<{ id: number; title: string }>(
+    `SELECT id, title FROM post_translations WHERE slug IS NULL OR slug = ''`
+  );
+
+  let updated = 0;
+  for (const row of rows) {
+    const slug = generateSlug(row.title);
+    if (slug) {
+      await execute('UPDATE post_translations SET slug = ? WHERE id = ?', [slug, row.id]);
+      updated++;
+    }
+  }
+  return updated;
+}
+
+/**
  * Get all locale-specific slugs for a post
  * Returns a map of locale -> slug for generating hreflang alternates
  */
