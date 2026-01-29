@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter as useNextRouter } from "next/navigation";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { locales, localeNames, type Locale } from "@/i18n/config";
 import { GlobeAltIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
@@ -11,6 +12,7 @@ type Props = {
 
 export function LanguageSwitcher({ locale }: Props) {
   const router = useRouter();
+  const nextRouter = useNextRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -24,10 +26,10 @@ export function LanguageSwitcher({ locale }: Props) {
         // Extract pathname only - href may be absolute URL with production domain
         try {
           const url = new URL(href, window.location.origin);
-          router.push(url.pathname);
+          nextRouter.push(url.pathname);
         } catch {
           // If URL parsing fails, use href as-is (it's likely already a pathname)
-          router.push(href);
+          nextRouter.push(href);
         }
         setIsOpen(false);
         return;
