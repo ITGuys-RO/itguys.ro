@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { type Locale } from "@/i18n/config";
+import { CookieSettingsButton } from "@/components/ui/CookieSettingsButton";
 
 const navigation = [
   { name: { en: "Development", ro: "Dezvoltare", fr: "Développement", de: "Entwicklung", it: "Sviluppo", es: "Desarrollo" }, href: "/development" },
@@ -107,6 +108,7 @@ export function Footer({ locale }: Props) {
             >
               +40 726 205 856
             </a>
+            <CookieSettingsButton locale={locale} />
           </div>
         </div>
       </div>

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { GoogleTagManager } from "@next/third-parties/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { CookieConsentProvider } from "@/components/providers/CookieConsentProvider";
+import { ConditionalGTM } from "@/components/ui/ConditionalGTM";
+import { CookieConsentBanner } from "@/components/ui/CookieConsent";
 import "./globals.css";
-
-const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 
 const inter = Inter({
   subsets: ["latin"],
@@ -95,9 +95,12 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased bg-background text-foreground">
         <ThemeProvider>
-          {children}
+          <CookieConsentProvider>
+            {children}
+            <CookieConsentBanner />
+            <ConditionalGTM />
+          </CookieConsentProvider>
         </ThemeProvider>
-        {GTM_ID && <GoogleTagManager gtmId={GTM_ID} />}
       </body>
     </html>
   );
