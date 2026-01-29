@@ -13,6 +13,8 @@ export default function IndexNowPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [clearing, setClearing] = useState(false);
+  const [backfilling, setBackfilling] = useState(false);
+  const [backfillResult, setBackfillResult] = useState<string | null>(null);
 
   useEffect(() => {
     fetchEntries();
@@ -59,6 +61,23 @@ export default function IndexNowPage() {
     }
   };
 
+  const handleBackfillSlugs = async () => {
+    if (!confirm('Generate missing translation slugs from titles? This will update all translations with empty slugs.')) return;
+
+    setBackfilling(true);
+    setBackfillResult(null);
+    try {
+      const res = await fetch('/api/admin/posts/backfill-slugs', { method: 'POST' });
+      if (!res.ok) throw new Error('Failed to backfill');
+      const data = await res.json();
+      setBackfillResult(`Updated ${data.updated} translation slug(s).`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Backfill failed');
+    } finally {
+      setBackfilling(false);
+    }
+  };
+
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleString();
   };
@@ -81,20 +100,35 @@ export default function IndexNowPage() {
             URLs submitted to search engines via IndexNow ({entries.length} total)
           </p>
         </div>
-        {entries.length > 0 && (
+        <div className="flex gap-2">
           <button
-            onClick={handleClearAll}
-            disabled={clearing}
-            className="px-4 py-2 text-sm font-medium text-red-400 border border-red-500/50 hover:bg-red-500/20 disabled:opacity-50 rounded-lg transition-colors"
+            onClick={handleBackfillSlugs}
+            disabled={backfilling}
+            className="px-4 py-2 text-sm font-medium text-brand-200 border border-brand-500/50 hover:bg-brand-500/20 disabled:opacity-50 rounded-lg transition-colors"
           >
-            {clearing ? 'Clearing...' : 'Clear All'}
+            {backfilling ? 'Backfilling...' : 'Backfill Slugs'}
           </button>
-        )}
+          {entries.length > 0 && (
+            <button
+              onClick={handleClearAll}
+              disabled={clearing}
+              className="px-4 py-2 text-sm font-medium text-red-400 border border-red-500/50 hover:bg-red-500/20 disabled:opacity-50 rounded-lg transition-colors"
+            >
+              {clearing ? 'Clearing...' : 'Clear All'}
+            </button>
+          )}
+        </div>
       </div>
 
       {error && (
         <div className="mb-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400">
           {error}
+        </div>
+      )}
+
+      {backfillResult && (
+        <div className="mb-4 p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400">
+          {backfillResult}
         </div>
       )}
 
