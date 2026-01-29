@@ -79,10 +79,7 @@ async function cleanupOldImages(env: Env): Promise<void> {
 
 export default {
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
-    if (event.cron === '0 3 1 * *') {
-      await cleanupOldImages(env);
-    } else {
-      await triggerBlogWorkflow(env);
-    }
+    await triggerBlogWorkflow(env);
+    await cleanupOldImages(env);
   },
 };
