@@ -95,8 +95,10 @@ jobs:
 
       - name: Deploy blog-trigger worker
         run: |
-          pnpm wrangler deploy --config wrangler.blog-trigger.toml
-          echo "$GH_PAT_WORKFLOW" | pnpm wrangler secret put GITHUB_TOKEN --config wrangler.blog-trigger.toml
+          envsubst < wrangler.blog-trigger.toml > wrangler.blog-trigger.resolved.toml
+          pnpm wrangler deploy --config wrangler.blog-trigger.resolved.toml
+          echo "$GH_PAT_WORKFLOW" | pnpm wrangler secret put GITHUB_TOKEN --config wrangler.blog-trigger.resolved.toml
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           GH_PAT_WORKFLOW: ${{ secrets.GH_PAT_WORKFLOW }}
+          D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
