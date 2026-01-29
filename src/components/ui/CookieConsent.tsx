@@ -38,6 +38,10 @@ const t = {
     en: "Save Preferences", ro: "Salvează preferințe", fr: "Enregistrer les préférences",
     de: "Einstellungen speichern", it: "Salva preferenze", es: "Guardar preferencias",
   },
+  back: {
+    en: "Back", ro: "Înapoi", fr: "Retour",
+    de: "Zurück", it: "Indietro", es: "Volver",
+  },
   necessary: {
     en: "Necessary", ro: "Necesare", fr: "Nécessaires",
     de: "Notwendig", it: "Necessari", es: "Necesarias",
@@ -104,7 +108,7 @@ const toggleCategories: { key: CategoryKey; label: keyof typeof t; desc: keyof t
 ];
 
 export function CookieConsentBanner() {
-  const { showBanner, consent, acceptAll, rejectAll, savePreferences } = useCookieConsent();
+  const { showBanner, setShowBanner, consentGiven, consent, acceptAll, rejectAll, savePreferences } = useCookieConsent();
   const [expanded, setExpanded] = useState(false);
   const [localToggles, setLocalToggles] = useState<Record<CategoryKey, boolean>>({
     analytics: consent.analytics,
@@ -113,6 +117,25 @@ export function CookieConsentBanner() {
   });
 
   const locale = getLocaleFromPath();
+
+  if (!showBanner && consentGiven) {
+    return (
+      <button
+        type="button"
+        onClick={() => setShowBanner(true)}
+        aria-label={t.banner_title[locale]}
+        className="fixed bottom-4 right-4 z-50 w-10 h-10 rounded-full border border-brand-400/30 bg-brand-950/90 backdrop-blur-sm shadow-lg shadow-black/30 flex items-center justify-center text-brand-300 hover:text-neon hover:border-neon/50 hover:shadow-[0_0_12px_rgba(0,212,255,0.3)] transition-all duration-300"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <circle cx="8" cy="9" r="1.5" fill="currentColor" stroke="none" />
+          <circle cx="15" cy="13" r="1.5" fill="currentColor" stroke="none" />
+          <circle cx="10" cy="15" r="1" fill="currentColor" stroke="none" />
+          <circle cx="14" cy="8" r="1" fill="currentColor" stroke="none" />
+        </svg>
+      </button>
+    );
+  }
 
   if (!showBanner) return null;
 
@@ -126,7 +149,7 @@ export function CookieConsentBanner() {
 
   return (
     <div className="fixed bottom-0 inset-x-0 z-50 p-4 md:p-6">
-      <div className="max-w-2xl mx-auto rounded-xl border border-brand-700/40 bg-brand-950/80 backdrop-blur-xl shadow-2xl shadow-black/40">
+      <div className="max-w-2xl mx-auto rounded-xl border border-brand-400/30 bg-brand-950/95 backdrop-blur-xl shadow-[0_0_40px_rgba(0,0,0,0.5),0_0_15px_rgba(81,116,161,0.15)] ring-1 ring-brand-400/10">
         <div className="p-5 md:p-6">
           <h3 className="text-base font-semibold text-white mb-2">
             {t.banner_title[locale]}
@@ -176,12 +199,20 @@ export function CookieConsentBanner() {
 
           <div className="flex flex-wrap gap-3">
             {expanded ? (
-              <button
-                onClick={handleSave}
-                className="flex-1 min-w-[140px] px-5 py-2.5 text-sm font-medium rounded-lg bg-brand-400 text-white hover:bg-brand-300 transition-colors"
-              >
-                {t.save_preferences[locale]}
-              </button>
+              <>
+                <button
+                  onClick={handleSave}
+                  className="flex-1 min-w-[140px] px-5 py-2.5 text-sm font-medium rounded-lg bg-brand-400 text-white hover:bg-brand-300 transition-colors"
+                >
+                  {t.save_preferences[locale]}
+                </button>
+                <button
+                  onClick={() => setExpanded(false)}
+                  className="flex-1 min-w-[120px] px-5 py-2.5 text-sm font-medium rounded-lg border border-brand-700/50 text-brand-400 hover:text-brand-200 hover:border-brand-500/50 transition-colors"
+                >
+                  {t.back[locale]}
+                </button>
+              </>
             ) : (
               <>
                 <button
