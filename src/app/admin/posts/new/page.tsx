@@ -16,16 +16,7 @@ type TranslationData = {
   slug: string | null;
 };
 
-function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-    .trim()
-    .replace(/\s+/g, '-') // Replace spaces with hyphens
-    .replace(/-+/g, '-'); // Remove consecutive hyphens
-}
+import { generateSlug } from '@/lib/utils';
 
 function truncateForMeta(text: string, maxLength: number = 155): string {
   if (!text || text.length <= maxLength) return text;

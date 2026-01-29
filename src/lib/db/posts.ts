@@ -1,6 +1,7 @@
 import { query, queryFirst, execute, batch } from './client';
 import type { Locale } from './schema';
 import { getTeamMemberLocalized } from './team';
+import { generateSlug } from '../utils';
 import type {
   Post,
   PostTranslation,
@@ -208,7 +209,7 @@ export async function createPost(input: PostInput): Promise<number> {
 
   const postId = result.lastRowId;
 
-  // Insert translations
+  // Insert translations (auto-generate slug from title if not provided)
   const translationStatements = Object.entries(input.translations).map(([locale, t]) => ({
     sql: `INSERT INTO post_translations (post_id, locale, title, excerpt, content, meta_title, meta_description, slug)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -220,7 +221,7 @@ export async function createPost(input: PostInput): Promise<number> {
       t!.content,
       t!.meta_title ?? null,
       t!.meta_description ?? null,
-      t!.slug ?? null,
+      t!.slug || generateSlug(t!.title),
     ],
   }));
 
@@ -283,7 +284,7 @@ export async function updatePost(id: number, input: Partial<PostInput>): Promise
              meta_title = excluded.meta_title,
              meta_description = excluded.meta_description,
              slug = excluded.slug`,
-          [id, locale, t.title, t.excerpt ?? null, t.content, t.meta_title ?? null, t.meta_description ?? null, t.slug ?? null]
+          [id, locale, t.title, t.excerpt ?? null, t.content, t.meta_title ?? null, t.meta_description ?? null, t.slug || generateSlug(t.title)]
         );
       }
     }

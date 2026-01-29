@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { InputField, TextareaField, CheckboxField, DateTimePicker, TagInput, LocaleFields, DeleteButton, MarkdownEditor, ValidationSummary, useFormValidation, validateTranslations } from '@/components/admin';
 import type { PostWithTranslations, PostInput } from '@/lib/db';
+import { generateSlug } from '@/lib/utils';
 
 type TranslationData = {
   title: string;
@@ -14,17 +15,6 @@ type TranslationData = {
   meta_description: string | null;
   slug: string | null;
 };
-
-function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-    .trim()
-    .replace(/\s+/g, '-') // Replace spaces with hyphens
-    .replace(/-+/g, '-'); // Remove consecutive hyphens
-}
 
 function truncateForMeta(text: string, maxLength: number = 155): string {
   if (!text || text.length <= maxLength) return text;
