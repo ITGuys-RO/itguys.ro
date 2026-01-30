@@ -116,6 +116,14 @@ export default function PostsListPage() {
         editPath={(p) => `/admin/posts/${p.id}`}
         onDelete={handleDelete}
         emptyMessage="No posts found"
+        exportFilename="posts"
+        exportColumns={[
+          { key: 'title', header: 'Title', value: (p) => p.translations.en?.title ?? p.slug },
+          { key: 'slug', header: 'Slug', value: (p) => p.slug },
+          { key: 'tags', header: 'Tags', value: (p) => p.tags.join(', ') },
+          { key: 'published_at', header: 'Published', value: (p) => p.published_at ?? '' },
+          { key: 'status', header: 'Status', value: (p) => p.is_published ? 'Published' : 'Draft' },
+        ]}
       />
     </div>
   );

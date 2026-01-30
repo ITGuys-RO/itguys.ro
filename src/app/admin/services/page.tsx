@@ -93,6 +93,14 @@ export default function ServicesListPage() {
         editPath={(s) => `/admin/services/${s.id}`}
         onDelete={handleDelete}
         emptyMessage="No services found"
+        exportFilename="services"
+        exportColumns={[
+          { key: 'title', header: 'Title', value: (s) => s.translations.en?.title ?? s.slug },
+          { key: 'slug', header: 'Slug', value: (s) => s.slug },
+          { key: 'category', header: 'Category', value: (s) => s.category ?? '' },
+          { key: 'subservices', header: 'Sub-services', value: (s) => s.subservices.length },
+          { key: 'status', header: 'Status', value: (s) => s.is_active === 1 ? 'Active' : 'Inactive' },
+        ]}
       />
     </div>
   );

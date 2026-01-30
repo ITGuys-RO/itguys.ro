@@ -88,6 +88,12 @@ export default function CompaniesListPage() {
         editPath={(c) => `/admin/companies/${c.id}`}
         onDelete={handleDelete}
         emptyMessage="No companies found"
+        exportFilename="companies"
+        exportColumns={[
+          { key: 'name', header: 'Name', value: (c) => c.translations.en?.name ?? c.slug },
+          { key: 'slug', header: 'Slug', value: (c) => c.slug },
+          { key: 'status', header: 'Status', value: (c) => c.is_active === 1 ? 'Active' : 'Inactive' },
+        ]}
       />
     </div>
   );

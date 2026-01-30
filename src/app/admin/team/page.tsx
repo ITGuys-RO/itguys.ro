@@ -108,6 +108,13 @@ export default function TeamListPage() {
         editPath={(m) => `/admin/team/${m.id}`}
         onDelete={handleDelete}
         emptyMessage="No team members found"
+        exportFilename="team-members"
+        exportColumns={[
+          { key: 'name', header: 'Name', value: (m) => m.translations.en?.name ?? m.slug },
+          { key: 'role', header: 'Role', value: (m) => m.translations.en?.role ?? '' },
+          { key: 'email', header: 'Email', value: (m) => m.email ?? '' },
+          { key: 'status', header: 'Status', value: (m) => m.is_active === 1 ? 'Active' : 'Inactive' },
+        ]}
       />
     </div>
   );

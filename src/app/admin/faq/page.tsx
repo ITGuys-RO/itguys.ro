@@ -86,6 +86,12 @@ export default function FaqListPage() {
         editPath={(f) => `/admin/faq/${f.id}`}
         onDelete={handleDelete}
         emptyMessage="No FAQ items found"
+        exportFilename="faq"
+        exportColumns={[
+          { key: 'question', header: 'Question', value: (f) => f.translations.en?.question ?? f.slug },
+          { key: 'category', header: 'Category', value: (f) => f.category ?? '' },
+          { key: 'status', header: 'Status', value: (f) => f.is_active === 1 ? 'Active' : 'Inactive' },
+        ]}
       />
     </div>
   );

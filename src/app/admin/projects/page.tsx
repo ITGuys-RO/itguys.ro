@@ -110,6 +110,14 @@ export default function ProjectsListPage() {
         editPath={(p) => `/admin/projects/${p.id}`}
         onDelete={handleDelete}
         emptyMessage="No projects found"
+        exportFilename="projects"
+        exportColumns={[
+          { key: 'name', header: 'Name', value: (p) => p.translations.en?.name ?? p.slug },
+          { key: 'slug', header: 'Slug', value: (p) => p.slug },
+          { key: 'industry', header: 'Industry', value: (p) => p.translations.en?.industry ?? '' },
+          { key: 'technologies', header: 'Technologies', value: (p) => p.technologies.join(', ') },
+          { key: 'status', header: 'Status', value: (p) => p.is_active === 1 ? 'Active' : 'Inactive' },
+        ]}
       />
     </div>
   );

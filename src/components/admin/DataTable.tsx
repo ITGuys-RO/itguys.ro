@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { clsx } from 'clsx';
 
@@ -10,6 +11,100 @@ interface Column<T> {
   className?: string;
 }
 
+interface ExportColumn<T> {
+  key: string;
+  header: string;
+  value: (item: T) => string | number;
+}
+
+function ExportDropdown<T>({
+  data,
+  exportColumns,
+  filename,
+}: {
+  data: T[];
+  exportColumns: ExportColumn<T>[];
+  filename: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  const download = useCallback(
+    (type: 'csv' | 'json') => {
+      const rows = data.map((item) =>
+        Object.fromEntries(exportColumns.map((col) => [col.header, col.value(item)]))
+      );
+
+      let blob: Blob;
+      let ext: string;
+      if (type === 'json') {
+        blob = new Blob([JSON.stringify(rows, null, 2)], { type: 'application/json' });
+        ext = 'json';
+      } else {
+        const headers = exportColumns.map((c) => c.header);
+        const csvRows = [
+          headers.map((h) => `"${h.replace(/"/g, '""')}"`).join(','),
+          ...data.map((item) =>
+            exportColumns
+              .map((col) => {
+                const v = col.value(item);
+                return typeof v === 'number' ? String(v) : `"${String(v).replace(/"/g, '""')}"`;
+              })
+              .join(',')
+          ),
+        ];
+        blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+        ext = 'csv';
+      }
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${filename}.${ext}`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setOpen(false);
+    },
+    [data, exportColumns, filename]
+  );
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="px-3 py-1.5 text-xs font-medium text-brand-300 hover:text-white border border-brand-600/50 hover:border-brand-400/50 rounded transition-colors"
+      >
+        Export
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-1 w-36 bg-brand-800 border border-brand-600/50 rounded shadow-lg z-10">
+          <button
+            onClick={() => download('csv')}
+            className="block w-full text-left px-3 py-2 text-sm text-brand-300 hover:text-white hover:bg-brand-700/50 transition-colors"
+          >
+            Export CSV
+          </button>
+          <button
+            onClick={() => download('json')}
+            className="block w-full text-left px-3 py-2 text-sm text-brand-300 hover:text-white hover:bg-brand-700/50 transition-colors"
+          >
+            Export JSON
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 interface DataTableProps<T> {
   columns: Column<T>[];
   data: T[];
@@ -17,6 +112,8 @@ interface DataTableProps<T> {
   editPath?: (item: T) => string;
   onDelete?: (item: T) => void;
   emptyMessage?: string;
+  exportColumns?: ExportColumn<T>[];
+  exportFilename?: string;
 }
 
 export function DataTable<T>({
@@ -26,6 +123,8 @@ export function DataTable<T>({
   editPath,
   onDelete,
   emptyMessage = 'No items found',
+  exportColumns,
+  exportFilename = 'export',
 }: DataTableProps<T>) {
   if (data.length === 0) {
     return (
@@ -37,6 +136,11 @@ export function DataTable<T>({
 
   return (
     <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 overflow-hidden">
+      {exportColumns && (
+        <div className="flex justify-end px-4 py-2 border-b border-brand-700/30">
+          <ExportDropdown data={data} exportColumns={exportColumns} filename={exportFilename} />
+        </div>
+      )}
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
