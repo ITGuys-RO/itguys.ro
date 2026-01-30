@@ -36,8 +36,8 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
-    "@ai-sdk/perplexity": "^3.0.12",
-    "@anthropic-ai/sdk": "^0.71.2",
+    "@ai-sdk/perplexity": "^3.0.15",
+    "@anthropic-ai/sdk": "^0.72.1",
     "@aws-sdk/client-s3": "^3.978.0",
     "@opennextjs/cloudflare": "^1.16.1",
     "@tailwindcss/postcss": "^4",
@@ -45,13 +45,13 @@
     "@types/react": "^19",
     "@types/react-datepicker": "^7.0.0",
     "@types/react-dom": "^19",
-    "ai": "^6.0.59",
+    "ai": "^6.0.62",
     "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5",
-    "wrangler": "^4.61.0"
+    "wrangler": "^4.61.1"
   }
 }
