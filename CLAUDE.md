@@ -1,4 +1,4 @@
-# ITGuys Website
+# ITGuys Website — AI Assistant Reference
 
 ## Tech Stack
 - **Framework**: Next.js 16 with App Router, React 19
@@ -6,99 +6,154 @@
 - **Database**: Cloudflare D1 (SQLite)
 - **Styling**: Tailwind CSS v4
 - **Package Manager**: pnpm
+- **Auth**: Cloudflare Access JWT (admin panel)
+
+## Commands
+
+```bash
+pnpm dev              # Build + run Cloudflare worker locally
+pnpm db:migrate:local # Run all D1 migrations
+pnpm lint             # ESLint
+pnpm tsx scripts/generate-news-post.ts  # Generate blog post
+```
+
+Local D1 stored in `.wrangler/state/`.
 
 ## Project Structure
 
-### Frontend
-- `src/app/(en)/` - English pages (default locale)
-- `src/app/[locale]/` - Localized pages (ro, fr, de, it, es)
-- `src/content/` - Static page copy (heroes, CTAs)
-- `src/components/` - Reusable UI components
-- `src/i18n/` - Internationalization config and navigation
+### Frontend Pages
+- `src/app/(en)/` — English pages (default locale, no prefix)
+- `src/app/[locale]/` — Localized pages (ro, fr, de, it, es)
+- `src/content/{locale}/` — Static page copy (home, about, services, development, portfolio, contact)
+
+Pages available: `/`, `/about`, `/services`, `/services/[slug]`, `/development`, `/portfolio`, `/blog`, `/blog/[slug]`, `/contact`
+
+All pages use `export const dynamic = 'force-dynamic'` since D1 is unavailable at build time.
+
+### Components
+- `src/components/admin/` — DataTable, FormField, MarkdownEditor, LocaleTabs, Sidebar, GlobalSearch, validation
+- `src/components/layout/` — Header, Footer
+- `src/components/ui/` — Button, Input, Card, Section, Carousel, AnimateOnScroll, ThemeSwitcher, LanguageSwitcher, CookieConsent
+- `src/components/sections/` — Hero, CTA, ContactForm
+- `src/components/illustrations/` — 8 SVG illustration components
+- `src/components/providers/` — ThemeProvider, CookieConsentProvider
+- `src/components/structured-data/` — Schema.org JSON-LD (Breadcrumb, Organization, WebPage)
 
 ### Admin Panel
-- `src/app/admin/` - Admin UI (CRUD for all entities)
-- `src/app/api/admin/` - Admin API routes
-- Auth: Cloudflare Access JWT (bypassed locally with `ADMIN_DEV_BYPASS=true`)
+- `src/app/admin/` — Admin UI (CRUD for services, posts, team, projects, companies, FAQ, translations)
+- `src/app/api/admin/` — Admin API routes
+- Auth: Cloudflare Access JWT header `Cf-Access-Jwt-Assertion` (bypassed locally with `ADMIN_DEV_BYPASS=true`)
+- Dark theme, client components with fetch-based data loading
 
-**API pattern:** `withAdmin()` wrapper or `requireAdmin()` + `handleApiError()`. Dynamic params: `const { id } = await params`.
+**API pattern:**
+```ts
+// Option A: wrapper
+export const GET = withAdmin(async (request) => { ... });
 
-### Database
-- `src/lib/db/client.ts` - D1 client (`query<T>`, `queryFirst<T>`, `execute`, `batch`)
-- `src/lib/db/schema.ts` - TypeScript types
-- `src/lib/db/*.ts` - Query functions per entity
-- `migrations/` - SQL migrations (24 files)
+// Option B: manual
+export async function GET(request: NextRequest) {
+  try {
+    requireAdmin(request);
+    // ...
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+```
+
+Dynamic params: `const { id } = await params;`
+
+### Database Layer
+- `src/lib/db/client.ts` — D1 client: `query<T>()`, `queryFirst<T>()`, `execute()`, `batch()`
+- `src/lib/db/schema.ts` — TypeScript types (base, translations, localized, input variants)
+- `src/lib/db/services.ts` — Service CRUD + localized queries with COALESCE fallback
+- `src/lib/db/posts.ts` — Post CRUD + localized queries
+- `src/lib/db/team.ts`, `projects.ts`, `companies.ts`, `faq.ts` — Same pattern
+- `src/lib/db/translations.ts` — UI string management (namespace-based)
+- `src/lib/db/search.ts` — Global admin search across all entities
+- `migrations/` — 25 SQL migration files (0000-0024)
+
+### Other Lib Files
+- `src/lib/admin-auth.ts` — `requireAdmin()`, `withAdmin()`, `handleApiError()`
+- `src/lib/gravatar.ts` — Gravatar URL from email
+- `src/lib/indexnow.ts` — Submit URLs to IndexNow
+- `src/lib/utils.ts` — `cn()` (Tailwind classes), `getCombinedYears()`, `generateSlug()`
 
 ## Database Schema
-Entity + translations pattern:
-- `services` / `service_translations` / `service_technologies` / `subservices`
+
+Entity + translations pattern (all have CASCADE deletes):
+- `services` / `service_translations` / `service_technologies` / `subservices` / `subservice_translations`
 - `posts` / `post_translations` / `post_tags`
 - `team_members` / `team_member_translations`
 - `projects` / `project_translations` / `project_technologies`
 - `companies` / `company_translations`
 - `faq_items` / `faq_translations`
+- `translations` (UI strings: key, namespace, locale, value)
+- `indexnow_submitted` (URL tracking)
 
-Other: `translations` (UI strings), `settings`, `indexnow_submitted`
+Translation tables have `UNIQUE(entity_id, locale)` constraints. Queries use `COALESCE(t.field, t_en.field)` for locale fallback to English.
 
 ## Localization
 
 **Locales:** en (default), ro, fr, de, it, es
 
-**Localized URLs:** Routes have translated paths per locale (configured in `src/i18n/config.ts`):
-- `/services` → `/ro/servicii`, `/de/dienstleistungen`, `/it/servizi`, `/es/servicios`
-- `/about` → `/ro/despre-noi`, `/de/ueber-uns`, `/it/chi-siamo`
+**URL structure:**
+- English: `/services` (no prefix)
+- Other: `/{locale}/{localized-path}` (e.g., `/ro/servicii`, `/de/dienstleistungen`)
 
-**Localized slugs:** Service detail pages use translated slugs:
-- `/services/consulting` → `/ro/servicii/consultanta`, `/fr/services/conseil`
+**Key files:**
+- `src/i18n/config.ts` — `locales`, `pathnames` map, `getLocalizedPath()`, `getInternalPath()`, `generateAlternates()`
+- `src/i18n/navigation.tsx` — Custom `Link`, `usePathname()`, `useRouter()` with locale awareness
+- `middleware.ts` — Rewrites localized paths to internal routes (e.g., `/ro/servicii` → `/ro/services`)
 
-Use `getLocalizedPath()` and `generateAlternates()` from `src/i18n/config.ts` for URL handling.
+**Localized slugs:** Service and blog detail pages have per-locale slugs stored in translation tables. Use `getServiceLocaleSlugs()` / `getPostLocaleSlugs()` for hreflang alternates.
 
-## Development
+**Content files:** `src/content/{locale}/*.ts` — Static page copy. Access via `getContent(locale)`.
 
-```bash
-pnpm dev              # Build + run Cloudflare worker locally
-pnpm db:migrate:local # Run all migrations
-pnpm lint             # Lint code
+**In-page text pattern:**
+```ts
+const text: Record<Locale, string> = { en: 'Back', ro: 'Înapoi', fr: 'Retour', ... };
 ```
 
-Local D1 stored in `.wrangler/state/`.
+## CI/CD
 
-## Deployment
-- **CI/CD**: GitHub Actions → push to master → build → migrations → deploy
-- **Config**: `wrangler.toml.example` with `${VAR}` placeholders
+Three GitHub Actions workflows:
+1. **deploy.yml** — Push to master: build → migrate D1 → deploy workers
+2. **daily-tech-news.yml** — Cron: generate blog post via Perplexity + Claude APIs → publish via automation API
+3. **sitemap-indexing.yml** — After deploy/blog: submit new URLs to IndexNow + Google Search Console
 
 ## Environment Variables
 
 **Public** (`.env.local`):
-- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` - Cloudflare Turnstile
-- `NEXT_PUBLIC_GTM_ID` - Google Tag Manager
-- `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` - Search Console verification
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`
 
 **Secrets** (`wrangler.toml`):
-- `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` - Contact notifications
-- `TURNSTILE_SECRET_KEY` - Turnstile validation
-- `INDEXNOW_KEY` - SEO index submission
-- `AUTOMATION_API_KEY` - Blog post API auth
+- `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` — Contact notifications
+- `TURNSTILE_SECRET_KEY` — Turnstile validation
+- `INDEXNOW_KEY` — SEO submission
+- `AUTOMATION_API_KEY` — Blog automation auth
 
 ## Integrations
-- **Turnstile** - Contact form CAPTCHA
-- **Telegram Bot** - Contact form notifications
-- **IndexNow** - Auto-submit new content to search engines
-- **Google Tag Manager** - Analytics and tracking
-- **Gravatar** - Team avatars
+- **Cloudflare Turnstile** — Contact form CAPTCHA
+- **Telegram Bot** — Contact form notifications
+- **IndexNow** — Auto-submit new content to search engines
+- **Google Tag Manager** — Analytics (conditional on cookie consent)
+- **Gravatar** — Team member avatars
+- **Perplexity API** — Blog news research
+- **Claude API** — Blog translation to 5 locales
 
-## Utilities
-- `cn()` from `src/lib/utils.ts` - Tailwind class composition
-- `getCombinedYears()` - Years since 2000 for experience text
+## Important Patterns
 
-## Notes
-- Image optimization disabled for Cloudflare compatibility
-- Build limited to 1 CPU core for memory constraints
-- Admin panel uses dark theme
+- All admin pages are `'use client'` with `useState`/`useEffect` fetch pattern
+- Database queries return camelCase types via `as` aliases in SQL
+- `TranslationsWithRequiredEnglish<T>` — en is required, other locales optional
+- Structured data via JSON-LD components on public pages
+- Image optimization disabled (`unoptimized: true`) for Cloudflare compatibility
+- Build limited to 1 CPU core (`cpus: 1, workerThreads: false`)
 
 ## Workflow
 When working on any task, create a corresponding task in the repo's GitHub Project (`gh project`), and transition it through statuses (e.g. Todo → In Progress → Done) as work progresses. When a priority is specified (e.g. "critical"), set it using the project's priority field (`gh project item-edit`) instead of putting it in the title.
 
 ## CLI Tools
-- **GitHub CLI (`gh`)** - PRs, secrets, workflows, project task tracking
-- **Wrangler (`pnpm wrangler`)** - D1 queries, deployments
+- **GitHub CLI (`gh`)** — PRs, secrets, workflows, project task tracking
+- **Wrangler (`pnpm wrangler`)** — D1 queries, deployments
