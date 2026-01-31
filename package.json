@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "overrides": {
-    "@smithy/config-resolver": "^4.4.0"
+    "@smithy/config-resolver": "^4.4.0",
+    "fast-xml-parser": ">=5.3.4"
   },
   "pnpm": {
     "overrides": {
-      "@smithy/config-resolver": "^4.4.0"
+      "@smithy/config-resolver": "^4.4.0",
+      "fast-xml-parser": ">=5.3.4"
     },
     "onlyBuiltDependencies": [
       "esbuild",
