@@ -6,7 +6,8 @@ import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-da
 import { getContent } from "@/content";
 import { getProjectsLocalized } from "@/lib/db";
 import { type Locale, generateAlternates } from "@/i18n/config";
-import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
+import { ArrowTopRightOnSquareIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
+import { Link as LocaleLink } from "@/i18n/navigation";
 
 // Force dynamic rendering since we fetch from D1
 export const dynamic = 'force-dynamic';
@@ -140,6 +141,18 @@ export default async function PortfolioPage({ params }: Props) {
                     <span className="text-sm text-brand-200">
                       {project.result}
                     </span>
+                  </div>
+                )}
+
+                {project.isCaseStudy && project.caseStudySlug && (
+                  <div className="pt-4 mt-4 border-t border-brand-700/30">
+                    <LocaleLink
+                      href={`/portfolio/${project.caseStudySlug}`}
+                      className="inline-flex items-center gap-2 text-sm font-medium text-neon hover:text-white transition-colors"
+                    >
+                      {locale === "ro" ? "Citește studiul de caz" : "Read Case Study"}
+                      <ArrowRightIcon className="w-4 h-4" />
+                    </LocaleLink>
                   </div>
                 )}
               </Card>

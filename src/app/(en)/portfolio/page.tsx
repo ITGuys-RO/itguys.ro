@@ -6,7 +6,8 @@ import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-da
 import { getContent } from "@/content";
 import { getProjectsLocalized } from "@/lib/db";
 import { generateAlternates } from "@/i18n";
-import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
+import { ArrowTopRightOnSquareIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 // Force dynamic rendering since we fetch from D1
 export const dynamic = 'force-dynamic';
@@ -113,6 +114,18 @@ export default async function PortfolioPage() {
                     <span className="text-sm text-brand-200">
                       {project.result}
                     </span>
+                  </div>
+                )}
+
+                {project.isCaseStudy && project.caseStudySlug && (
+                  <div className="pt-4 mt-4 border-t border-brand-700/30">
+                    <Link
+                      href={`/portfolio/${project.caseStudySlug}`}
+                      className="inline-flex items-center gap-2 text-sm font-medium text-neon hover:text-white transition-colors"
+                    >
+                      Read Case Study
+                      <ArrowRightIcon className="w-4 h-4" />
+                    </Link>
                   </div>
                 )}
               </Card>

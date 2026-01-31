@@ -56,6 +56,17 @@ export default function ProjectsListPage() {
       ),
     },
     {
+      key: 'type',
+      header: 'Type',
+      render: (p: ProjectWithTranslations) => (
+        p.is_case_study === 1 ? (
+          <span className="px-2 py-0.5 bg-neon/20 text-neon text-xs rounded-full">Case Study</span>
+        ) : (
+          <span className="text-brand-400 text-xs">Project</span>
+        )
+      ),
+    },
+    {
       key: 'technologies',
       header: 'Tech',
       render: (p: ProjectWithTranslations) => (

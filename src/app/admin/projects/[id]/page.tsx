@@ -9,11 +9,13 @@ import {
   CheckboxField,
   TagInput,
   LocaleFields,
+  MarkdownEditor,
   DeleteButton,
   ValidationSummary,
   useFormValidation,
   validateTranslations,
 } from '@/components/admin';
+import { generateSlug } from '@/lib/utils';
 import type { ProjectWithTranslations, ProjectInput } from '@/lib/db';
 
 type TranslationData = {
@@ -23,6 +25,10 @@ type TranslationData = {
   challenge: string | null;
   solution: string | null;
   result: string | null;
+  content: string | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  slug: string | null;
 };
 
 export default function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
@@ -39,8 +45,11 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     external_url: '',
     sort_order: 0,
     is_active: 1,
+    is_case_study: 0,
+    duration: '',
+    completed_at: '',
     technologies: [],
-    translations: { en: { name: '', client_type: null, industry: null, challenge: null, solution: null, result: null } },
+    translations: { en: { name: '', client_type: null, industry: null, challenge: null, solution: null, result: null, content: null, meta_title: null, meta_description: null, slug: null } },
   });
 
   useEffect(() => {
@@ -64,6 +73,10 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                 challenge: t.challenge,
                 solution: t.solution,
                 result: t.result,
+                content: t.content,
+                meta_title: t.meta_title,
+                meta_description: t.meta_description,
+                slug: t.slug,
               }
             : undefined,
         ])
@@ -75,6 +88,9 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         external_url: project.external_url,
         sort_order: project.sort_order,
         is_active: project.is_active,
+        is_case_study: project.is_case_study,
+        duration: project.duration,
+        completed_at: project.completed_at,
         technologies: project.technologies,
         translations,
       });
@@ -137,6 +153,8 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
 
   if (loading) return <div className="text-brand-400">Loading...</div>;
 
+  const isCaseStudy = formData.is_case_study === 1;
+
   const defaultTranslation: TranslationData = {
     name: '',
     client_type: '',
@@ -144,6 +162,10 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     challenge: '',
     solution: '',
     result: '',
+    content: '',
+    meta_title: '',
+    meta_description: '',
+    slug: '',
   };
 
   return (
@@ -215,7 +237,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
               placeholder="Add technology..."
             />
           </div>
-          <div className="mt-4">
+          <div className="mt-4 space-y-3">
             <CheckboxField
               label="Active"
               name="is_active"
@@ -223,7 +245,32 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
               onChange={(c) => setFormData({ ...formData, is_active: c ? 1 : 0 })}
               description="Show this project on the website"
             />
+            <CheckboxField
+              label="Case Study"
+              name="is_case_study"
+              checked={isCaseStudy}
+              onChange={(c) => setFormData({ ...formData, is_case_study: c ? 1 : 0 })}
+              description="Enable detail page with rich markdown content"
+            />
           </div>
+          {isCaseStudy && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <InputField
+                label="Duration"
+                name="duration"
+                value={formData.duration || ''}
+                onChange={(v) => setFormData({ ...formData, duration: v || null })}
+                placeholder="e.g. 6 months"
+              />
+              <InputField
+                label="Completed At"
+                name="completed_at"
+                value={formData.completed_at || ''}
+                onChange={(v) => setFormData({ ...formData, completed_at: v || null })}
+                placeholder="YYYY-MM-DD"
+              />
+            </div>
+          )}
         </div>
 
         <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6">
@@ -243,7 +290,13 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                   label="Name"
                   name={`name-${locale}`}
                   value={data.name}
-                  onChange={(v) => onChange({ ...data, name: v })}
+                  onChange={(v) => {
+                    const updated = { ...data, name: v };
+                    if (isCaseStudy && !data.slug) {
+                      updated.slug = generateSlug(v);
+                    }
+                    onChange(updated);
+                  }}
                   required
                 />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -281,6 +334,35 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                   onChange={(v) => onChange({ ...data, result: v || null })}
                   rows={2}
                 />
+                {isCaseStudy && (
+                  <>
+                    <InputField
+                      label="URL Slug"
+                      name={`slug-${locale}`}
+                      value={data.slug || ''}
+                      onChange={(v) => onChange({ ...data, slug: v || null })}
+                    />
+                    <MarkdownEditor
+                      label="Content"
+                      name={`content-${locale}`}
+                      value={data.content || ''}
+                      onChange={(v) => onChange({ ...data, content: v || null })}
+                    />
+                    <InputField
+                      label="Meta Title"
+                      name={`meta_title-${locale}`}
+                      value={data.meta_title || ''}
+                      onChange={(v) => onChange({ ...data, meta_title: v || null })}
+                    />
+                    <TextareaField
+                      label="Meta Description"
+                      name={`meta_description-${locale}`}
+                      value={data.meta_description || ''}
+                      onChange={(v) => onChange({ ...data, meta_description: v || null })}
+                      rows={2}
+                    />
+                  </>
+                )}
               </div>
             )}
           />

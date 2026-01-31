@@ -31,6 +31,9 @@ export interface Project {
   external_url: string | null;
   sort_order: number;
   is_active: number;
+  is_case_study: number;
+  duration: string | null;
+  completed_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -45,6 +48,10 @@ export interface ProjectTranslation {
   challenge: string | null;
   solution: string | null;
   result: string | null;
+  content: string | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  slug: string | null;
 }
 
 export interface ProjectTechnology {
@@ -215,6 +222,16 @@ export interface ProjectLocalized {
   tech: string[];
   image: string | null;
   url: string | null;
+  isCaseStudy: boolean;
+  caseStudySlug: string | null;
+}
+
+export interface CaseStudyLocalized extends ProjectLocalized {
+  content: string;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  duration: string | null;
+  completedAt: string | null;
 }
 
 export interface CompanyWithTranslations extends Company {
@@ -312,6 +329,9 @@ export interface ProjectInput {
   external_url?: string | null;
   sort_order?: number;
   is_active?: number;
+  is_case_study?: number;
+  duration?: string | null;
+  completed_at?: string | null;
   technologies: string[];
   translations: TranslationsWithRequiredEnglish<{
     name: string;
@@ -320,6 +340,10 @@ export interface ProjectInput {
     challenge?: string | null;
     solution?: string | null;
     result?: string | null;
+    content?: string | null;
+    meta_title?: string | null;
+    meta_description?: string | null;
+    slug?: string | null;
   }>;
 }
 
