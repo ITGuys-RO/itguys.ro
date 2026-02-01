@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/portfolio`,
       type: "website",
     },
-    alternates: generateAlternates("/portfolio"),
+    alternates: generateAlternates("/portfolio", locale as Locale),
     twitter: {
       card: "summary_large_image",
       description: portfolioDescriptions[locale] || portfolioDescriptions.en,

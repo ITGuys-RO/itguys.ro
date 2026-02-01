@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: 'Blog - ITGuys',
     description: content[locale]?.subheadline || content.en.subheadline,
-    alternates: generateAlternates('/blog'),
+    alternates: generateAlternates('/blog', locale),
   };
 }
 

@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     description: descriptions[locale] || descriptions.en,
-    alternates: generateAlternates("/"),
+    alternates: generateAlternates("/", locale as Locale),
     openGraph: {
       url: locale === "en" ? "https://itguys.ro" : `https://itguys.ro/${locale}`,
       description: descriptions[locale] || descriptions.en,

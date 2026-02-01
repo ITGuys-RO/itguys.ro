@@ -135,12 +135,10 @@ export function getAllLocalizedPaths(): Map<string, { locale: Locale; internalPa
 
 // Generate hreflang alternates for metadata
 // internalPath should be the internal path like '/services' or '/services/security'
-export function generateAlternates(internalPath: string): {
+export function generateAlternates(internalPath: string, currentLocale: Locale = defaultLocale): {
   canonical: string;
   languages: Record<string, string>;
 } {
-  const localizedPathEn = getLocalizedPath(internalPath, 'en');
-
   const languages: Record<string, string> = {};
   for (const locale of locales) {
     const localizedPath = getLocalizedPath(internalPath, locale);
@@ -151,8 +149,12 @@ export function generateAlternates(internalPath: string): {
     }
   }
 
+  const canonical = currentLocale === defaultLocale
+    ? getLocalizedPath(internalPath, defaultLocale)
+    : `/${currentLocale}${getLocalizedPath(internalPath, currentLocale)}`;
+
   return {
-    canonical: localizedPathEn,
+    canonical,
     languages,
   };
 }
