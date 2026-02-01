@@ -36,9 +36,6 @@ jobs:
       - name: Generate wrangler.toml
         run: envsubst < wrangler.toml.example > wrangler.toml
         env:
-          TELEGRAM_BOT_TOKEN: "unused"
-          TELEGRAM_CHAT_ID: "unused"
-          TURNSTILE_SECRET_KEY: "unused"
           D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
 
       - name: Wait for Cloudflare propagation

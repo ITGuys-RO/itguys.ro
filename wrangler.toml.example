@@ -11,11 +11,8 @@ routes = [
 directory = ".open-next/assets"
 
 [vars]
-TELEGRAM_BOT_TOKEN = "${TELEGRAM_BOT_TOKEN}"
-TELEGRAM_CHAT_ID = "${TELEGRAM_CHAT_ID}"
-TURNSTILE_SECRET_KEY = "${TURNSTILE_SECRET_KEY}"
-INDEXNOW_KEY = "${INDEXNOW_KEY}"
-AUTOMATION_API_KEY = "${AUTOMATION_API_KEY}"
+# Sensitive values are set via `wrangler secret put` in the deploy workflow
+# Non-secret vars can be added here
 
 [[d1_databases]]
 binding = "DB"
