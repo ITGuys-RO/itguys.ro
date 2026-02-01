@@ -1,10 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Section, Card, CardTitle, CardDescription, AnimateOnScroll } from '@/components/ui';
+import { Section, Card, CardTitle, CardDescription, AnimateOnScroll, Breadcrumb } from '@/components/ui';
 import { BreadcrumbSchema, OrganizationSchema, WebPageSchema } from '@/components/structured-data';
 import { getServiceLocalized, getServiceLocaleSlugs } from '@/lib/db';
-import { Link } from '@/i18n/navigation';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { getLocalizedPath, locales, type Locale } from '@/i18n/config';
 
 export const dynamic = 'force-dynamic';
@@ -13,13 +11,13 @@ type Props = {
   params: Promise<{ slug: string; locale: Locale }>;
 };
 
-const backText: Record<Locale, string> = {
-  en: 'Back to Services',
-  ro: 'Înapoi la Servicii',
-  fr: 'Retour aux Services',
-  de: 'Zurück zu Dienstleistungen',
-  it: 'Torna ai Servizi',
-  es: 'Volver a Servicios',
+const servicesLabel: Record<Locale, string> = {
+  en: 'Services',
+  ro: 'Servicii',
+  fr: 'Services',
+  de: 'Dienstleistungen',
+  it: 'Servizi',
+  es: 'Servicios',
 };
 
 const whatWeOfferText: Record<Locale, string> = {
@@ -118,13 +116,10 @@ export default async function ServiceDetailPage({ params }: Props) {
       <Section className="pt-24 pb-16">
         <article className="max-w-6xl mx-auto">
           <AnimateOnScroll animation="fade-in-up">
-            <Link
-              href="/services"
-              className="inline-flex items-center gap-2 text-brand-400 hover:text-neon text-sm font-medium mb-8 transition-colors"
-            >
-              <ArrowLeftIcon className="w-4 h-4" />
-              {backText[locale]}
-            </Link>
+            <Breadcrumb locale={locale} items={[
+              { label: servicesLabel[locale], href: '/services' },
+              { label: service.title },
+            ]} />
           </AnimateOnScroll>
 
           <AnimateOnScroll animation="fade-in-up" delay={100}>

@@ -140,6 +140,7 @@ export function generateAlternates(internalPath: string, currentLocale: Locale =
   languages: Record<string, string>;
 } {
   const languages: Record<string, string> = {};
+  const localizedPathEn = getLocalizedPath(internalPath, defaultLocale);
   for (const locale of locales) {
     const localizedPath = getLocalizedPath(internalPath, locale);
     if (locale === defaultLocale) {
@@ -148,6 +149,7 @@ export function generateAlternates(internalPath: string, currentLocale: Locale =
       languages[locale] = `/${locale}${localizedPath}`;
     }
   }
+  languages['x-default'] = localizedPathEn;
 
   const canonical = currentLocale === defaultLocale
     ? getLocalizedPath(internalPath, defaultLocale)

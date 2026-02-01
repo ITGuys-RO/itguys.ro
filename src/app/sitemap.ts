@@ -32,6 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ? `${baseUrl}${localizedPath}`
         : `${baseUrl}/${locale}${localizedPath}`;
     }
+    alternates['x-default'] = alternates[defaultLocale];
     return alternates;
   };
 
@@ -71,6 +72,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ? `${baseUrl}${localizedBlogPath}/${localeSlug}`
         : `${baseUrl}/${locale}${localizedBlogPath}/${localeSlug}`;
     }
+    blogAlternates['x-default'] = blogAlternates[defaultLocale];
 
     for (const locale of locales) {
       const localeSlug = localeSlugs[locale] || post.slug;

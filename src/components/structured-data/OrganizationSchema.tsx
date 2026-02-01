@@ -38,10 +38,8 @@ export function OrganizationSchema() {
       },
     ],
     sameAs: [
-      // Add social media profiles when available
-      // "https://www.linkedin.com/company/itguys",
-      // "https://twitter.com/itguys",
-      // "https://github.com/itguys",
+      "https://www.linkedin.com/company/itguys-ro",
+      "https://github.com/ITGuys-RO",
     ],
     hasOfferCatalog: {
       "@type": "OfferCatalog",

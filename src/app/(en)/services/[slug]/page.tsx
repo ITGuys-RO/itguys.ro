@@ -1,11 +1,9 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Section, Card, CardTitle, CardDescription, AnimateOnScroll } from '@/components/ui';
+import { Section, Card, CardTitle, CardDescription, AnimateOnScroll, Breadcrumb } from '@/components/ui';
 import { BreadcrumbSchema, OrganizationSchema, WebPageSchema } from '@/components/structured-data';
 import { getServiceLocalized, getServiceLocaleSlugs } from '@/lib/db';
-import { Link } from '@/i18n/navigation';
 import { getLocalizedPath, locales, type Locale } from '@/i18n/config';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 export const dynamic = 'force-dynamic';
 
@@ -88,13 +86,10 @@ export default async function ServiceDetailPage({ params }: Props) {
       <Section className="pt-24 pb-16">
         <article className="max-w-6xl mx-auto">
           <AnimateOnScroll animation="fade-in-up">
-            <Link
-              href="/services"
-              className="inline-flex items-center gap-2 text-brand-400 hover:text-neon text-sm font-medium mb-8 transition-colors"
-            >
-              <ArrowLeftIcon className="w-4 h-4" />
-              Back to Services
-            </Link>
+            <Breadcrumb items={[
+              { label: 'Services', href: '/services' },
+              { label: service.title },
+            ]} />
           </AnimateOnScroll>
 
           <AnimateOnScroll animation="fade-in-up" delay={100}>

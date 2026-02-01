@@ -1,10 +1,9 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Section, Card, AnimateOnScroll } from '@/components/ui';
+import { Section, Card, AnimateOnScroll, Breadcrumb } from '@/components/ui';
 import { BreadcrumbSchema, OrganizationSchema, BlogPostingSchema } from '@/components/structured-data';
 import { getPostLocalized, getPostLocaleSlugs } from '@/lib/db';
-import { Link } from '@/i18n/navigation';
-import { CalendarIcon, UserIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { CalendarIcon, UserIcon } from '@heroicons/react/24/outline';
 
 export const dynamic = 'force-dynamic';
 
@@ -88,13 +87,10 @@ export default async function BlogPostPage({ params }: Props) {
       <Section className="pt-24 pb-16">
         <article className="max-w-6xl mx-auto">
           <AnimateOnScroll animation="fade-in-up">
-            <Link
-              href="/blog"
-              className="inline-flex items-center gap-2 text-brand-400 hover:text-neon text-sm font-medium mb-8 transition-colors"
-            >
-              <ArrowLeftIcon className="w-4 h-4" />
-              Back to Blog
-            </Link>
+            <Breadcrumb items={[
+              { label: 'Blog', href: '/blog' },
+              { label: post.title },
+            ]} />
           </AnimateOnScroll>
 
           <AnimateOnScroll animation="fade-in-up" delay={100}>
@@ -172,7 +168,11 @@ function MarkdownContent({ content }: { content: string }) {
     .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold text-white mt-10 mb-4">$1</h1>')
     .replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-white">$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-neon hover:underline">$1</a>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match: string, text: string, url: string) => {
+      const isExternal = url.startsWith('http') && !url.includes('itguys.ro');
+      const rel = isExternal ? ' rel="nofollow noopener" target="_blank"' : '';
+      return `<a href="${url}" class="text-neon hover:underline"${rel}>${text}</a>`;
+    })
     .replace(/```(\w+)?\n?([\s\S]*?)```/g, '<pre class="bg-brand-900/60 border border-brand-700/30 p-4 rounded-lg text-sm overflow-x-auto my-6"><code class="text-brand-200">$2</code></pre>')
     .replace(/`([^`]+)`/g, '<code class="bg-brand-800/50 px-1.5 py-0.5 rounded text-sm text-neon">$1</code>')
     .replace(/^> (.*$)/gim, '<blockquote class="border-l-4 border-neon/50 pl-4 text-brand-300 italic my-6">$1</blockquote>')
