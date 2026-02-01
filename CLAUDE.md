@@ -118,16 +118,22 @@ const text: Record<Locale, string> = { en: 'Back', ro: 'Înapoi', fr: 'Retour', 
 ## CI/CD
 
 Three GitHub Actions workflows:
-1. **deploy.yml** — Push to master: build → migrate D1 → deploy workers
+1. **deploy.yml** — Push to master: build → migrate D1 → deploy workers → set worker secrets
 2. **daily-tech-news.yml** — Cron: generate blog post via Perplexity + Claude APIs → publish via automation API
 3. **sitemap-indexing.yml** — After deploy/blog: submit new URLs to IndexNow + Google Search Console
+
+**Secrets handling:**
+- Worker secrets (TELEGRAM_BOT_TOKEN, TURNSTILE_SECRET_KEY, etc.) are set via `wrangler secret put` after deploy — **never** placed in `wrangler.toml` `[vars]`
+- `wrangler.toml.example` only contains non-secret config + `${D1_DATABASE_ID}` placeholder (substituted via `envsubst`)
+- In workflows, always pass secrets via `env:` block and reference as `$VAR` — **never** interpolate `${{ secrets.* }}` directly in `run:` blocks (prevents process-list exposure and script injection)
+- For local dev, secrets go in `.dev.vars` (gitignored), not in `wrangler.toml`
 
 ## Environment Variables
 
 **Public** (`.env.local`):
 - `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`
 
-**Secrets** (`wrangler.toml`):
+**Worker Secrets** (set via `wrangler secret put` in deploy workflow):
 - `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` — Contact notifications
 - `TURNSTILE_SECRET_KEY` — Turnstile validation
 - `INDEXNOW_KEY` — SEO submission
