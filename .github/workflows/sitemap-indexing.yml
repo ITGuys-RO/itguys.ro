@@ -135,9 +135,9 @@ jobs:
               --argjson urlList "$URL_ARRAY" \
               '{host: $host, key: $key, keyLocation: $keyLocation, urlList: $urlList}')
 
-            HTTP_CODE=$(curl -s -w "%{http_code}" -o response.txt -X POST "https://api.indexnow.org/IndexNow" \
+            HTTP_CODE=$(echo "$JSON_PAYLOAD" | curl -s -w "%{http_code}" -o response.txt -X POST "https://api.indexnow.org/IndexNow" \
               -H "Content-Type: application/json; charset=utf-8" \
-              -d "$JSON_PAYLOAD")
+              -d @-)
 
             case $HTTP_CODE in
               200|202)
@@ -183,6 +183,9 @@ jobs:
 
           # Install cryptography for JWT signing
           pip install --quiet cryptography
+
+          # Ensure cleanup on any exit
+          trap 'rm -f /tmp/google-credentials.json /tmp/create_jwt.py' EXIT
 
           # Write credentials to file
           echo "$GOOGLE_CREDENTIALS" > /tmp/google-credentials.json
@@ -231,7 +234,6 @@ jobs:
 
           if [ -z "$ACCESS_TOKEN" ] || [ "$ACCESS_TOKEN" = "null" ]; then
             echo "Warning: Failed to get Google access token (non-blocking)"
-            rm -f /tmp/google-credentials.json /tmp/create_jwt.py
             exit 0
           fi
 
@@ -245,14 +247,12 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{}')
 
-          rm -f /tmp/google-credentials.json /tmp/create_jwt.py
-
           if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "204" ]; then
             echo "Google Search Console sitemap submission successful"
           else
             echo "Warning: Google API returned HTTP $HTTP_CODE (non-blocking)"
             if [ -s google-response.txt ]; then
-              cat google-response.txt
+              jq -r '.error.message // "Unknown error"' google-response.txt 2>/dev/null || echo "Non-JSON error response"
             fi
           fi
 

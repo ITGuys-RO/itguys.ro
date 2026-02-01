@@ -44,11 +44,16 @@ jobs:
           R2_PUBLIC_URL: ${{ vars.R2_PUBLIC_URL }}
 
       - name: Publish to database
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+          AUTOMATION_API_KEY: ${{ secrets.AUTOMATION_API_KEY }}
         run: |
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${{ vars.SITE_URL }}/api/automation/posts" \
-            -H "CF-Access-Client-Id: ${{ secrets.CF_ACCESS_CLIENT_ID }}" \
-            -H "CF-Access-Client-Secret: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}" \
-            -H "Authorization: Bearer ${{ secrets.AUTOMATION_API_KEY }}" \
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${SITE_URL}/api/automation/posts" \
+            -H "CF-Access-Client-Id: ${CF_ACCESS_CLIENT_ID}" \
+            -H "CF-Access-Client-Secret: ${CF_ACCESS_CLIENT_SECRET}" \
+            -H "Authorization: Bearer ${AUTOMATION_API_KEY}" \
             -H "Content-Type: application/json" \
             -d @blog-post.json)
 
@@ -56,7 +61,6 @@ jobs:
           BODY=$(echo "$RESPONSE" | sed '$d')
 
           echo "HTTP Status: $HTTP_CODE"
-          echo "Response: $BODY"
 
           # Check for Cloudflare challenge page
           if echo "$BODY" | grep -q "Just a moment"; then
@@ -67,6 +71,7 @@ jobs:
           # Check for successful response
           if [ "$HTTP_CODE" -ne 200 ]; then
             echo "::error::API request failed with status $HTTP_CODE"
+            echo "::error::$(echo "$BODY" | jq -r '.error // .message // "Unknown error"' 2>/dev/null || echo "Non-JSON response")"
             exit 1
           fi
 
