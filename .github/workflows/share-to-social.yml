@@ -69,6 +69,7 @@ jobs:
           echo "Post data fetched successfully"
 
       - name: Post to Twitter/X
+        id: twitter
         if: github.event.inputs.platform == 'twitter' || github.event.inputs.platform == 'all'
         continue-on-error: true
         env:
@@ -80,7 +81,7 @@ jobs:
         run: pnpm tsx scripts/post-tweet.ts
 
       - name: Report Twitter share status
-        if: (github.event.inputs.platform == 'twitter' || github.event.inputs.platform == 'all') && success()
+        if: steps.twitter.outcome == 'success'
         continue-on-error: true
         env:
           SITE_URL: ${{ vars.SITE_URL }}
@@ -98,6 +99,7 @@ jobs:
             "${SITE_URL}/api/automation/posts/${POST_SLUG}/share-status"
 
       - name: Post to Facebook
+        id: facebook
         if: github.event.inputs.platform == 'facebook' || github.event.inputs.platform == 'all'
         continue-on-error: true
         env:
@@ -107,7 +109,7 @@ jobs:
         run: pnpm tsx scripts/post-facebook.ts
 
       - name: Report Facebook share status
-        if: (github.event.inputs.platform == 'facebook' || github.event.inputs.platform == 'all') && success()
+        if: steps.facebook.outcome == 'success'
         continue-on-error: true
         env:
           SITE_URL: ${{ vars.SITE_URL }}
