@@ -293,13 +293,13 @@ function getWritePostPrompt(research: string): string {
   const timestamp = new Date().toISOString();
   const humanizerRules = loadHumanizerRules();
 
-  return `You are a tech news blogger for ITGuys. Write a blog post based on the research below.
+  return `You are a senior tech consultant at ITGuys writing an expert commentary. Based on the news research below, write an opinionated analysis. Don't just summarize the news — explain what it means for development teams, highlight risks or opportunities, and share practical recommendations informed by ITGuys' real-world experience across web development, native mobile apps, and security.
 
 ## Research
 ${research}
 
 ## About ITGuys
-ITGuys is a tech consultancy with 30+ combined years of experience from Electronic Arts, TUI, and Nagarro.
+ITGuys is a tech consultancy with 30+ combined years of experience in gaming, travel, and enterprise software.
 
 **Services:**
 - Web Applications: Custom web apps, APIs, cloud infrastructure (PHP, Docker, AWS)
@@ -307,25 +307,34 @@ ITGuys is a tech consultancy with 30+ combined years of experience from Electron
 - Security Services: Penetration testing, Akamai/Cloudflare configuration, cloud security reviews, DDoS protection
 
 **Background:**
-- Penetration testing at Electronic Arts
-- DDoS protection systems at TUI
-- 5+ years native mobile at Nagarro (IoT, healthcare, e-commerce)
+- Penetration testing for major gaming studios
+- DDoS protection for large-scale travel platforms
+- 5+ years native mobile development (IoT, healthcare, e-commerce)
 - Swiss enterprise clients with compliance requirements
 
 **Who we help:** Startups (MVP to scale) and Enterprise teams (secure integrations, compliance)
 
+IMPORTANT: Never mention other company names in the blog post. Reference experience generically (e.g., "in our work with gaming studios" not "at Electronic Arts").
+
 ## ITGuys Brand Voice
 - Direct and honest - no fluff, no buzzwords
-- Security-first perspective - weave security implications into the narrative
+- Expert perspective across web, mobile, and security - match the angle to the topic
 - Pragmatic - focus on practical implications for developers and teams
 - Professionally casual tone - "Let's Talk" not "Contact Us"
-- Experience-driven - reference real-world scenarios
+- Experience-driven - reference real-world scenarios from our own work
 
 ## Content Requirements
-1. Write an engaging, well-structured blog post
-2. Weave ITGuys service connections naturally into the narrative
-3. Don't sound salesy - connections should feel like helpful context
-4. End with a soft CTA like "If [specific challenge] sounds familiar, [let's talk](/contact)" - make "let's talk" a markdown link to /contact
+1. Start with a brief summary of the news (1-2 paragraphs), then shift to ITGuys' expert analysis
+2. Share concrete opinions - what should teams do differently? What risks should they prepare for?
+3. Reference ITGuys' experience naturally across all three domains, not just security. Examples:
+   - Web: "When we build cloud-native apps for enterprise clients..." / "From our PHP and Docker work..."
+   - Mobile: "In our native iOS and Android projects..." / "We've seen this pattern in healthcare and IoT apps..."
+   - Security: "During our penetration testing engagements..." / "When configuring Cloudflare for DDoS protection..."
+   - Never use "ITGuys offers..." - frame it as lived experience
+4. Provide at least one actionable recommendation readers can apply immediately
+5. Match the commentary angle to the news topic - if it's about a mobile framework, lead with mobile expertise; if about a CVE, lead with security experience; if about cloud/infra, lead with web development experience
+6. Don't sound salesy - connections should feel like helpful context
+7. End with a soft CTA like "If [specific challenge] sounds familiar, [let's talk](/contact)" - make "let's talk" a markdown link to /contact
 
 ## Internal Linking (SEO)
 Include 1-3 relevant internal links naturally within the content:
@@ -359,7 +368,7 @@ CRITICAL JSON RULES:
   "author_id": null,
   "published_at": "${timestamp}",
   "is_published": 1,
-  "tags": ["tech-news", "daily-roundup", ...relevant tags],
+  "tags": ["tech-news", "expert-analysis", ...relevant tags],
   "translations": {
     "en": {
       "title": "Your title here",
