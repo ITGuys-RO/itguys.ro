@@ -1,6 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { readFileSync, writeFileSync } from 'fs';
-import { jsonrepair } from 'jsonrepair';
 
 const anthropic = new Anthropic();
 const ANTHROPIC_MODEL = 'claude-sonnet-4-20250514';
@@ -60,10 +59,6 @@ async function withRetry<T>(
   throw lastError;
 }
 
-function stripMarkdownFences(text: string): string {
-  return text.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
-}
-
 const LOCALE_RULES: Record<string, { name: string; rules: string }> = {
   ro: {
     name: 'Romanian',
@@ -104,6 +99,23 @@ const LOCALE_RULES: Record<string, { name: string; rules: string }> = {
   },
 };
 
+const translationTool = {
+  name: 'save_translation' as const,
+  description: 'Save the translated blog post content',
+  input_schema: {
+    type: 'object' as const,
+    properties: {
+      title: { type: 'string' as const, description: 'Translated title' },
+      excerpt: { type: 'string' as const, description: 'Translated excerpt/summary' },
+      content: { type: 'string' as const, description: 'Translated markdown content' },
+      meta_title: { type: 'string' as const, description: 'SEO title, max 60 characters' },
+      meta_description: { type: 'string' as const, description: 'SEO description, max 155 characters' },
+      slug: { type: 'string' as const, description: 'URL-friendly slug in target language' },
+    },
+    required: ['title', 'excerpt', 'content', 'meta_title', 'meta_description', 'slug'],
+  },
+};
+
 async function translateToLocale(
   englishContent: BlogPostTranslation,
   locale: string
@@ -116,10 +128,12 @@ async function translateToLocale(
   const response = await anthropic.messages.create({
     model: ANTHROPIC_MODEL,
     max_tokens: 8000,
+    tools: [translationTool],
+    tool_choice: { type: 'tool', name: 'save_translation' },
     messages: [
       {
         role: 'user',
-        content: `Translate this blog post to ${localeConfig.name}.
+        content: `Translate this blog post to ${localeConfig.name}. Use the save_translation tool to return the result.
 
 ## Translation Quality Rules
 1. **Natural fluency over literal translation** - Write as a native speaker would, not word-for-word
@@ -143,45 +157,18 @@ Generate a URL-friendly slug in ${localeConfig.name} based on the translated tit
 - Keep the date prefix from English slug if present (e.g., "2025-01-26-")
 - Example: "Noticias de Tecnología" → "noticias-de-tecnologia"
 
-## Output
-Output ONLY valid JSON:
-{
-  "title": "...",
-  "excerpt": "...",
-  "content": "... use \\n for newlines ...",
-  "meta_title": "...",
-  "meta_description": "...",
-  "slug": "..."
-}
-
 ## Source Content
 ${JSON.stringify(englishContent, null, 2)}`,
       },
     ],
   });
 
-  const textContent = response.content.find((block) => block.type === 'text');
-  if (!textContent || textContent.type !== 'text') {
-    throw new Error('No text content in translation response');
+  const toolUse = response.content.find((block) => block.type === 'tool_use');
+  if (!toolUse || toolUse.type !== 'tool_use') {
+    throw new Error(`No tool use in translation response for ${locale}`);
   }
 
-  const jsonStr = stripMarkdownFences(textContent.text);
-  try {
-    return JSON.parse(jsonStr) as BlogPostTranslation;
-  } catch {
-    console.log(`  JSON parse failed for ${locale}, attempting repair...`);
-    try {
-      const repaired = jsonrepair(jsonStr);
-      return JSON.parse(repaired) as BlogPostTranslation;
-    } catch (repairError) {
-      console.error(`  Failed to repair JSON for ${locale}:`);
-      console.error(`  Raw response length: ${jsonStr.length}`);
-      console.error(`  First 500 chars: ${jsonStr.slice(0, 500)}`);
-      writeFileSync(`debug-translation-${locale}.txt`, textContent.text);
-      console.error(`  Full response saved to debug-translation-${locale}.txt`);
-      throw repairError;
-    }
-  }
+  return toolUse.input as BlogPostTranslation;
 }
 
 async function main() {
