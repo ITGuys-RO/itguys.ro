@@ -78,15 +78,23 @@ export function handleApiError(error: unknown): NextResponse {
 
   console.error('API Error:', error);
 
-  // Include more details in development/debug
-  const message = error instanceof Error ? error.message : 'Internal server error';
-  const stack = error instanceof Error ? error.stack : undefined;
+  let isDev = false;
+  try {
+    isDev = process.env.NODE_ENV === 'development';
+  } catch {
+    // process.env not available in Cloudflare Workers production
+  }
 
-  return NextResponse.json({
-    error: message,
-    // Include stack trace for debugging (remove in production if sensitive)
-    stack: stack?.split('\n').slice(0, 5).join('\n')
-  }, { status: 500 });
+  if (isDev) {
+    const message = error instanceof Error ? error.message : 'Internal server error';
+    const stack = error instanceof Error ? error.stack : undefined;
+    return NextResponse.json({
+      error: message,
+      stack: stack?.split('\n').slice(0, 5).join('\n')
+    }, { status: 500 });
+  }
+
+  return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
 }
 
 // Wrapper to handle authentication and errors for admin API routes
