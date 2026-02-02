@@ -3,7 +3,7 @@ config({ path: '.env.local' });
 import Anthropic from '@anthropic-ai/sdk';
 import { createPerplexity } from '@ai-sdk/perplexity';
 import { generateText } from 'ai';
-import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import { join, dirname, extname } from 'path';
 import { fileURLToPath } from 'url';
 import { jsonrepair } from 'jsonrepair';
@@ -883,13 +883,29 @@ async function storeImage(imageUrl: string, slug: string): Promise<string | null
       console.log(`Uploaded image to R2: ${publicUrl}`);
       return publicUrl;
     } else {
-      // Local: save to public/images/blog/
-      const dir = join(__dirname, '..', 'public', 'images', 'blog');
-      mkdirSync(dir, { recursive: true });
-      const filePath = join(dir, filename);
-      writeFileSync(filePath, buffer);
-      const localPath = `/images/blog/${filename}`;
-      console.log(`Saved image locally: ${filePath}`);
+      // Local: upload via admin API to local R2 emulator
+      const localApiUrl = process.env.LOCAL_API_URL || 'http://localhost:8787';
+      const blob = new Blob([buffer], { type: contentType });
+      const form = new FormData();
+      form.append('file', blob, filename);
+      form.append('key', `blog/${filename}`);
+
+      const uploadRes = await fetch(`${localApiUrl}/api/images/blog/upload`, {
+        method: 'PUT',
+        body: buffer,
+        headers: {
+          'Content-Type': contentType,
+          'X-Image-Key': `blog/${filename}`,
+        },
+      });
+
+      if (!uploadRes.ok) {
+        console.warn(`Local R2 upload failed: ${uploadRes.status}`);
+        return null;
+      }
+
+      const localPath = `/api/images/blog/${filename}`;
+      console.log(`Stored image in local R2: ${localPath}`);
       return localPath;
     }
   } catch (err) {

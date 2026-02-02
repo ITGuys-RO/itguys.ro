@@ -65,7 +65,10 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       httpMetadata: { contentType: file.type },
     });
 
-    const publicUrl = `${process.env.R2_PUBLIC_URL || ''}/blog/${post.slug}${ext}`;
+    const r2PublicUrl = process.env.R2_PUBLIC_URL;
+    const publicUrl = r2PublicUrl
+      ? `${r2PublicUrl}/blog/${post.slug}${ext}`
+      : `/api/images/blog/${post.slug}${ext}`;
 
     // Update post image_path
     await updatePost(postId, { image_path: publicUrl });
