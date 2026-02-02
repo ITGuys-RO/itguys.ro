@@ -7,3 +7,4 @@ export { AboutIllustration } from "./AboutIllustration";
 export { PortfolioIllustration } from "./PortfolioIllustration";
 export { BlogIllustration } from "./BlogIllustration";
 export { PrivacyIllustration } from "./PrivacyIllustration";
+export { TermsIllustration } from "./TermsIllustration";

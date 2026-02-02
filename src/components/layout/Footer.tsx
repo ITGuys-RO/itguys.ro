@@ -39,6 +39,15 @@ const privacyLabel: Record<string, string> = {
   es: "Privacidad",
 };
 
+const termsLabel: Record<string, string> = {
+  en: "Terms of Service",
+  ro: "Termeni si Conditii",
+  fr: "Conditions d'Utilisation",
+  de: "Nutzungsbedingungen",
+  it: "Termini di Servizio",
+  es: "Términos de Servicio",
+};
+
 type Props = {
   locale: Locale;
 };
@@ -122,6 +131,12 @@ export function Footer({ locale }: Props) {
               className="text-sm text-brand-300 hover:text-neon transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.4)]"
             >
               {privacyLabel[locale]}
+            </Link>
+            <Link
+              href="/terms"
+              className="text-sm text-brand-300 hover:text-neon transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.4)]"
+            >
+              {termsLabel[locale]}
             </Link>
             <CookieSettingsButton locale={locale} />
           </div>

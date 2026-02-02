@@ -79,6 +79,14 @@ export const pathnames: Record<string, Record<Locale, string>> = {
     it: '/privacy',
     es: '/privacidad',
   },
+  '/terms': {
+    en: '/terms',
+    ro: '/termeni-si-conditii',
+    fr: '/conditions-utilisation',
+    de: '/nutzungsbedingungen',
+    it: '/termini-di-servizio',
+    es: '/terminos-de-servicio',
+  },
 };
 
 // Get the localized path for a given internal path and locale

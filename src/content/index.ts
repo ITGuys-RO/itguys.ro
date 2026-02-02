@@ -28,3 +28,4 @@ export { aboutContent } from "./en/about";
 export { portfolioContent } from "./en/portfolio";
 export { contactContent } from "./en/contact";
 export { privacyContent } from "./en/privacy";
+export { termsContent } from "./en/terms";
