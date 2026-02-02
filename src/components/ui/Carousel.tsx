@@ -2,7 +2,6 @@
 
 import { ReactNode, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import AutoScroll from "embla-carousel-auto-scroll";
 import { clsx } from "clsx";
 
 type CarouselProps = {
@@ -11,43 +10,18 @@ type CarouselProps = {
 };
 
 export function Carousel({ children, className }: CarouselProps) {
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    {
-      align: "start",
-      loop: true,
-      dragFree: true,
-    },
-    [
-      AutoScroll({
-        speed: 0.8,
-        stopOnInteraction: false,
-        stopOnMouseEnter: true,
-      }),
-    ]
-  );
-
-  const handleMouseEnter = useCallback(() => {
-    const autoScroll = emblaApi?.plugins()?.autoScroll;
-    if (autoScroll) autoScroll.stop();
-  }, [emblaApi]);
-
-  const handleMouseLeave = useCallback(() => {
-    const autoScroll = emblaApi?.plugins()?.autoScroll;
-    if (autoScroll) autoScroll.play();
-  }, [emblaApi]);
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "start",
+    loop: false,
+    dragFree: true,
+  });
 
   const scrollPrev = useCallback(() => {
-    if (!emblaApi) return;
-    const autoScroll = emblaApi.plugins()?.autoScroll;
-    if (autoScroll) autoScroll.stop();
-    emblaApi.scrollPrev();
+    emblaApi?.scrollPrev();
   }, [emblaApi]);
 
   const scrollNext = useCallback(() => {
-    if (!emblaApi) return;
-    const autoScroll = emblaApi.plugins()?.autoScroll;
-    if (autoScroll) autoScroll.stop();
-    emblaApi.scrollNext();
+    emblaApi?.scrollNext();
   }, [emblaApi]);
 
   return (
@@ -55,8 +29,6 @@ export function Carousel({ children, className }: CarouselProps) {
       <div
         className="overflow-hidden py-2 -my-2"
         ref={emblaRef}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
       >
         <div className="flex ml-[-1.5rem]">
           {children.map((child, index) => (
