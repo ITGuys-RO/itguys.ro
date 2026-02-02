@@ -32,8 +32,9 @@ export function getAdminUser(request: NextRequest): CloudflareAccessPayload | nu
   }
 
   try {
-    // Decode the JWT payload (we trust Cloudflare Access has already validated it)
-    // The JWT format is: header.payload.signature
+    // Decode the JWT payload
+    // Signature verification is delegated to Cloudflare Access (sits in front of all /admin routes).
+    // We validate iss and exp as defense-in-depth against misconfigured Access policies.
     const parts = jwt.split('.');
     if (parts.length !== 3) {
       return null;
@@ -47,6 +48,11 @@ export function getAdminUser(request: NextRequest): CloudflareAccessPayload | nu
 
     // Check if the token has expired
     if (payload.exp && payload.exp * 1000 < Date.now()) {
+      return null;
+    }
+
+    // Validate issuer is from Cloudflare Access
+    if (payload.iss && !payload.iss.endsWith('.cloudflareaccess.com')) {
       return null;
     }
 

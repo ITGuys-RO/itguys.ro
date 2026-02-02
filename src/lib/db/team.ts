@@ -47,16 +47,23 @@ export async function getAllTeamMembersWithTranslations(): Promise<TeamMemberWit
     'SELECT * FROM team_members ORDER BY sort_order ASC'
   );
 
-  const result: TeamMemberWithTranslations[] = [];
-  for (const member of members) {
-    const translations = await getTeamMemberTranslations(member.id);
-    const translationsMap = translations.reduce((acc, t) => {
-      acc[t.locale as Locale] = t;
-      return acc;
-    }, {} as Record<Locale, TeamMemberTranslation | undefined>);
-    result.push({ ...member, translations: translationsMap });
+  if (members.length === 0) return [];
+
+  const memberIds = members.map((m) => m.id);
+  const allTranslations = await query<TeamMemberTranslation>(
+    `SELECT * FROM team_member_translations WHERE team_member_id IN (${memberIds.map(() => '?').join(',')})`,
+    memberIds
+  );
+
+  const translationsByMember: Record<number, Record<Locale, TeamMemberTranslation | undefined>> = {};
+  for (const t of allTranslations) {
+    (translationsByMember[t.team_member_id] ??= {} as Record<Locale, TeamMemberTranslation | undefined>)[t.locale as Locale] = t;
   }
-  return result;
+
+  return members.map((member) => ({
+    ...member,
+    translations: translationsByMember[member.id] ?? {} as Record<Locale, TeamMemberTranslation | undefined>,
+  }));
 }
 
 export async function getTeamMembersLocalized(locale: Locale): Promise<TeamMemberLocalized[]> {

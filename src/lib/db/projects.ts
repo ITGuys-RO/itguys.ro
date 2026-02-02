@@ -62,19 +62,37 @@ export async function getAllProjectsWithTranslations(): Promise<ProjectWithTrans
     'SELECT * FROM projects ORDER BY sort_order ASC'
   );
 
-  const result: ProjectWithTranslations[] = [];
-  for (const project of projects) {
-    const [translations, technologies] = await Promise.all([
-      getProjectTranslations(project.id),
-      getProjectTechnologies(project.id),
-    ]);
-    const translationsMap = translations.reduce((acc, t) => {
-      acc[t.locale as Locale] = t;
-      return acc;
-    }, {} as Record<Locale, ProjectTranslation | undefined>);
-    result.push({ ...project, translations: translationsMap, technologies });
+  if (projects.length === 0) return [];
+
+  const projectIds = projects.map((p) => p.id);
+  const placeholders = projectIds.map(() => '?').join(',');
+
+  const [allTranslations, allTechnologies] = await Promise.all([
+    query<ProjectTranslation>(
+      `SELECT * FROM project_translations WHERE project_id IN (${placeholders})`,
+      projectIds
+    ),
+    query<ProjectTechnology>(
+      `SELECT * FROM project_technologies WHERE project_id IN (${placeholders}) ORDER BY sort_order ASC`,
+      projectIds
+    ),
+  ]);
+
+  const translationsByProject: Record<number, Record<Locale, ProjectTranslation | undefined>> = {};
+  for (const t of allTranslations) {
+    (translationsByProject[t.project_id] ??= {} as Record<Locale, ProjectTranslation | undefined>)[t.locale as Locale] = t;
   }
-  return result;
+
+  const techByProject: Record<number, string[]> = {};
+  for (const t of allTechnologies) {
+    (techByProject[t.project_id] ??= []).push(t.technology);
+  }
+
+  return projects.map((project) => ({
+    ...project,
+    translations: translationsByProject[project.id] ?? {} as Record<Locale, ProjectTranslation | undefined>,
+    technologies: techByProject[project.id] ?? [],
+  }));
 }
 
 export async function getProjectsLocalized(locale: Locale): Promise<ProjectLocalized[]> {
@@ -96,27 +114,34 @@ export async function getProjectsLocalized(locale: Locale): Promise<ProjectLocal
     [locale]
   );
 
-  const result: ProjectLocalized[] = [];
-  for (const row of rows) {
-    const technologies = await getProjectTechnologies(row.id);
-    result.push({
-      id: row.id,
-      slug: row.slug,
-      name: row.name,
-      clientType: row.client_type,
-      industry: row.industry,
-      challenge: row.challenge,
-      solution: row.solution,
-      result: row.result,
-      tech: technologies,
-      image: row.image_path,
-      url: row.external_url,
-      isCaseStudy: row.is_case_study === 1,
-      caseStudySlug: row.is_case_study === 1 ? (row.resolved_slug || null) : null,
-    });
+  if (rows.length === 0) return [];
+
+  const rowIds = rows.map((r) => r.id);
+  const allTechnologies = await query<ProjectTechnology>(
+    `SELECT * FROM project_technologies WHERE project_id IN (${rowIds.map(() => '?').join(',')}) ORDER BY sort_order ASC`,
+    rowIds
+  );
+
+  const techByProject: Record<number, string[]> = {};
+  for (const t of allTechnologies) {
+    (techByProject[t.project_id] ??= []).push(t.technology);
   }
 
-  return result;
+  return rows.map((row) => ({
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    clientType: row.client_type,
+    industry: row.industry,
+    challenge: row.challenge,
+    solution: row.solution,
+    result: row.result,
+    tech: techByProject[row.id] ?? [],
+    image: row.image_path,
+    url: row.external_url,
+    isCaseStudy: row.is_case_study === 1,
+    caseStudySlug: row.is_case_study === 1 ? (row.resolved_slug || null) : null,
+  }));
 }
 
 export async function getProjectLocalized(slug: string, locale: Locale): Promise<ProjectLocalized | null> {
@@ -314,32 +339,39 @@ export async function getCaseStudiesLocalized(locale: Locale): Promise<CaseStudy
     [locale]
   );
 
-  const result: CaseStudyLocalized[] = [];
-  for (const row of rows) {
-    const technologies = await getProjectTechnologies(row.id);
-    result.push({
-      id: row.id,
-      slug: row.slug,
-      name: row.name,
-      clientType: row.client_type,
-      industry: row.industry,
-      challenge: row.challenge,
-      solution: row.solution,
-      result: row.result,
-      content: row.content || '',
-      metaTitle: row.meta_title,
-      metaDescription: row.meta_description,
-      duration: row.duration,
-      completedAt: row.completed_at,
-      tech: technologies,
-      image: row.image_path,
-      url: row.external_url,
-      isCaseStudy: true,
-      caseStudySlug: row.resolved_slug || null,
-    });
+  if (rows.length === 0) return [];
+
+  const rowIds = rows.map((r) => r.id);
+  const allTechnologies = await query<ProjectTechnology>(
+    `SELECT * FROM project_technologies WHERE project_id IN (${rowIds.map(() => '?').join(',')}) ORDER BY sort_order ASC`,
+    rowIds
+  );
+
+  const techByProject: Record<number, string[]> = {};
+  for (const t of allTechnologies) {
+    (techByProject[t.project_id] ??= []).push(t.technology);
   }
 
-  return result;
+  return rows.map((row) => ({
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    clientType: row.client_type,
+    industry: row.industry,
+    challenge: row.challenge,
+    solution: row.solution,
+    result: row.result,
+    content: row.content || '',
+    metaTitle: row.meta_title,
+    metaDescription: row.meta_description,
+    duration: row.duration,
+    completedAt: row.completed_at,
+    tech: techByProject[row.id] ?? [],
+    image: row.image_path,
+    url: row.external_url,
+    isCaseStudy: true,
+    caseStudySlug: row.resolved_slug || null,
+  }));
 }
 
 export async function getCaseStudyBySlug(slug: string, locale: Locale): Promise<CaseStudyLocalized | null> {

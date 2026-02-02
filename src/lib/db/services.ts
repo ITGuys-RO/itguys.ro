@@ -88,12 +88,66 @@ export async function getAllServicesWithTranslations(): Promise<ServiceWithTrans
     'SELECT * FROM services ORDER BY sort_order ASC'
   );
 
-  const result: ServiceWithTranslations[] = [];
-  for (const service of services) {
-    const fullService = await getServiceWithTranslations(service.id);
-    if (fullService) result.push(fullService);
+  if (services.length === 0) return [];
+
+  const serviceIds = services.map((s) => s.id);
+  const placeholders = serviceIds.map(() => '?').join(',');
+
+  // Batch-fetch all related data in parallel
+  const [allTranslations, allTechnologies, allSubservices] = await Promise.all([
+    query<ServiceTranslation>(
+      `SELECT * FROM service_translations WHERE service_id IN (${placeholders})`,
+      serviceIds
+    ),
+    query<ServiceTechnology>(
+      `SELECT * FROM service_technologies WHERE service_id IN (${placeholders}) ORDER BY sort_order ASC`,
+      serviceIds
+    ),
+    query<Subservice>(
+      `SELECT * FROM subservices WHERE service_id IN (${placeholders}) ORDER BY sort_order ASC`,
+      serviceIds
+    ),
+  ]);
+
+  // Fetch subservice translations in bulk
+  const subserviceIds = allSubservices.map((s) => s.id);
+  const allSubTranslations = subserviceIds.length > 0
+    ? await query<SubserviceTranslation>(
+        `SELECT * FROM subservice_translations WHERE subservice_id IN (${subserviceIds.map(() => '?').join(',')})`,
+        subserviceIds
+      )
+    : [];
+
+  // Index data
+  const translationsByService: Record<number, Record<Locale, ServiceTranslation | undefined>> = {};
+  for (const t of allTranslations) {
+    (translationsByService[t.service_id] ??= {} as Record<Locale, ServiceTranslation | undefined>)[t.locale as Locale] = t;
   }
-  return result;
+
+  const techByService: Record<number, string[]> = {};
+  for (const t of allTechnologies) {
+    (techByService[t.service_id] ??= []).push(t.technology);
+  }
+
+  const subsByService: Record<number, Subservice[]> = {};
+  for (const s of allSubservices) {
+    (subsByService[s.service_id] ??= []).push(s);
+  }
+
+  const subTransBySub: Record<number, Record<Locale, SubserviceTranslation | undefined>> = {};
+  for (const t of allSubTranslations) {
+    (subTransBySub[t.subservice_id] ??= {} as Record<Locale, SubserviceTranslation | undefined>)[t.locale as Locale] = t;
+  }
+
+  return services.map((service) => ({
+    ...service,
+    translations: translationsByService[service.id] ?? {} as Record<Locale, ServiceTranslation | undefined>,
+    technologies: techByService[service.id] ?? [],
+    subservices: (subsByService[service.id] ?? []).map((sub) => ({
+      ...sub,
+      translations: subTransBySub[sub.id] ?? {} as Record<Locale, SubserviceTranslation | undefined>,
+    })),
+  }));
 }
 
 export async function getServicesLocalized(locale: Locale, category?: string): Promise<ServiceLocalized[]> {
@@ -116,42 +170,55 @@ export async function getServicesLocalized(locale: Locale, category?: string): P
     category ? [locale, category] : [locale]
   );
 
-  const result: ServiceLocalized[] = [];
-  for (const row of rows) {
-    const [technologies, subservices] = await Promise.all([
-      getServiceTechnologies(row.id),
-      // Also apply fallback for subservice translations
-      query<Subservice & SubserviceTranslation>(
-        `SELECT sub.*,
-           COALESCE(st.title, st_en.title) as title,
-           COALESCE(st.description, st_en.description) as description
-         FROM subservices sub
-         LEFT JOIN subservice_translations st ON st.subservice_id = sub.id AND st.locale = ?
-         LEFT JOIN subservice_translations st_en ON st_en.subservice_id = sub.id AND st_en.locale = 'en'
-         WHERE sub.service_id = ?
-         ORDER BY sub.sort_order ASC`,
-        [locale, row.id]
-      ),
-    ]);
+  if (rows.length === 0) return [];
 
-    result.push({
-      id: row.slug,
-      slug: row.localized_slug || row.slug,
-      category: row.category,
-      title: row.title,
-      description: row.description,
-      details: row.details,
-      note: row.note,
-      longDescription: row.long_description,
-      technologies,
-      subservices: subservices.map((sub) => ({
-        title: sub.title,
-        description: sub.description,
-      })),
+  const rowIds = rows.map((r) => r.id);
+  const placeholders = rowIds.map(() => '?').join(',');
+
+  // Batch-fetch technologies and subservices for all services
+  const [allTechnologies, allSubservices] = await Promise.all([
+    query<ServiceTechnology>(
+      `SELECT * FROM service_technologies WHERE service_id IN (${placeholders}) ORDER BY sort_order ASC`,
+      rowIds
+    ),
+    query<Subservice & SubserviceTranslation>(
+      `SELECT sub.*,
+         COALESCE(st.title, st_en.title) as title,
+         COALESCE(st.description, st_en.description) as description
+       FROM subservices sub
+       LEFT JOIN subservice_translations st ON st.subservice_id = sub.id AND st.locale = ?
+       LEFT JOIN subservice_translations st_en ON st_en.subservice_id = sub.id AND st_en.locale = 'en'
+       WHERE sub.service_id IN (${placeholders})
+       ORDER BY sub.sort_order ASC`,
+      [locale, ...rowIds]
+    ),
+  ]);
+
+  const techByService: Record<number, string[]> = {};
+  for (const t of allTechnologies) {
+    (techByService[t.service_id] ??= []).push(t.technology);
+  }
+
+  const subsByService: Record<number, Array<{ title: string; description: string | null }>> = {};
+  for (const sub of allSubservices) {
+    (subsByService[sub.service_id] ??= []).push({
+      title: sub.title,
+      description: sub.description,
     });
   }
 
-  return result;
+  return rows.map((row) => ({
+    id: row.slug,
+    slug: row.localized_slug || row.slug,
+    category: row.category,
+    title: row.title,
+    description: row.description,
+    details: row.details,
+    note: row.note,
+    longDescription: row.long_description,
+    technologies: techByService[row.id] ?? [],
+    subservices: subsByService[row.id] ?? [],
+  }));
 }
 
 export async function createService(input: ServiceInput): Promise<number> {

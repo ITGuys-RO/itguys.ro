@@ -9,6 +9,8 @@ import type {
   PostWithTranslations,
   PostLocalized,
   PostInput,
+  TeamMember,
+  TeamMemberTranslation,
   TeamMemberLocalized,
 } from './schema';
 import { getSocialShares, getSocialSharesForPosts } from './social-shares';
@@ -73,18 +75,68 @@ export async function getAllPostsWithTranslations(): Promise<PostWithTranslation
     'SELECT * FROM posts ORDER BY created_at DESC'
   );
 
-  const postIds = posts.map((p) => p.id);
-  const sharesMap = await getSocialSharesForPosts(postIds);
+  if (posts.length === 0) return [];
 
-  const result: PostWithTranslations[] = [];
-  for (const post of posts) {
-    const fullPost = await getPostWithTranslations(post.id);
-    if (fullPost) {
-      fullPost.socialShares = sharesMap[post.id] ?? [];
-      result.push(fullPost);
-    }
+  const postIds = posts.map((p) => p.id);
+  const placeholders = postIds.map(() => '?').join(',');
+
+  // Batch-fetch all related data in parallel
+  const [allTranslations, allTags, sharesMap, allAuthors] = await Promise.all([
+    query<PostTranslation>(
+      `SELECT * FROM post_translations WHERE post_id IN (${placeholders})`,
+      postIds
+    ),
+    query<PostTag & { post_id: number }>(
+      `SELECT post_id, tag FROM post_tags WHERE post_id IN (${placeholders})`,
+      postIds
+    ),
+    getSocialSharesForPosts(postIds),
+    query<{ id: number } & TeamMemberLocalized>(
+      `SELECT m.id, m.slug, m.email, m.gravatar_email, m.linkedin_url, m.image_path,
+              COALESCE(t.name, t_en.name) as name,
+              COALESCE(t.role, t_en.role) as role,
+              COALESCE(t.bio, t_en.bio) as bio
+       FROM team_members m
+       LEFT JOIN team_member_translations t ON t.team_member_id = m.id AND t.locale = 'en'
+       LEFT JOIN team_member_translations t_en ON t_en.team_member_id = m.id AND t_en.locale = 'en'
+       WHERE m.id IN (SELECT DISTINCT author_id FROM posts WHERE author_id IS NOT NULL AND id IN (${placeholders}))`,
+      postIds
+    ),
+  ]);
+
+  // Index by post_id
+  const translationsByPost: Record<number, Record<Locale, PostTranslation | undefined>> = {};
+  for (const t of allTranslations) {
+    (translationsByPost[t.post_id] ??= {} as Record<Locale, PostTranslation | undefined>)[t.locale as Locale] = t;
   }
-  return result;
+
+  const tagsByPost: Record<number, string[]> = {};
+  for (const t of allTags) {
+    (tagsByPost[t.post_id] ??= []).push(t.tag);
+  }
+
+  const authorsById: Record<number, TeamMemberLocalized> = {};
+  for (const a of allAuthors) {
+    authorsById[a.id] = {
+      id: a.id,
+      slug: a.slug,
+      email: a.email,
+      gravatarEmail: a.gravatarEmail,
+      linkedIn: a.linkedIn,
+      imagePath: a.imagePath,
+      name: a.name,
+      role: a.role,
+      bio: a.bio,
+    };
+  }
+
+  return posts.map((post) => ({
+    ...post,
+    translations: translationsByPost[post.id] ?? {} as Record<Locale, PostTranslation | undefined>,
+    tags: tagsByPost[post.id] ?? [],
+    author: post.author_id ? authorsById[post.author_id] : undefined,
+    socialShares: sharesMap[post.id] ?? [],
+  }));
 }
 
 export async function getPostsLocalized(locale: Locale, limit?: number): Promise<PostLocalized[]> {
@@ -113,31 +165,68 @@ export async function getPostsLocalized(locale: Locale, limit?: number): Promise
 
   const rows = await query<Post & PostTranslation & { resolved_slug: string }>(sql, params);
 
-  const result: PostLocalized[] = [];
-  for (const row of rows) {
-    const tags = await getPostTags(row.id);
-    let author: TeamMemberLocalized | undefined;
-    if (row.author_id) {
-      author = (await getTeamMemberLocalized(row.author_id, locale)) ?? undefined;
-    }
+  if (rows.length === 0) return [];
 
-    result.push({
-      id: row.id,
-      slug: row.resolved_slug,
-      title: row.title,
-      excerpt: row.excerpt,
-      content: row.content,
-      imagePath: row.image_path,
-      publishedAt: row.published_at,
-      updatedAt: row.updated_at,
-      metaTitle: row.meta_title,
-      metaDescription: row.meta_description,
-      tags,
-      author,
-    });
+  const rowIds = rows.map((r) => r.id);
+  const placeholders = rowIds.map(() => '?').join(',');
+
+  // Batch-fetch tags and authors for all rows
+  const authorIds = [...new Set(rows.filter((r) => r.author_id).map((r) => r.author_id!))];
+
+  const [allTags, allAuthors] = await Promise.all([
+    query<PostTag & { post_id: number }>(
+      `SELECT post_id, tag FROM post_tags WHERE post_id IN (${placeholders})`,
+      rowIds
+    ),
+    authorIds.length > 0
+      ? query<TeamMember & TeamMemberTranslation & { member_id: number }>(
+          `SELECT m.id as member_id, m.slug, m.email, m.gravatar_email, m.linkedin_url, m.image_path,
+                  COALESCE(t.name, t_en.name) as name,
+                  COALESCE(t.role, t_en.role) as role,
+                  COALESCE(t.bio, t_en.bio) as bio
+           FROM team_members m
+           LEFT JOIN team_member_translations t ON t.team_member_id = m.id AND t.locale = ?
+           LEFT JOIN team_member_translations t_en ON t_en.team_member_id = m.id AND t_en.locale = 'en'
+           WHERE m.id IN (${authorIds.map(() => '?').join(',')})`,
+          [locale, ...authorIds]
+        )
+      : Promise.resolve([]),
+  ]);
+
+  const tagsByPost: Record<number, string[]> = {};
+  for (const t of allTags) {
+    (tagsByPost[t.post_id] ??= []).push(t.tag);
   }
 
-  return result;
+  const authorsById: Record<number, TeamMemberLocalized> = {};
+  for (const a of allAuthors) {
+    authorsById[a.member_id] = {
+      id: a.member_id,
+      slug: a.slug,
+      email: a.email,
+      gravatarEmail: a.gravatar_email,
+      linkedIn: a.linkedin_url,
+      imagePath: a.image_path,
+      name: a.name,
+      role: a.role,
+      bio: a.bio,
+    };
+  }
+
+  return rows.map((row) => ({
+    id: row.id,
+    slug: row.resolved_slug,
+    title: row.title,
+    excerpt: row.excerpt,
+    content: row.content,
+    imagePath: row.image_path,
+    publishedAt: row.published_at,
+    updatedAt: row.updated_at,
+    metaTitle: row.meta_title,
+    metaDescription: row.meta_description,
+    tags: tagsByPost[row.id] ?? [],
+    author: row.author_id ? authorsById[row.author_id] : undefined,
+  }));
 }
 
 export async function getPostLocalized(slug: string, locale: Locale): Promise<PostLocalized | null> {
@@ -184,15 +273,83 @@ export async function getPostLocalized(slug: string, locale: Locale): Promise<Po
 }
 
 export async function getPostsByTag(tag: string, locale: Locale): Promise<PostLocalized[]> {
-  const postIds = await query<{ post_id: number }>(
-    'SELECT post_id FROM post_tags WHERE tag = ?',
-    [tag]
+  const rows = await query<Post & PostTranslation & { resolved_slug: string }>(
+    `SELECT p.*,
+       COALESCE(t.title, t_en.title) as title,
+       COALESCE(t.excerpt, t_en.excerpt) as excerpt,
+       COALESCE(t.content, t_en.content) as content,
+       COALESCE(t.meta_title, t_en.meta_title) as meta_title,
+       COALESCE(t.meta_description, t_en.meta_description) as meta_description,
+       COALESCE(t.slug, t_en.slug, p.slug) as resolved_slug
+     FROM posts p
+     INNER JOIN post_tags pt ON pt.post_id = p.id AND pt.tag = ?
+     LEFT JOIN post_translations t ON t.post_id = p.id AND t.locale = ?
+     LEFT JOIN post_translations t_en ON t_en.post_id = p.id AND t_en.locale = 'en'
+     WHERE p.is_published = 1
+     ORDER BY p.published_at DESC`,
+    [tag, locale]
   );
 
-  if (postIds.length === 0) return [];
+  if (rows.length === 0) return [];
 
-  const posts = await getPostsLocalized(locale);
-  return posts.filter((p) => postIds.some((pt) => pt.post_id === p.id));
+  const rowIds = rows.map((r) => r.id);
+  const placeholders = rowIds.map(() => '?').join(',');
+  const authorIds = [...new Set(rows.filter((r) => r.author_id).map((r) => r.author_id!))];
+
+  const [allTags, allAuthors] = await Promise.all([
+    query<PostTag & { post_id: number }>(
+      `SELECT post_id, tag FROM post_tags WHERE post_id IN (${placeholders})`,
+      rowIds
+    ),
+    authorIds.length > 0
+      ? query<TeamMember & TeamMemberTranslation & { member_id: number }>(
+          `SELECT m.id as member_id, m.slug, m.email, m.gravatar_email, m.linkedin_url, m.image_path,
+                  COALESCE(t.name, t_en.name) as name,
+                  COALESCE(t.role, t_en.role) as role,
+                  COALESCE(t.bio, t_en.bio) as bio
+           FROM team_members m
+           LEFT JOIN team_member_translations t ON t.team_member_id = m.id AND t.locale = ?
+           LEFT JOIN team_member_translations t_en ON t_en.team_member_id = m.id AND t_en.locale = 'en'
+           WHERE m.id IN (${authorIds.map(() => '?').join(',')})`,
+          [locale, ...authorIds]
+        )
+      : Promise.resolve([]),
+  ]);
+
+  const tagsByPost: Record<number, string[]> = {};
+  for (const t of allTags) {
+    (tagsByPost[t.post_id] ??= []).push(t.tag);
+  }
+
+  const authorsById: Record<number, TeamMemberLocalized> = {};
+  for (const a of allAuthors) {
+    authorsById[a.member_id] = {
+      id: a.member_id,
+      slug: a.slug,
+      email: a.email,
+      gravatarEmail: a.gravatar_email,
+      linkedIn: a.linkedin_url,
+      imagePath: a.image_path,
+      name: a.name,
+      role: a.role,
+      bio: a.bio,
+    };
+  }
+
+  return rows.map((row) => ({
+    id: row.id,
+    slug: row.resolved_slug,
+    title: row.title,
+    excerpt: row.excerpt,
+    content: row.content,
+    imagePath: row.image_path,
+    publishedAt: row.published_at,
+    updatedAt: row.updated_at,
+    metaTitle: row.meta_title,
+    metaDescription: row.meta_description,
+    tags: tagsByPost[row.id] ?? [],
+    author: row.author_id ? authorsById[row.author_id] : undefined,
+  }));
 }
 
 export async function getAllTags(): Promise<string[]> {
