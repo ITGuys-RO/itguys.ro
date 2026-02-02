@@ -27,28 +27,32 @@ const hashtags = tags
   )
   .join(" ");
 
-const message = `${title}\n\n${desc}\n\n${url}\n\n${hashtags}`.trim();
+async function main() {
+  const message = `${title}\n\n${desc}\n\n${url}\n\n${hashtags}`.trim();
 
-// Facebook Graph API — publish to Page feed
-// Token is auto-refreshed by refresh-facebook-token.ts before each run.
-const response = await fetch(
-  `https://graph.facebook.com/v24.0/${FACEBOOK_PAGE_ID}/feed`,
-  {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      message,
-      link: url,
-      access_token: FACEBOOK_ACCESS_TOKEN,
-    }),
+  // Facebook Graph API — publish to Page feed
+  // Token is auto-refreshed by refresh-facebook-token.ts before each run.
+  const response = await fetch(
+    `https://graph.facebook.com/v24.0/${FACEBOOK_PAGE_ID}/feed`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message,
+        link: url,
+        access_token: FACEBOOK_ACCESS_TOKEN,
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.error("Failed to post to Facebook:", data.error?.message ?? `HTTP ${response.status}`);
+    process.exit(1);
   }
-);
 
-const data = await response.json();
-
-if (!response.ok) {
-  console.error("Failed to post to Facebook:", JSON.stringify(data, null, 2));
-  process.exit(1);
+  console.log(`Facebook post published: https://facebook.com/${data.id}`);
 }
 
-console.log(`Facebook post published: https://facebook.com/${data.id}`);
+main();

@@ -43,17 +43,21 @@ if (tweet.length > 280) {
   tweet = `${title}\n\n${url}`;
 }
 
-const client = new TwitterApi({
-  appKey: TWITTER_API_KEY,
-  appSecret: TWITTER_API_SECRET,
-  accessToken: TWITTER_ACCESS_TOKEN,
-  accessSecret: TWITTER_ACCESS_SECRET,
-});
+async function main() {
+  const client = new TwitterApi({
+    appKey: TWITTER_API_KEY,
+    appSecret: TWITTER_API_SECRET,
+    accessToken: TWITTER_ACCESS_TOKEN,
+    accessSecret: TWITTER_ACCESS_SECRET,
+  });
 
-try {
-  const result = await client.v2.tweet(tweet);
-  console.log(`Tweet posted: https://x.com/i/status/${result.data.id}`);
-} catch (err) {
-  console.error("Failed to post tweet:", err);
-  process.exit(1);
+  try {
+    const result = await client.v2.tweet(tweet);
+    console.log(`Tweet posted: https://x.com/i/status/${result.data.id}`);
+  } catch (err) {
+    console.error("Failed to post tweet:", err instanceof Error ? err.message : "Unknown error");
+    process.exit(1);
+  }
 }
+
+main();
