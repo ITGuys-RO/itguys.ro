@@ -100,19 +100,6 @@ export default async function BlogPostPage({ params }: Props) {
 
           <AnimateOnScroll animation="fade-in-up" delay={100}>
             <header className="mb-8">
-              {post.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {post.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 bg-brand-800/50 text-brand-300 text-sm font-medium rounded-full border border-brand-700/30"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
                 {post.title}
               </h1>
@@ -159,6 +146,21 @@ export default async function BlogPostPage({ params }: Props) {
               </div>
             </Card>
           </AnimateOnScroll>
+
+          {post.tags.length > 0 && (
+            <AnimateOnScroll animation="fade-in-up" delay={400}>
+              <div className="flex flex-wrap gap-2 mt-8">
+                {post.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 bg-brand-800/50 text-brand-300 text-sm font-medium rounded-full border border-brand-700/30"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </AnimateOnScroll>
+          )}
         </article>
       </Section>
     </>
