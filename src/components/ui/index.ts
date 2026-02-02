@@ -9,3 +9,4 @@ export { LanguageSwitcher } from "./LanguageSwitcher";
 export { ThemeSwitcher } from "./ThemeSwitcher";
 export { Breadcrumb } from "./Breadcrumb";
 export { FAQ } from "./FAQ";
+export { MarkdownContent } from "./MarkdownContent";

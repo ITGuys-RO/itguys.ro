@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { clsx } from 'clsx';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 interface MarkdownEditorProps {
   label: string;
@@ -172,7 +173,7 @@ function MarkdownPreview({ content }: { content: string }) {
   return (
     <div
       className="text-brand-200"
-      dangerouslySetInnerHTML={{ __html: `<p class="mb-4">${html}</p>` }}
+      dangerouslySetInnerHTML={{ __html: `<p class="mb-4">${sanitizeHtml(html)}</p>` }}
     />
   );
 }
