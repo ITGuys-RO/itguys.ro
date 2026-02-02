@@ -113,7 +113,7 @@ function getLocalizedHref(href: string, locale: Locale): string {
   }
 
   // For other locales, add prefix
-  return `/${locale}${localizedPath}`;
+  return `/${locale}${localizedPath === '/' ? '' : localizedPath}`;
 }
 
 /**
@@ -131,5 +131,5 @@ export function getLocaleUrl(pathname: string, currentLocale: Locale, targetLoca
     return localizedPath;
   }
 
-  return `/${targetLocale}${localizedPath}`;
+  return `/${targetLocale}${localizedPath === '/' ? '' : localizedPath}`;
 }

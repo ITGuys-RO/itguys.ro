@@ -30,7 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const localizedPath = getLocalizedPath(internalPath || '/', locale as Locale);
       alternates[locale] = locale === defaultLocale
         ? `${baseUrl}${localizedPath}`
-        : `${baseUrl}/${locale}${localizedPath}`;
+        : `${baseUrl}/${locale}${localizedPath === '/' ? '' : localizedPath}`;
     }
     alternates['x-default'] = alternates[defaultLocale];
     return alternates;
@@ -42,7 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const localizedPath = getLocalizedPath(page.path || '/', locale as Locale);
       const url = locale === defaultLocale
         ? `${baseUrl}${localizedPath}`
-        : `${baseUrl}/${locale}${localizedPath}`;
+        : `${baseUrl}/${locale}${localizedPath === '/' ? '' : localizedPath}`;
 
       entries.push({
         url,

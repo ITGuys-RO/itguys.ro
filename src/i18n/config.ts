@@ -146,14 +146,15 @@ export function generateAlternates(internalPath: string, currentLocale: Locale =
     if (locale === defaultLocale) {
       languages[locale] = localizedPath;
     } else {
-      languages[locale] = `/${locale}${localizedPath}`;
+      languages[locale] = `/${locale}${localizedPath === '/' ? '' : localizedPath}`;
     }
   }
   languages['x-default'] = localizedPathEn;
 
+  const currentLocalizedPath = getLocalizedPath(internalPath, currentLocale);
   const canonical = currentLocale === defaultLocale
-    ? getLocalizedPath(internalPath, defaultLocale)
-    : `/${currentLocale}${getLocalizedPath(internalPath, currentLocale)}`;
+    ? currentLocalizedPath
+    : `/${currentLocale}${currentLocalizedPath === '/' ? '' : currentLocalizedPath}`;
 
   return {
     canonical,
