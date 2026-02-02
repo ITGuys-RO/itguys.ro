@@ -1,5 +1,5 @@
 -- Track social media shares for blog posts
-CREATE TABLE post_social_shares (
+CREATE TABLE IF NOT EXISTS post_social_shares (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
   platform TEXT NOT NULL,
