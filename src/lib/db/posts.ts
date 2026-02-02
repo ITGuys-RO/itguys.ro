@@ -147,7 +147,7 @@ export async function getPostLocalized(slug: string, locale: Locale): Promise<Po
      LEFT JOIN post_translations t ON t.post_id = p.id AND t.locale = ?
      LEFT JOIN post_translations t_en ON t_en.post_id = p.id AND t_en.locale = 'en'
      WHERE p.is_published = 1
-       AND (t.slug = ? OR (t.slug IS NULL AND t_en.slug = ?) OR (t.slug IS NULL AND t_en.slug IS NULL AND p.slug = ?))`,
+       AND (t.slug = ? OR t_en.slug = ? OR p.slug = ?)`,
     [locale, slug, slug, slug]
   );
 
