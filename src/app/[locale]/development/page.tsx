@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Hero, CTA } from "@/components/sections";
-import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
+import { Section, Card, CardTitle, CardDescription, FAQ } from "@/components/ui";
 import { DevelopmentIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
-import { getServicesLocalized } from "@/lib/db";
+import { getServicesLocalized, getFaqLocalized } from "@/lib/db";
 import { type Locale, generateAlternates } from "@/i18n/config";
 import {
   CodeBracketIcon,
@@ -79,34 +79,19 @@ export default async function ServicesPage({ params }: Props) {
   // Fetch services from D1
   const services = await getServicesLocalized(locale as Locale, 'development');
 
-  const faqItems = [
-    {
-      question: "What types of software do you develop?",
-      answer: "We develop custom web applications, mobile apps (iOS and Android), APIs, backend systems, and cloud-based solutions. We specialize in React, Next.js, Node.js, and modern JavaScript technologies.",
-    },
-    {
-      question: "Do you offer security testing services?",
-      answer: "Yes, we provide comprehensive security services including security audits, penetration testing, vulnerability assessments, and security consulting to help protect your applications and infrastructure.",
-    },
-    {
-      question: "What is your development process?",
-      answer: "We follow agile methodologies with iterative development cycles. We start with requirements gathering, then move through design, development, testing, and deployment phases with continuous client communication.",
-    },
-    {
-      question: "Do you work with clients outside Romania?",
-      answer: "Absolutely. While we're based in Romania, we serve clients worldwide across Europe, UK, and other regions. We're experienced in remote collaboration and working across time zones.",
-    },
-    {
-      question: "What technologies do you specialize in?",
-      answer: "Our core expertise includes React, Next.js, Node.js, TypeScript, PostgreSQL, MongoDB, AWS, and various modern web and mobile frameworks. We choose the right technology stack based on your specific needs.",
-    },
-  ];
+  const allFaqs = await getFaqLocalized(locale as Locale);
+  const faqsByCategory = Object.groupBy(allFaqs, (f) => f.category ?? '');
+
+  const faqTitle: Record<string, string> = {
+    en: 'Frequently Asked Questions', ro: 'Intrebari frecvente', fr: 'Questions frequentes',
+    de: 'Haufig gestellte Fragen', it: 'Domande frequenti', es: 'Preguntas frecuentes',
+  };
 
   return (
     <>
       <OrganizationSchema />
       <BreadcrumbSchema items={[{ name: "Development", url: `https://itguys.ro${locale === "en" ? "" : `/${locale}`}/development` }]} />
-      <FAQSchema items={faqItems} />
+      <FAQSchema items={allFaqs} />
       <Hero
         headline={hero.headline}
         subheadline={hero.subheadline}
@@ -161,6 +146,8 @@ export default async function ServicesPage({ params }: Props) {
               ))}
             </div>
           )}
+
+          <FAQ items={faqsByCategory[service.id] ?? []} title={faqTitle[locale] || faqTitle.en} />
         </Section>
         );
       })}

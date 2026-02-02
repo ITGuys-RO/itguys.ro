@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Hero, CTA } from "@/components/sections";
-import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
+import { Section, Card, CardTitle, CardDescription, FAQ } from "@/components/ui";
 import { DevelopmentIllustration } from "@/components/illustrations";
 import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
-import { getServicesLocalized } from "@/lib/db";
+import { getServicesLocalized, getFaqLocalized } from "@/lib/db";
 import { generateAlternates } from "@/i18n";
 import {
   CodeBracketIcon,
@@ -45,41 +45,22 @@ export const metadata: Metadata = {
   },
 };
 
-const faqItems = [
-  {
-    question: "What types of software do you develop?",
-    answer: "We develop custom web applications, mobile apps (iOS and Android), APIs, backend systems, and cloud-based solutions. We specialize in React, Next.js, Node.js, and modern JavaScript technologies.",
-  },
-  {
-    question: "Do you offer security testing services?",
-    answer: "Yes, we provide comprehensive security services including security audits, penetration testing, vulnerability assessments, and security consulting to help protect your applications and infrastructure.",
-  },
-  {
-    question: "What is your development process?",
-    answer: "We follow agile methodologies with iterative development cycles. We start with requirements gathering, then move through design, development, testing, and deployment phases with continuous client communication.",
-  },
-  {
-    question: "Do you work with clients outside Romania?",
-    answer: "Absolutely. While we're based in Romania, we serve clients worldwide across Europe, UK, and other regions. We're experienced in remote collaboration and working across time zones.",
-  },
-  {
-    question: "What technologies do you specialize in?",
-    answer: "Our core expertise includes React, Next.js, Node.js, TypeScript, PostgreSQL, MongoDB, AWS, and various modern web and mobile frameworks. We choose the right technology stack based on your specific needs.",
-  },
-];
-
 export default async function ServicesPage() {
   const content = getContent("en");
   const { hero, cta } = content.developmentContent;
 
-  // Fetch services from D1
-  const services = await getServicesLocalized('en', 'development');
+  // Fetch services and FAQs from D1
+  const [services, allFaqs] = await Promise.all([
+    getServicesLocalized('en', 'development'),
+    getFaqLocalized('en'),
+  ]);
+  const faqsByCategory = Object.groupBy(allFaqs, (f) => f.category ?? '');
 
   return (
     <>
       <OrganizationSchema />
       <BreadcrumbSchema items={[{ name: "Development", url: "https://itguys.ro/development" }]} />
-      <FAQSchema items={faqItems} />
+      <FAQSchema items={allFaqs} />
       <Hero
         headline={hero.headline}
         subheadline={hero.subheadline}
@@ -134,6 +115,8 @@ export default async function ServicesPage() {
                 ))}
               </div>
             )}
+
+            <FAQ items={faqsByCategory[service.id] ?? []} />
           </Section>
         );
       })}

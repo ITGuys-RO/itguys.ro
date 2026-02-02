@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Section, Card, CardTitle, CardDescription, AnimateOnScroll, Breadcrumb } from '@/components/ui';
-import { BreadcrumbSchema, OrganizationSchema, WebPageSchema } from '@/components/structured-data';
-import { getServiceLocalized, getServiceLocaleSlugs } from '@/lib/db';
+import { Section, Card, CardTitle, CardDescription, AnimateOnScroll, Breadcrumb, FAQ } from '@/components/ui';
+import { BreadcrumbSchema, FAQSchema, OrganizationSchema, WebPageSchema } from '@/components/structured-data';
+import { getServiceLocalized, getServiceLocaleSlugs, getFaqLocalized } from '@/lib/db';
 import { getLocalizedPath, locales, type Locale } from '@/i18n/config';
 
 export const dynamic = 'force-dynamic';
@@ -67,9 +67,12 @@ export default async function ServiceDetailPage({ params }: Props) {
     notFound();
   }
 
+  const faqs = await getFaqLocalized('en', service.id);
+
   return (
     <>
       <OrganizationSchema />
+      {faqs.length > 0 && <FAQSchema items={faqs} />}
       <BreadcrumbSchema
         items={[
           { name: 'Services', url: 'https://itguys.ro/services' },
@@ -162,8 +165,14 @@ export default async function ServiceDetailPage({ params }: Props) {
             </AnimateOnScroll>
           )}
 
-          {service.note && (
+          {faqs.length > 0 && (
             <AnimateOnScroll animation="fade-in-up" delay={600}>
+              <FAQ items={faqs} />
+            </AnimateOnScroll>
+          )}
+
+          {service.note && (
+            <AnimateOnScroll animation="fade-in-up" delay={700}>
               <p className="text-sm text-brand-400 italic">
                 {service.note}
               </p>

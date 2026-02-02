@@ -8,3 +8,4 @@ export { Carousel } from "./Carousel";
 export { LanguageSwitcher } from "./LanguageSwitcher";
 export { ThemeSwitcher } from "./ThemeSwitcher";
 export { Breadcrumb } from "./Breadcrumb";
+export { FAQ } from "./FAQ";

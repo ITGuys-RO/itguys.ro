@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Hero, CTA } from "@/components/sections";
 import { Section, Card, CardTitle, CardDescription } from "@/components/ui";
 import { SecurityIllustration } from "@/components/illustrations";
-import { BreadcrumbSchema, FAQSchema, OrganizationSchema } from "@/components/structured-data";
+import { BreadcrumbSchema, OrganizationSchema } from "@/components/structured-data";
 import { getContent } from "@/content";
 import { getServicesLocalized } from "@/lib/db";
 import {
@@ -43,25 +43,6 @@ export const metadata: Metadata = {
   },
 };
 
-const faqItems = [
-  {
-    question: "What security testing services do you offer?",
-    answer: "We provide penetration testing, security audits, cloud security reviews, DDoS protection, and incident response services. Our team has backgrounds at Electronic Arts and TUI, bringing enterprise-level security expertise.",
-  },
-  {
-    question: "Do you offer QA services for existing projects?",
-    answer: "Yes, we can integrate with your existing development team to provide manual testing, automated testing, performance testing, and security testing services. We work with Selenium, Appium, JMeter, and other industry-standard tools.",
-  },
-  {
-    question: "What analytics solutions do you provide?",
-    answer: "We implement custom dashboards, real-time monitoring, performance tracking, and competitive analysis. We help you transform raw data into actionable business intelligence using tools like Google Analytics, Mixpanel, and Grafana.",
-  },
-  {
-    question: "Can you help with compliance and data privacy?",
-    answer: "Absolutely. We help organizations achieve compliance with GDPR, CCPA, HIPAA, and other regulations. Our security audits include data privacy assessments and recommendations for regulatory compliance.",
-  },
-];
-
 export default async function ProfessionalServicesPage() {
   const content = getContent("en");
   const { hero, cta } = content.servicesContent;
@@ -73,7 +54,6 @@ export default async function ProfessionalServicesPage() {
     <>
       <OrganizationSchema />
       <BreadcrumbSchema items={[{ name: "Services", url: "https://itguys.ro/services" }]} />
-      <FAQSchema items={faqItems} />
       <Hero
         headline={hero.headline}
         subheadline={hero.subheadline}
