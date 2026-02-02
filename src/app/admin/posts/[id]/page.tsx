@@ -186,8 +186,6 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
   };
 
   const nonEnLocales = ['ro', 'fr', 'de', 'it', 'es'] as const;
-  const localeNames: Record<string, string> = { ro: 'Romanian', fr: 'French', de: 'German', it: 'Italian', es: 'Spanish' };
-  const missingLocales = nonEnLocales.filter((l) => !formData.translations[l]?.title);
 
   const getShareStatus = (platform: string) =>
     socialShares.find((s) => s.platform === platform);
@@ -275,8 +273,29 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
                 onChange({ ...data, ...updates });
               };
 
+              const isRetranslating = retranslating === locale || retranslating === nonEnLocales.join(',');
+
               return (
                 <div className="space-y-4">
+                  {locale !== 'en' && (
+                    <div className="flex items-center justify-between p-2 bg-brand-800/30 rounded-lg -mt-1 mb-2">
+                      <span className="flex items-center gap-1.5 text-xs">
+                        {data.title ? (
+                          <><span className="w-2 h-2 rounded-full bg-green-400" /><span className="text-green-400">Has content</span></>
+                        ) : (
+                          <><span className="w-2 h-2 rounded-full bg-red-400" /><span className="text-red-400">Missing translation</span></>
+                        )}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleRetranslate([locale])}
+                        disabled={isRetranslating || retranslating !== null}
+                        className="px-3 py-1 text-xs font-medium text-white bg-brand-600 hover:bg-brand-500 disabled:opacity-50 rounded-lg transition-colors"
+                      >
+                        {isRetranslating ? 'Retranslating...' : 'Retranslate'}
+                      </button>
+                    </div>
+                  )}
                   <InputField
                     label="Title"
                     name={`title-${locale}`}
@@ -316,51 +335,6 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
           <button type="submit" disabled={saving} className="px-4 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-500 disabled:opacity-50 rounded-lg transition-colors">{saving ? 'Saving...' : 'Save'}</button>
         </div>
       </form>
-      <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6 mt-8">
-        <h2 className="text-lg font-semibold text-white mb-4">Translation Status</h2>
-        <div className="space-y-3">
-          {nonEnLocales.map((locale) => {
-            const hasContent = !!formData.translations[locale]?.title;
-            const isRetranslating = retranslating === locale || retranslating === nonEnLocales.join(',');
-            return (
-              <div key={locale} className="flex items-center justify-between p-3 bg-brand-800/50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-white">{localeNames[locale]}</span>
-                  {hasContent ? (
-                    <span className="flex items-center gap-1.5 text-xs text-green-400">
-                      <span className="w-2 h-2 rounded-full bg-green-400" />
-                      Has content
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1.5 text-xs text-red-400">
-                      <span className="w-2 h-2 rounded-full bg-red-400" />
-                      Missing
-                    </span>
-                  )}
-                </div>
-                <button
-                  onClick={() => handleRetranslate([locale])}
-                  disabled={isRetranslating || retranslating !== null}
-                  className="px-3 py-1.5 text-xs font-medium text-white bg-brand-600 hover:bg-brand-500 disabled:opacity-50 rounded-lg transition-colors"
-                >
-                  {isRetranslating ? 'Retranslating...' : 'Retranslate'}
-                </button>
-              </div>
-            );
-          })}
-          {missingLocales.length > 0 && (
-            <div className="pt-2">
-              <button
-                onClick={() => handleRetranslate([...missingLocales])}
-                disabled={retranslating !== null}
-                className="px-4 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-500 disabled:opacity-50 rounded-lg transition-colors"
-              >
-                {retranslating === nonEnLocales.join(',') ? 'Retranslating...' : `Retranslate All Missing (${missingLocales.length})`}
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
       {formData.is_published === 1 && (
         <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6 mt-8">
           <h2 className="text-lg font-semibold text-white mb-4">Social Sharing</h2>
