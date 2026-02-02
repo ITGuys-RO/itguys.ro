@@ -1,5 +1,5 @@
 // Database client
-export { getDB, query, queryFirst, execute, batch } from './client';
+export { getDB, query, queryFirst, execute, batch, buildUpdateStatement } from './client';
 export type { D1Database, D1PreparedStatement, D1Result } from './client';
 
 // Schema types

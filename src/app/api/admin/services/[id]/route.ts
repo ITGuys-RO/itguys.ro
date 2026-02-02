@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin, handleApiError } from '@/lib/admin-auth';
+import { requireAdmin, handleApiError, parseId } from '@/lib/admin-auth';
 import {
   getServiceWithTranslations,
   updateService,
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     requireAdmin(request);
     const { id } = await params;
-    const service = await getServiceWithTranslations(parseInt(id, 10));
+    const service = await getServiceWithTranslations(parseId(id));
 
     if (!service) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
@@ -31,7 +31,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
     const input = (await request.json()) as Partial<ServiceInput>;
 
-    await updateService(parseInt(id, 10), input);
+    await updateService(parseId(id), input);
     return NextResponse.json({ success: true });
   } catch (error) {
     return handleApiError(error);
@@ -43,7 +43,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     requireAdmin(request);
     const { id } = await params;
 
-    await deleteService(parseInt(id, 10));
+    await deleteService(parseId(id));
     return NextResponse.json({ success: true });
   } catch (error) {
     return handleApiError(error);

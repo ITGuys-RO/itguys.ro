@@ -305,7 +305,11 @@ export default function EditServicePage({ params }: { params: Promise<{ id: stri
   };
 
   const handleDelete = async () => {
-    await fetch(`/api/admin/services/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/admin/services/${id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      setError('Failed to delete service');
+      return;
+    }
     router.push('/admin/services');
   };
 

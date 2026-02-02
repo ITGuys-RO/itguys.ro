@@ -117,6 +117,33 @@ export async function execute(sql: string, params: unknown[] = []): Promise<{ ch
   };
 }
 
+// Build a conditional UPDATE statement from a partial input object
+export function buildUpdateStatement(
+  table: string,
+  id: number,
+  fields: Record<string, unknown>,
+): { sql: string; params: unknown[] } | null {
+  const updates: string[] = [];
+  const values: unknown[] = [];
+
+  for (const [column, value] of Object.entries(fields)) {
+    if (value !== undefined) {
+      updates.push(`${column} = ?`);
+      values.push(value);
+    }
+  }
+
+  if (updates.length === 0) return null;
+
+  updates.push('updated_at = CURRENT_TIMESTAMP');
+  values.push(id);
+
+  return {
+    sql: `UPDATE ${table} SET ${updates.join(', ')} WHERE id = ?`,
+    params: values,
+  };
+}
+
 // Helper to run multiple statements in a batch
 export async function batch(statements: Array<{ sql: string; params?: unknown[] }>): Promise<D1Result[]> {
   const db = await getDB();

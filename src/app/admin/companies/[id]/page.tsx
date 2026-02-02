@@ -91,7 +91,11 @@ export default function EditCompanyPage({ params }: { params: Promise<{ id: stri
   };
 
   const handleDelete = async () => {
-    await fetch(`/api/admin/companies/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/admin/companies/${id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      setError('Failed to delete company');
+      return;
+    }
     router.push('/admin/companies');
   };
 

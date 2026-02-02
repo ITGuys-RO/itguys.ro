@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin, handleApiError } from '@/lib/admin-auth';
+import { requireAdmin, handleApiError, parseId } from '@/lib/admin-auth';
 import {
   getProjectWithTranslations,
   updateProject,
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     requireAdmin(request);
     const { id } = await params;
-    const project = await getProjectWithTranslations(parseInt(id, 10));
+    const project = await getProjectWithTranslations(parseId(id));
 
     if (!project) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
@@ -31,7 +31,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const { id } = await params;
     const input = (await request.json()) as Partial<ProjectInput>;
 
-    await updateProject(parseInt(id, 10), input);
+    await updateProject(parseId(id), input);
     return NextResponse.json({ success: true });
   } catch (error) {
     return handleApiError(error);
@@ -43,7 +43,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     requireAdmin(request);
     const { id } = await params;
 
-    await deleteProject(parseInt(id, 10));
+    await deleteProject(parseId(id));
     return NextResponse.json({ success: true });
   } catch (error) {
     return handleApiError(error);

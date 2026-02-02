@@ -87,7 +87,11 @@ export default function EditFaqPage({ params }: { params: Promise<{ id: string }
   };
 
   const handleDelete = async () => {
-    await fetch(`/api/admin/faq/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/admin/faq/${id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      setError('Failed to delete FAQ item');
+      return;
+    }
     router.push('/admin/faq');
   };
 

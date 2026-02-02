@@ -23,6 +23,13 @@ function buildReverseLookup(): Map<string, string> {
 
 const reverseLookup = buildReverseLookup();
 
+function setCacheHeaders(response: NextResponse): void {
+  response.headers.set(
+    'Cache-Control',
+    'public, s-maxage=300, stale-while-revalidate=3600'
+  );
+}
+
 // English pages that exist in the (en) route group - no rewrite needed
 const englishRoutes = [
   "/",
@@ -50,7 +57,9 @@ export function middleware(request: NextRequest) {
     if (exactMatch) {
       const url = request.nextUrl.clone();
       url.pathname = exactMatch;
-      return NextResponse.rewrite(url);
+      const response = NextResponse.rewrite(url);
+      setCacheHeaders(response);
+      return response;
     }
 
     // Check for prefix match (for dynamic routes like /ro/servicii/web-development)
@@ -59,17 +68,23 @@ export function middleware(request: NextRequest) {
         const suffix = pathname.slice(localizedPrefix.length);
         const url = request.nextUrl.clone();
         url.pathname = internalPrefix + suffix;
-        return NextResponse.rewrite(url);
+        const response = NextResponse.rewrite(url);
+        setCacheHeaders(response);
+        return response;
       }
     }
 
     // No rewrite needed, let it through
-    return NextResponse.next();
+    const response = NextResponse.next();
+    setCacheHeaders(response);
+    return response;
   }
 
   // If pathname is an English route that exists in (en) group, let it through
   if (englishRoutes.includes(pathname) || englishRoutes.some(route => pathname.startsWith(route + '/'))) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    setCacheHeaders(response);
+    return response;
   }
 
   // For any other paths without locale, let Next.js handle the 404

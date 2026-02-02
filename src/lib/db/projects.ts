@@ -1,4 +1,4 @@
-import { query, queryFirst, execute, batch } from './client';
+import { query, queryFirst, execute, batch, buildUpdateStatement } from './client';
 import type { Locale } from './schema';
 import { generateSlug } from '../utils';
 import type {
@@ -237,50 +237,17 @@ export async function createProject(input: ProjectInput): Promise<number> {
 export async function updateProject(id: number, input: Partial<ProjectInput>): Promise<void> {
   const statements: { sql: string; params: unknown[] }[] = [];
 
-  const updates: string[] = [];
-  const values: unknown[] = [];
-
-  if (input.slug !== undefined) {
-    updates.push('slug = ?');
-    values.push(input.slug);
-  }
-  if (input.image_path !== undefined) {
-    updates.push('image_path = ?');
-    values.push(input.image_path);
-  }
-  if (input.external_url !== undefined) {
-    updates.push('external_url = ?');
-    values.push(input.external_url);
-  }
-  if (input.sort_order !== undefined) {
-    updates.push('sort_order = ?');
-    values.push(input.sort_order);
-  }
-  if (input.is_active !== undefined) {
-    updates.push('is_active = ?');
-    values.push(input.is_active);
-  }
-  if (input.is_case_study !== undefined) {
-    updates.push('is_case_study = ?');
-    values.push(input.is_case_study);
-  }
-  if (input.duration !== undefined) {
-    updates.push('duration = ?');
-    values.push(input.duration);
-  }
-  if (input.completed_at !== undefined) {
-    updates.push('completed_at = ?');
-    values.push(input.completed_at);
-  }
-
-  if (updates.length > 0) {
-    updates.push('updated_at = CURRENT_TIMESTAMP');
-    values.push(id);
-    statements.push({
-      sql: `UPDATE projects SET ${updates.join(', ')} WHERE id = ?`,
-      params: values,
-    });
-  }
+  const baseUpdate = buildUpdateStatement('projects', id, {
+    slug: input.slug,
+    image_path: input.image_path,
+    external_url: input.external_url,
+    sort_order: input.sort_order,
+    is_active: input.is_active,
+    is_case_study: input.is_case_study,
+    duration: input.duration,
+    completed_at: input.completed_at,
+  });
+  if (baseUpdate) statements.push(baseUpdate);
 
   // Translations
   if (input.translations) {

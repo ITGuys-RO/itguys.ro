@@ -1,4 +1,4 @@
-import { query, queryFirst, execute, batch } from './client';
+import { query, queryFirst, execute, batch, buildUpdateStatement } from './client';
 import type { Locale } from './schema';
 import type {
   FaqItem,
@@ -118,46 +118,33 @@ export async function createFaq(input: FaqInput): Promise<number> {
 }
 
 export async function updateFaq(id: number, input: Partial<FaqInput>): Promise<void> {
-  const updates: string[] = [];
-  const values: unknown[] = [];
+  const statements: { sql: string; params: unknown[] }[] = [];
 
-  if (input.slug !== undefined) {
-    updates.push('slug = ?');
-    values.push(input.slug);
-  }
-  if (input.category !== undefined) {
-    updates.push('category = ?');
-    values.push(input.category);
-  }
-  if (input.sort_order !== undefined) {
-    updates.push('sort_order = ?');
-    values.push(input.sort_order);
-  }
-  if (input.is_active !== undefined) {
-    updates.push('is_active = ?');
-    values.push(input.is_active);
-  }
+  const baseUpdate = buildUpdateStatement('faq_items', id, {
+    slug: input.slug,
+    category: input.category,
+    sort_order: input.sort_order,
+    is_active: input.is_active,
+  });
+  if (baseUpdate) statements.push(baseUpdate);
 
-  if (updates.length > 0) {
-    updates.push('updated_at = CURRENT_TIMESTAMP');
-    values.push(id);
-    await execute(`UPDATE faq_items SET ${updates.join(', ')} WHERE id = ?`, values);
-  }
-
-  // Update translations
   if (input.translations) {
     for (const [locale, t] of Object.entries(input.translations)) {
       if (t) {
-        await execute(
-          `INSERT INTO faq_translations (faq_id, locale, question, answer)
-           VALUES (?, ?, ?, ?)
-           ON CONFLICT(faq_id, locale) DO UPDATE SET
-             question = excluded.question,
-             answer = excluded.answer`,
-          [id, locale, t.question, t.answer]
-        );
+        statements.push({
+          sql: `INSERT INTO faq_translations (faq_id, locale, question, answer)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT(faq_id, locale) DO UPDATE SET
+                  question = excluded.question,
+                  answer = excluded.answer`,
+          params: [id, locale, t.question, t.answer],
+        });
       }
     }
+  }
+
+  if (statements.length > 0) {
+    await batch(statements);
   }
 }
 

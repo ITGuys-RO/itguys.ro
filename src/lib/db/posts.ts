@@ -1,5 +1,5 @@
 import { cache } from 'react';
-import { query, queryFirst, execute, batch } from './client';
+import { query, queryFirst, execute, batch, buildUpdateStatement } from './client';
 import type { Locale } from './schema';
 import { getTeamMemberLocalized } from './team';
 import { generateSlug } from '../utils';
@@ -420,38 +420,14 @@ export async function createPost(input: PostInput): Promise<number> {
 export async function updatePost(id: number, input: Partial<PostInput>): Promise<void> {
   const statements: { sql: string; params: unknown[] }[] = [];
 
-  const updates: string[] = [];
-  const values: unknown[] = [];
-
-  if (input.slug !== undefined) {
-    updates.push('slug = ?');
-    values.push(input.slug);
-  }
-  if (input.image_path !== undefined) {
-    updates.push('image_path = ?');
-    values.push(input.image_path);
-  }
-  if (input.author_id !== undefined) {
-    updates.push('author_id = ?');
-    values.push(input.author_id);
-  }
-  if (input.published_at !== undefined) {
-    updates.push('published_at = ?');
-    values.push(input.published_at);
-  }
-  if (input.is_published !== undefined) {
-    updates.push('is_published = ?');
-    values.push(input.is_published);
-  }
-
-  if (updates.length > 0) {
-    updates.push('updated_at = CURRENT_TIMESTAMP');
-    values.push(id);
-    statements.push({
-      sql: `UPDATE posts SET ${updates.join(', ')} WHERE id = ?`,
-      params: values,
-    });
-  }
+  const baseUpdate = buildUpdateStatement('posts', id, {
+    slug: input.slug,
+    image_path: input.image_path,
+    author_id: input.author_id,
+    published_at: input.published_at,
+    is_published: input.is_published,
+  });
+  if (baseUpdate) statements.push(baseUpdate);
 
   // Translations
   if (input.translations) {

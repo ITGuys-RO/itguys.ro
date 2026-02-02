@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin, handleApiError } from '@/lib/admin-auth';
+import { requireAdmin, handleApiError, parseId } from '@/lib/admin-auth';
 import {
   getPostWithTranslations,
   updatePost,
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     requireAdmin(request);
     const { id } = await params;
-    const post = await getPostWithTranslations(parseInt(id, 10));
+    const post = await getPostWithTranslations(parseId(id));
 
     if (!post) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 });
@@ -33,11 +33,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const input = (await request.json()) as Partial<PostInput>;
 
     // Get current post to check if publishing status changed
-    const currentPost = await getPostWithTranslations(parseInt(id, 10));
+    const currentPost = await getPostWithTranslations(parseId(id));
     const wasUnpublished = currentPost && currentPost.is_published === 0;
     const isNowPublished = input.is_published === 1;
 
-    await updatePost(parseInt(id, 10), input);
+    await updatePost(parseId(id), input);
 
     // Submit to IndexNow if post is being published for the first time
     if (wasUnpublished && isNowPublished && (input.slug || currentPost?.slug)) {
@@ -58,7 +58,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     requireAdmin(request);
     const { id } = await params;
 
-    await deletePost(parseInt(id, 10));
+    await deletePost(parseId(id));
     return NextResponse.json({ success: true });
   } catch (error) {
     return handleApiError(error);

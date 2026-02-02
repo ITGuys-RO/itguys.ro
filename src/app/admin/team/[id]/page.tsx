@@ -118,7 +118,10 @@ export default function EditTeamMemberPage({ params }: { params: Promise<{ id: s
 
   const handleDelete = async () => {
     const res = await fetch(`/api/admin/team/${id}`, { method: 'DELETE' });
-    if (!res.ok) throw new Error('Failed to delete');
+    if (!res.ok) {
+      setError('Failed to delete team member');
+      return;
+    }
     router.push('/admin/team');
   };
 

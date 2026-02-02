@@ -94,6 +94,7 @@ async function searchTeam(searchPattern: string): Promise<RawSearchResult[]> {
   ]);
 }
 
+// Searches name, client_type, and industry only (not challenge/solution/result — too large for LIKE scans)
 async function searchProjects(searchPattern: string): Promise<RawSearchResult[]> {
   const sql = `
     SELECT
@@ -102,19 +103,13 @@ async function searchProjects(searchPattern: string): Promise<RawSearchResult[]>
       CASE
         WHEN LOWER(t.name) LIKE LOWER(?) ESCAPE '\' THEN 'name'
         WHEN LOWER(t.client_type) LIKE LOWER(?) ESCAPE '\' THEN 'client_type'
-        WHEN LOWER(t.industry) LIKE LOWER(?) ESCAPE '\' THEN 'industry'
-        WHEN LOWER(t.challenge) LIKE LOWER(?) ESCAPE '\' THEN 'challenge'
-        WHEN LOWER(t.solution) LIKE LOWER(?) ESCAPE '\' THEN 'solution'
-        ELSE 'result'
+        ELSE 'industry'
       END as match_field,
       t.locale as match_locale,
       CASE
         WHEN LOWER(t.name) LIKE LOWER(?) ESCAPE '\' THEN t.name
         WHEN LOWER(t.client_type) LIKE LOWER(?) ESCAPE '\' THEN t.client_type
-        WHEN LOWER(t.industry) LIKE LOWER(?) ESCAPE '\' THEN t.industry
-        WHEN LOWER(t.challenge) LIKE LOWER(?) ESCAPE '\' THEN t.challenge
-        WHEN LOWER(t.solution) LIKE LOWER(?) ESCAPE '\' THEN t.solution
-        ELSE t.result
+        ELSE t.industry
       END as match_value
     FROM projects p
     JOIN project_translations t ON t.project_id = p.id
@@ -122,16 +117,12 @@ async function searchProjects(searchPattern: string): Promise<RawSearchResult[]>
     WHERE LOWER(t.name) LIKE LOWER(?) ESCAPE '\'
        OR LOWER(t.client_type) LIKE LOWER(?) ESCAPE '\'
        OR LOWER(t.industry) LIKE LOWER(?) ESCAPE '\'
-       OR LOWER(t.challenge) LIKE LOWER(?) ESCAPE '\'
-       OR LOWER(t.solution) LIKE LOWER(?) ESCAPE '\'
-       OR LOWER(t.result) LIKE LOWER(?) ESCAPE '\'
     LIMIT 10
   `;
-  // CASE match_field: 5, CASE match_value: 5, WHERE: 6 = 16 params
   return query<RawSearchResult>(sql, [
-    searchPattern, searchPattern, searchPattern, searchPattern, searchPattern,
-    searchPattern, searchPattern, searchPattern, searchPattern, searchPattern,
-    searchPattern, searchPattern, searchPattern, searchPattern, searchPattern, searchPattern,
+    searchPattern, searchPattern,
+    searchPattern, searchPattern,
+    searchPattern, searchPattern, searchPattern,
   ]);
 }
 
@@ -249,6 +240,7 @@ async function searchFaq(searchPattern: string): Promise<RawSearchResult[]> {
   ]);
 }
 
+// Searches title, excerpt, and meta fields only (not content — too large for LIKE scans)
 async function searchPosts(searchPattern: string): Promise<RawSearchResult[]> {
   const sql = `
     SELECT
@@ -257,7 +249,6 @@ async function searchPosts(searchPattern: string): Promise<RawSearchResult[]> {
       CASE
         WHEN LOWER(t.title) LIKE LOWER(?) ESCAPE '\' THEN 'title'
         WHEN LOWER(t.excerpt) LIKE LOWER(?) ESCAPE '\' THEN 'excerpt'
-        WHEN LOWER(t.content) LIKE LOWER(?) ESCAPE '\' THEN 'content'
         WHEN LOWER(t.meta_title) LIKE LOWER(?) ESCAPE '\' THEN 'meta_title'
         ELSE 'meta_description'
       END as match_field,
@@ -265,7 +256,6 @@ async function searchPosts(searchPattern: string): Promise<RawSearchResult[]> {
       CASE
         WHEN LOWER(t.title) LIKE LOWER(?) ESCAPE '\' THEN t.title
         WHEN LOWER(t.excerpt) LIKE LOWER(?) ESCAPE '\' THEN t.excerpt
-        WHEN LOWER(t.content) LIKE LOWER(?) ESCAPE '\' THEN t.content
         WHEN LOWER(t.meta_title) LIKE LOWER(?) ESCAPE '\' THEN t.meta_title
         ELSE t.meta_description
       END as match_value
@@ -274,16 +264,14 @@ async function searchPosts(searchPattern: string): Promise<RawSearchResult[]> {
     LEFT JOIN post_translations en_t ON en_t.post_id = p.id AND en_t.locale = 'en'
     WHERE LOWER(t.title) LIKE LOWER(?) ESCAPE '\'
        OR LOWER(t.excerpt) LIKE LOWER(?) ESCAPE '\'
-       OR LOWER(t.content) LIKE LOWER(?) ESCAPE '\'
        OR LOWER(t.meta_title) LIKE LOWER(?) ESCAPE '\'
        OR LOWER(t.meta_description) LIKE LOWER(?) ESCAPE '\'
     LIMIT 10
   `;
-  // CASE match_field: 4, CASE match_value: 4, WHERE: 5 = 13 params
   return query<RawSearchResult>(sql, [
+    searchPattern, searchPattern, searchPattern,
+    searchPattern, searchPattern, searchPattern,
     searchPattern, searchPattern, searchPattern, searchPattern,
-    searchPattern, searchPattern, searchPattern, searchPattern,
-    searchPattern, searchPattern, searchPattern, searchPattern, searchPattern,
   ]);
 }
 

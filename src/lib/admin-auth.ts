@@ -16,13 +16,13 @@ export function getAdminUser(request: NextRequest): CloudflareAccessPayload | nu
   // Cloudflare Access JWT is in the Cf-Access-Jwt-Assertion header
   const jwt = request.headers.get('Cf-Access-Jwt-Assertion');
 
-  // For local development, allow access without authentication
+  // For local development, allow access without authentication.
+  // Safe in production: Cloudflare Access sits in front of /admin/* and always
+  // injects the JWT header, so `!jwt` is never true for production requests.
+  // ADMIN_DEV_BYPASS is set in .dev.vars (local only), never via wrangler secrets.
   if (!jwt) {
-    // Check for dev mode - allows local testing without Cloudflare Access
-    // Use try-catch because process.env may not exist in Cloudflare Workers
     try {
-      const isDev = process.env.NODE_ENV === 'development' || process.env.ADMIN_DEV_BYPASS === 'true';
-      if (isDev) {
+      if (process.env.ADMIN_DEV_BYPASS === 'true') {
         return { email: 'dev@localhost', sub: 'dev' };
       }
     } catch {
@@ -81,6 +81,9 @@ export function handleApiError(error: unknown): NextResponse {
   if (error instanceof AdminAuthError) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  if (error instanceof InvalidIdError) {
+    return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
+  }
 
   console.error('API Error:', error);
 
@@ -101,6 +104,21 @@ export function handleApiError(error: unknown): NextResponse {
   }
 
   return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+}
+
+export function parseId(id: string): number {
+  const parsed = parseInt(id, 10);
+  if (isNaN(parsed)) {
+    throw new InvalidIdError();
+  }
+  return parsed;
+}
+
+export class InvalidIdError extends Error {
+  constructor() {
+    super('Invalid ID');
+    this.name = 'InvalidIdError';
+  }
 }
 
 // Wrapper to handle authentication and errors for admin API routes

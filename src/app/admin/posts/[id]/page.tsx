@@ -139,7 +139,11 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
   };
 
   const handleDelete = async () => {
-    await fetch(`/api/admin/posts/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/admin/posts/${id}`, { method: 'DELETE' });
+    if (!res.ok) {
+      setError('Failed to delete post');
+      return;
+    }
     router.push('/admin/posts');
   };
 

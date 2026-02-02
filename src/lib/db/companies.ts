@@ -1,4 +1,4 @@
-import { query, queryFirst, execute, batch } from './client';
+import { query, queryFirst, execute, batch, buildUpdateStatement } from './client';
 import type { Locale } from './schema';
 import type {
   Company,
@@ -112,50 +112,34 @@ export async function createCompany(input: CompanyInput): Promise<number> {
 }
 
 export async function updateCompany(id: number, input: Partial<CompanyInput>): Promise<void> {
-  const updates: string[] = [];
-  const values: unknown[] = [];
+  const statements: { sql: string; params: unknown[] }[] = [];
 
-  if (input.slug !== undefined) {
-    updates.push('slug = ?');
-    values.push(input.slug);
-  }
-  if (input.logo_path !== undefined) {
-    updates.push('logo_path = ?');
-    values.push(input.logo_path);
-  }
-  if (input.external_url !== undefined) {
-    updates.push('external_url = ?');
-    values.push(input.external_url);
-  }
-  if (input.sort_order !== undefined) {
-    updates.push('sort_order = ?');
-    values.push(input.sort_order);
-  }
-  if (input.is_active !== undefined) {
-    updates.push('is_active = ?');
-    values.push(input.is_active);
-  }
+  const baseUpdate = buildUpdateStatement('companies', id, {
+    slug: input.slug,
+    logo_path: input.logo_path,
+    external_url: input.external_url,
+    sort_order: input.sort_order,
+    is_active: input.is_active,
+  });
+  if (baseUpdate) statements.push(baseUpdate);
 
-  if (updates.length > 0) {
-    updates.push('updated_at = CURRENT_TIMESTAMP');
-    values.push(id);
-    await execute(`UPDATE companies SET ${updates.join(', ')} WHERE id = ?`, values);
-  }
-
-  // Update translations
   if (input.translations) {
     for (const [locale, t] of Object.entries(input.translations)) {
       if (t) {
-        await execute(
-          `INSERT INTO company_translations (company_id, locale, name, description)
-           VALUES (?, ?, ?, ?)
-           ON CONFLICT(company_id, locale) DO UPDATE SET
-             name = excluded.name,
-             description = excluded.description`,
-          [id, locale, t.name, t.description ?? null]
-        );
+        statements.push({
+          sql: `INSERT INTO company_translations (company_id, locale, name, description)
+                VALUES (?, ?, ?, ?)
+                ON CONFLICT(company_id, locale) DO UPDATE SET
+                  name = excluded.name,
+                  description = excluded.description`,
+          params: [id, locale, t.name, t.description ?? null],
+        });
       }
     }
+  }
+
+  if (statements.length > 0) {
+    await batch(statements);
   }
 }
 

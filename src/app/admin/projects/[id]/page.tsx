@@ -147,7 +147,10 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
 
   const handleDelete = async () => {
     const res = await fetch(`/api/admin/projects/${id}`, { method: 'DELETE' });
-    if (!res.ok) throw new Error('Failed to delete');
+    if (!res.ok) {
+      setError('Failed to delete project');
+      return;
+    }
     router.push('/admin/projects');
   };
 

@@ -1,4 +1,4 @@
-import { query, queryFirst, execute, batch } from './client';
+import { query, queryFirst, execute, batch, buildUpdateStatement } from './client';
 import type { Locale } from './schema';
 import type {
   Service,
@@ -280,38 +280,14 @@ export async function updateService(id: number, input: Partial<ServiceInput>): P
   // Batch base table update, translations, and technologies together
   const statements: { sql: string; params: unknown[] }[] = [];
 
-  const updates: string[] = [];
-  const values: unknown[] = [];
-
-  if (input.slug !== undefined) {
-    updates.push('slug = ?');
-    values.push(input.slug);
-  }
-  if (input.icon !== undefined) {
-    updates.push('icon = ?');
-    values.push(input.icon);
-  }
-  if (input.category !== undefined) {
-    updates.push('category = ?');
-    values.push(input.category);
-  }
-  if (input.sort_order !== undefined) {
-    updates.push('sort_order = ?');
-    values.push(input.sort_order);
-  }
-  if (input.is_active !== undefined) {
-    updates.push('is_active = ?');
-    values.push(input.is_active);
-  }
-
-  if (updates.length > 0) {
-    updates.push('updated_at = CURRENT_TIMESTAMP');
-    values.push(id);
-    statements.push({
-      sql: `UPDATE services SET ${updates.join(', ')} WHERE id = ?`,
-      params: values,
-    });
-  }
+  const baseUpdate = buildUpdateStatement('services', id, {
+    slug: input.slug,
+    icon: input.icon,
+    category: input.category,
+    sort_order: input.sort_order,
+    is_active: input.is_active,
+  });
+  if (baseUpdate) statements.push(baseUpdate);
 
   // Translations
   if (input.translations) {

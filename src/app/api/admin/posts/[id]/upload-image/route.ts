@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin, handleApiError } from '@/lib/admin-auth';
+import { requireAdmin, handleApiError, parseId } from '@/lib/admin-auth';
 import { getPostById, updatePost } from '@/lib/db';
 
 type RouteParams = { params: Promise<{ id: string }> };
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     requireAdmin(request);
     const { id } = await params;
-    const postId = parseInt(id, 10);
+    const postId = parseId(id);
 
     const post = await getPostById(postId);
     if (!post) {

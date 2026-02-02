@@ -1,4 +1,4 @@
-import { query, queryFirst, execute, batch } from './client';
+import { query, queryFirst, execute, batch, buildUpdateStatement } from './client';
 import type { Locale } from './schema';
 import type {
   TeamMember,
@@ -154,59 +154,37 @@ export async function createTeamMember(input: TeamMemberInput): Promise<number> 
 }
 
 export async function updateTeamMember(id: number, input: Partial<TeamMemberInput>): Promise<void> {
-  const updates: string[] = [];
-  const values: unknown[] = [];
+  const statements: { sql: string; params: unknown[] }[] = [];
 
-  if (input.slug !== undefined) {
-    updates.push('slug = ?');
-    values.push(input.slug);
-  }
-  if (input.email !== undefined) {
-    updates.push('email = ?');
-    values.push(input.email);
-  }
-  if (input.gravatar_email !== undefined) {
-    updates.push('gravatar_email = ?');
-    values.push(input.gravatar_email);
-  }
-  if (input.linkedin_url !== undefined) {
-    updates.push('linkedin_url = ?');
-    values.push(input.linkedin_url);
-  }
-  if (input.image_path !== undefined) {
-    updates.push('image_path = ?');
-    values.push(input.image_path);
-  }
-  if (input.sort_order !== undefined) {
-    updates.push('sort_order = ?');
-    values.push(input.sort_order);
-  }
-  if (input.is_active !== undefined) {
-    updates.push('is_active = ?');
-    values.push(input.is_active);
-  }
+  const baseUpdate = buildUpdateStatement('team_members', id, {
+    slug: input.slug,
+    email: input.email,
+    gravatar_email: input.gravatar_email,
+    linkedin_url: input.linkedin_url,
+    image_path: input.image_path,
+    sort_order: input.sort_order,
+    is_active: input.is_active,
+  });
+  if (baseUpdate) statements.push(baseUpdate);
 
-  if (updates.length > 0) {
-    updates.push('updated_at = CURRENT_TIMESTAMP');
-    values.push(id);
-    await execute(`UPDATE team_members SET ${updates.join(', ')} WHERE id = ?`, values);
-  }
-
-  // Update translations
   if (input.translations) {
     for (const [locale, t] of Object.entries(input.translations)) {
       if (t) {
-        await execute(
-          `INSERT INTO team_member_translations (team_member_id, locale, name, role, bio)
-           VALUES (?, ?, ?, ?, ?)
-           ON CONFLICT(team_member_id, locale) DO UPDATE SET
-             name = excluded.name,
-             role = excluded.role,
-             bio = excluded.bio`,
-          [id, locale, t.name, t.role, t.bio]
-        );
+        statements.push({
+          sql: `INSERT INTO team_member_translations (team_member_id, locale, name, role, bio)
+                VALUES (?, ?, ?, ?, ?)
+                ON CONFLICT(team_member_id, locale) DO UPDATE SET
+                  name = excluded.name,
+                  role = excluded.role,
+                  bio = excluded.bio`,
+          params: [id, locale, t.name, t.role, t.bio],
+        });
       }
     }
+  }
+
+  if (statements.length > 0) {
+    await batch(statements);
   }
 }
 
