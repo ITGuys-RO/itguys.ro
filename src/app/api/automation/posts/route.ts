@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createPost, getPostBySlug, updatePost } from '@/lib/db/posts';
+import { createImageCandidates, type PostImageCandidateInput } from '@/lib/db/image-candidates';
 import { PostInput } from '@/lib/db/schema';
 
 function validateApiKey(request: NextRequest): boolean {
@@ -21,7 +22,8 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const input: PostInput = await request.json();
+    const body = await request.json();
+    const { imageCandidates, ...input } = body as PostInput & { imageCandidates?: PostImageCandidateInput[] };
 
     // Check if post with this slug already exists
     const existingPost = await getPostBySlug(input.slug);
@@ -38,6 +40,11 @@ export async function POST(request: NextRequest) {
       // Create new post
       postId = await createPost(input);
       action = 'created';
+    }
+
+    // Store image candidates if provided
+    if (imageCandidates && imageCandidates.length > 0) {
+      await createImageCandidates(postId, imageCandidates);
     }
 
     return NextResponse.json({ id: postId, success: true, action });

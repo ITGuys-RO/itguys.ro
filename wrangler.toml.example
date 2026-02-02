@@ -19,6 +19,10 @@ binding = "DB"
 database_name = "itguys-ro"
 database_id = "${D1_DATABASE_ID}"
 
+[[r2_buckets]]
+binding = "BLOG_IMAGES"
+bucket_name = "itguys-blog-images"
+
 [observability]
 [observability.logs]
 enabled = true

@@ -95,6 +95,7 @@ interface BlogPostEnglish extends BlogPostBase {
 
 interface BlogPost extends BlogPostBase {
   translations: Record<string, BlogPostTranslation>;
+  imageCandidates?: ImageCandidate[];
 }
 
 function isValidBlogPostEnglish(obj: unknown): obj is BlogPostEnglish {
@@ -155,6 +156,7 @@ Return your findings as PLAIN TEXT (not JSON) with:
 interface ResearchResult {
   text: string;
   sourceUrls: string[];
+  images: ImageCandidate[];
 }
 
 async function researchNews(): Promise<ResearchResult> {
@@ -164,17 +166,41 @@ async function researchNews(): Promise<ResearchResult> {
       const result = await generateText({
         model: perplexity(PERPLEXITY_MODEL),
         prompt: getResearchPrompt(),
+        providerOptions: {
+          perplexity: {
+            return_images: true,
+          },
+        },
       });
       const sourceUrls = (result.sources || [])
         .filter(s => 'url' in s && typeof s.url === 'string')
         .map(s => (s as { url: string }).url);
-      return { text: stripThinkingTags(result.text), sourceUrls };
+
+      // Extract images from provider metadata
+      const metadata = result.providerMetadata?.perplexity as
+        | { images?: Array<{ imageUrl?: string; url?: string; originUrl?: string }> }
+        | undefined;
+      const rawImages = metadata?.images || [];
+      const images: ImageCandidate[] = rawImages
+        .filter(img => img.imageUrl || img.url)
+        .map(img => ({
+          imageUrl: (img.imageUrl || img.url)!,
+          pageTitle: 'Perplexity search result',
+          sourceUrl: img.originUrl || '',
+        }));
+
+      if (images.length > 0) {
+        console.log(`  Perplexity returned ${images.length} image(s)`);
+      }
+
+      return { text: stripThinkingTags(result.text), sourceUrls, images };
     }, 'researchNews');
   } catch (error) {
     console.warn('Perplexity failed, falling back to Claude knowledge:', (error as Error).message);
     return {
       text: 'FALLBACK: No live research available. Write about a recent security advisory, CVE, or notable tech development from your knowledge. Focus on practical implications for web developers, mobile developers, and security teams.',
       sourceUrls: [],
+      images: [],
     };
   }
 }
@@ -183,6 +209,89 @@ interface ImageCandidate {
   imageUrl: string;
   pageTitle: string;
   sourceUrl: string;
+}
+
+interface ImageScore {
+  candidate: ImageCandidate;
+  score: number;
+  rejected: boolean;
+  reason?: string;
+}
+
+async function scoreImageCandidate(
+  candidate: ImageCandidate,
+  articleTopic: string
+): Promise<ImageScore> {
+  try {
+    const response = await anthropic.messages.create({
+      model: ANTHROPIC_MODEL,
+      max_tokens: 30,
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'image',
+            source: { type: 'url', url: candidate.imageUrl },
+          },
+          {
+            type: 'text',
+            text: `Rate this image as a blog hero image for an article about: ${articleTopic.substring(0, 300)}
+
+Check these criteria:
+1. No visible URLs, watermarks, or overlaid text
+2. Relevant to the article topic
+3. Looks like a hero/banner image (not a tiny icon, avatar, or logo)
+
+Answer in EXACTLY this format (nothing else):
+SCORE: 0-10
+REJECT: yes/no
+REASON: one short phrase`,
+          },
+        ],
+      }],
+    });
+
+    const answer = response.content[0]?.type === 'text' ? response.content[0].text.trim() : '';
+    const scoreMatch = answer.match(/SCORE:\s*(\d+)/i);
+    const rejectMatch = answer.match(/REJECT:\s*(yes|no)/i);
+    const reasonMatch = answer.match(/REASON:\s*(.+)/i);
+
+    const score = scoreMatch ? parseInt(scoreMatch[1], 10) : 5;
+    const rejected = rejectMatch ? rejectMatch[1].toLowerCase() === 'yes' : false;
+    const reason = reasonMatch?.[1]?.trim();
+
+    return { candidate, score, rejected, reason };
+  } catch {
+    return { candidate, score: 5, rejected: false };
+  }
+}
+
+async function scoreAndFilterCandidates(
+  candidates: ImageCandidate[],
+  articleTopic: string
+): Promise<ImageCandidate[]> {
+  if (candidates.length === 0) return candidates;
+
+  console.log('  Scoring candidates with vision...');
+  const results = await Promise.allSettled(
+    candidates.map(c => scoreImageCandidate(c, articleTopic))
+  );
+
+  const scores: ImageScore[] = [];
+  for (const result of results) {
+    if (result.status === 'fulfilled') {
+      const s = result.value;
+      const status = s.rejected ? 'REJECTED' : `score=${s.score}`;
+      console.log(`  ${status}${s.reason ? ` (${s.reason})` : ''}: ${s.candidate.imageUrl}`);
+      scores.push(s);
+    }
+  }
+
+  // Filter rejected, sort by score descending
+  return scores
+    .filter(s => !s.rejected)
+    .sort((a, b) => b.score - a.score)
+    .map(s => s.candidate);
 }
 
 async function extractImageCandidates(sourceUrls: string[]): Promise<ImageCandidate[]> {
@@ -227,48 +336,80 @@ async function extractImageCandidates(sourceUrls: string[]): Promise<ImageCandid
   return candidates;
 }
 
-async function pickBestImage(
-  candidates: ImageCandidate[],
-  researchText: string
-): Promise<string | null> {
+function pickBestImage(candidates: ImageCandidate[]): string | null {
   if (candidates.length === 0) return null;
-  if (candidates.length === 1) {
-    // Still validate relevance for single candidate
-    const c = candidates[0];
-    console.log(`  Single candidate: "${c.pageTitle}" from ${c.sourceUrl}`);
-    // Image comes from a source article, so it's likely relevant — use it
-    return c.imageUrl;
-  }
-
-  // Multiple candidates: ask Claude to pick the best one
-  const listing = candidates.map((c, i) =>
-    `${i + 1}. Page: "${c.pageTitle}" | Image: ${c.imageUrl}`
-  ).join('\n');
-
-  const response = await anthropic.messages.create({
-    model: ANTHROPIC_MODEL,
-    max_tokens: 10,
-    messages: [{
-      role: 'user',
-      content: `Pick the best image for this tech article. These images come from the article's source pages, so they are relevant. Pick the one that looks most like a hero/banner image (not a tiny icon or avatar). Answer with ONLY the number (1-${candidates.length}).
-
-Article topic:
-${researchText.substring(0, 500)}
-
-Image candidates:
-${listing}`,
-    }],
-  });
-
-  const answer = response.content[0]?.type === 'text' ? response.content[0].text.trim() : '';
-  const idx = parseInt(answer, 10) - 1;
-  if (idx >= 0 && idx < candidates.length) {
-    console.log(`  Picked image from "${candidates[idx].pageTitle}"`);
-    return candidates[idx].imageUrl;
-  }
-  // Fallback: use the first candidate
-  console.log(`  Unexpected answer "${answer}", using first candidate`);
+  // Candidates are already sorted by score from scoreAndFilterCandidates
+  console.log(`  Using best candidate: "${candidates[0].pageTitle}"`);
   return candidates[0].imageUrl;
+}
+
+async function searchFallbackImage(articleTopic: string): Promise<ImageCandidate[]> {
+  console.log('  Searching for fallback image via Perplexity...');
+  try {
+    // First, ask Claude to craft a good image search query from the article topic
+    const queryResponse = await anthropic.messages.create({
+      model: ANTHROPIC_MODEL,
+      max_tokens: 50,
+      messages: [{
+        role: 'user',
+        content: `Based on this tech article topic, write a short image search query (5-10 words) to find a relevant, high-quality photo. Focus on the core technology or concept, not the news event itself. Return ONLY the search query, nothing else.
+
+Topic: ${articleTopic.substring(0, 500)}`,
+      }],
+    });
+    const searchQuery = queryResponse.content[0]?.type === 'text'
+      ? queryResponse.content[0].text.trim()
+      : articleTopic.substring(0, 100);
+
+    console.log(`  Search query: "${searchQuery}"`);
+
+    const result = await withRetry(async () => {
+      return await generateText({
+        model: perplexity(PERPLEXITY_MODEL),
+        prompt: `Find a high-quality landscape photo related to: ${searchQuery}`,
+        providerOptions: {
+          perplexity: {
+            return_images: true,
+          },
+        },
+      });
+    }, 'searchFallbackImage');
+
+    // Extract images from provider metadata
+    const metadata = result.providerMetadata?.perplexity as
+      | { images?: Array<{ imageUrl?: string; url?: string; originUrl?: string }> }
+      | undefined;
+    const images = metadata?.images;
+
+    if (!images || images.length === 0) {
+      console.log('  No images returned from Perplexity');
+      return [];
+    }
+
+    const candidates: ImageCandidate[] = [];
+    for (const img of images.slice(0, 3)) {
+      const url = img.imageUrl || img.url;
+      if (!url) continue;
+
+      const valid = await validateImageUrl(url);
+      if (!valid) {
+        console.log(`  Fallback image invalid: ${url}`);
+        continue;
+      }
+
+      console.log(`  Found fallback image: ${url}`);
+      candidates.push({
+        imageUrl: url,
+        pageTitle: `Search: ${searchQuery}`,
+        sourceUrl: img.originUrl || '',
+      });
+    }
+
+    return candidates;
+  } catch (err) {
+    console.warn(`  Fallback image search failed: ${(err as Error).message}`);
+    return [];
+  }
 }
 
 function getWritePostPrompt(research: string): string {
@@ -828,15 +969,26 @@ async function main() {
   const research = await researchNews();
   console.log(`Research complete (${research.text.length} chars, ${research.sourceUrls.length} sources)`);
 
-  // Step 1b: Extract featured image from source URLs
+  // Step 1b: Extract featured image from source URLs + Perplexity images
   console.log('Step 1b: Extracting featured image from sources...');
-  const candidates = await extractImageCandidates(research.sourceUrls);
-  console.log(`  Found ${candidates.length} image candidate(s)`);
-  const featuredImage = await pickBestImage(candidates, research.text);
+  const ogCandidates = await extractImageCandidates(research.sourceUrls);
+  const allCandidates = [...ogCandidates, ...research.images];
+  console.log(`  Found ${allCandidates.length} image candidate(s) (${ogCandidates.length} OG + ${research.images.length} Perplexity)`);
+  const scoredCandidates = await scoreAndFilterCandidates(allCandidates, research.text);
+  let featuredImage = pickBestImage(scoredCandidates);
+  if (!featuredImage) {
+    console.log('  All candidates rejected or none found, trying targeted search...');
+    const fallbackCandidates = await searchFallbackImage(research.text);
+    if (fallbackCandidates.length > 0) {
+      const scored = await scoreAndFilterCandidates(fallbackCandidates, research.text);
+      featuredImage = pickBestImage(scored);
+      allCandidates.push(...fallbackCandidates);
+    }
+  }
   if (featuredImage) {
     console.log(`Found featured image: ${featuredImage}`);
   } else {
-    console.log('No featured image found in sources');
+    console.log('No featured image found');
   }
 
   // Step 2: Write structured blog post (Claude)
@@ -871,6 +1023,7 @@ async function main() {
   let blogPost: BlogPost = {
     ...englishPost,
     translations: allTranslations,
+    imageCandidates: allCandidates.length > 0 ? allCandidates : undefined,
   };
 
   blogPost = await validateAndFixBlogPost(blogPost);
@@ -879,7 +1032,7 @@ async function main() {
   console.log(`Wrote blog-post.json with ${Object.keys(blogPost.translations).length} translations`);
 
   // Submit to local API if running locally
-  const localApiUrl = process.env.LOCAL_API_URL || 'http://localhost:8789';
+  const localApiUrl = process.env.LOCAL_API_URL || 'http://localhost:8787';
   await submitToLocalApi(blogPost, localApiUrl);
 }
 

@@ -3,7 +3,7 @@
 import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { InputField, TextareaField, CheckboxField, DateTimePicker, TagInput, LocaleFields, DeleteButton, MarkdownEditor, ValidationSummary, useFormValidation, validateTranslations } from '@/components/admin';
+import { InputField, TextareaField, CheckboxField, DateTimePicker, TagInput, LocaleFields, DeleteButton, MarkdownEditor, ValidationSummary, useFormValidation, validateTranslations, ImageUpload, ImageCandidatesGallery } from '@/components/admin';
 import type { PostWithTranslations, PostInput, PostSocialShare } from '@/lib/db';
 import { generateSlug } from '@/lib/utils';
 
@@ -231,7 +231,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
           <h2 className="text-lg font-semibold text-white mb-4">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <InputField label="Slug" name="slug" value={formData.slug} onChange={() => {}} disabled required helpText="Cannot be changed after creation" />
-            <InputField label="Image Path" name="image_path" value={formData.image_path || ''} onChange={(v) => setFormData({ ...formData, image_path: v || null })} />
+            <InputField label="Image Path" name="image_path" value={formData.image_path || ''} onChange={(v) => setFormData({ ...formData, image_path: v || null })} helpText="Direct URL or uploaded via controls below" />
             <DateTimePicker label="Published At" name="published_at" value={formData.published_at ?? null} onChange={(v) => setFormData({ ...formData, published_at: v })} />
             <div className="flex items-end">
               <CheckboxField label="Published" name="is_published" checked={formData.is_published === 1} onChange={(c) => setFormData({ ...formData, is_published: c ? 1 : 0 })} description="Make this post visible to the public" />
@@ -239,6 +239,21 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
           </div>
           <div className="mt-4">
             <TagInput label="Tags" value={formData.tags} onChange={(v) => setFormData({ ...formData, tags: v })} />
+          </div>
+        </div>
+        <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6">
+          <h2 className="text-lg font-semibold text-white mb-4">Post Image</h2>
+          <div className="space-y-6">
+            <ImageCandidatesGallery
+              postId={id}
+              currentImage={formData.image_path || null}
+              onSelected={(path) => setFormData({ ...formData, image_path: path })}
+            />
+            <ImageUpload
+              postId={id}
+              currentImage={formData.image_path || null}
+              onUploaded={(path) => setFormData({ ...formData, image_path: path })}
+            />
           </div>
         </div>
         <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6">

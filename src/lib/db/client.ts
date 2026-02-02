@@ -32,7 +32,45 @@ export type D1ExecResult = {
 declare global {
   interface CloudflareEnv {
     DB?: D1Database;
+    BLOG_IMAGES?: R2Bucket;
     INDEXNOW_KEY?: string;
+  }
+
+  interface R2Bucket {
+    put(key: string, value: ArrayBuffer | ReadableStream | string, options?: R2PutOptions): Promise<R2Object>;
+    get(key: string): Promise<R2ObjectBody | null>;
+    delete(key: string): Promise<void>;
+    list(options?: R2ListOptions): Promise<R2Objects>;
+  }
+
+  interface R2PutOptions {
+    httpMetadata?: { contentType?: string };
+    customMetadata?: Record<string, string>;
+  }
+
+  interface R2Object {
+    key: string;
+    size: number;
+    etag: string;
+  }
+
+  interface R2ObjectBody extends R2Object {
+    body: ReadableStream;
+    bodyUsed: boolean;
+    arrayBuffer(): Promise<ArrayBuffer>;
+    text(): Promise<string>;
+  }
+
+  interface R2ListOptions {
+    prefix?: string;
+    limit?: number;
+    cursor?: string;
+  }
+
+  interface R2Objects {
+    objects: R2Object[];
+    truncated: boolean;
+    cursor?: string;
   }
 }
 

@@ -424,6 +424,8 @@ export interface PostInput {
   }>;
 }
 
+export type { PostImageCandidate, PostImageCandidateInput } from './image-candidates';
+
 export interface TranslationInput {
   key: string;
   namespace: string;

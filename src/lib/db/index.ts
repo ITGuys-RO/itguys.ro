@@ -14,3 +14,4 @@ export * from './faq';
 export * from './posts';
 export * from './social-shares';
 export * from './search';
+export * from './image-candidates';

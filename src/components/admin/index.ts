@@ -9,3 +9,5 @@ export { GlobalSearch } from './GlobalSearch';
 export { ValidationSummary } from './ValidationSummary';
 export { validate, validators, createFieldValidator, type ValidationError, type ValidationResult } from './validation';
 export { useFormValidation, validateTranslations, type FieldRules, type ValidationSchema } from './useFormValidation';
+export { ImageUpload } from './ImageUpload';
+export { ImageCandidatesGallery } from './ImageCandidatesGallery';
