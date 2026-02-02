@@ -915,10 +915,13 @@ async function validateAndFixBlogPost(post: BlogPost): Promise<BlogPost> {
   }
 
   if (typeof post.image_path === 'string') {
-    const valid = await validateImageUrl(post.image_path);
-    if (!valid) {
-      warnings.push(`Invalid image URL, setting to null: ${post.image_path}`);
-      post.image_path = null;
+    // Skip validation for local paths (stored on disk during local dev)
+    if (!post.image_path.startsWith('/')) {
+      const valid = await validateImageUrl(post.image_path);
+      if (!valid) {
+        warnings.push(`Invalid image URL, setting to null: ${post.image_path}`);
+        post.image_path = null;
+      }
     }
   }
 
