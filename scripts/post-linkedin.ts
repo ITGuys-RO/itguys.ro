@@ -36,7 +36,7 @@ const response = await fetch("https://api.linkedin.com/rest/posts", {
   headers: {
     "Authorization": `Bearer ${LINKEDIN_ACCESS_TOKEN}`,
     "Content-Type": "application/json",
-    "LinkedIn-Version": "202402",
+    "LinkedIn-Version": "202501",
     "X-Restli-Protocol-Version": "2.0.0",
   },
   body: JSON.stringify({
@@ -48,6 +48,7 @@ const response = await fetch("https://api.linkedin.com/rest/posts", {
       article: {
         source: url,
         title,
+        description: desc,
       },
     },
     lifecycleState: "PUBLISHED",
