@@ -1,3 +1,5 @@
+import { execSync } from "child_process";
+
 const {
   FACEBOOK_ACCESS_TOKEN,
   FACEBOOK_APP_ID,
@@ -37,7 +39,6 @@ if (data.access_token === FACEBOOK_ACCESS_TOKEN) {
 }
 
 // Update the GitHub secret via gh CLI (requires GH_TOKEN env var)
-const { execSync } = await import("child_process");
 execSync(`gh secret set FACEBOOK_ACCESS_TOKEN`, {
   input: data.access_token,
   env: { ...process.env, GH_TOKEN: GH_PAT_WORKFLOW },
