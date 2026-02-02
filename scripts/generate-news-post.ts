@@ -40,7 +40,8 @@ async function withRetry<T>(
           error.message.includes('ECONNRESET') ||
           error.message.includes('other side closed') ||
           error.message.includes('Failed to parse') ||
-          error.message.includes('missing required fields'));
+          error.message.includes('missing required fields') ||
+          error.message.includes('expected at position'));
 
       if (!isRetryable || attempt === MAX_RETRIES) {
         throw error;
@@ -695,7 +696,7 @@ async function translateAll(
     if (result.status === 'fulfilled') {
       translations[result.value.locale] = result.value.translated;
     } else {
-      console.warn(`  Translation failed, skipping: ${result.reason}`);
+      console.warn(`  Translation failed for a locale, skipping: ${result.reason}`);
     }
   }
 
