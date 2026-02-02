@@ -113,3 +113,24 @@ jobs:
           FACEBOOK_ACCESS_TOKEN: ${{ secrets.FACEBOOK_ACCESS_TOKEN }}
           SITE_URL: ${{ vars.SITE_URL }}
         run: pnpm tsx scripts/post-facebook.ts
+
+      - name: Refresh LinkedIn token
+        if: success()
+        continue-on-error: true
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_REFRESH_TOKEN: ${{ secrets.LINKEDIN_REFRESH_TOKEN }}
+          LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
+          LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
+          GH_PAT_WORKFLOW: ${{ secrets.GH_PAT_WORKFLOW }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: pnpm tsx scripts/refresh-linkedin-token.ts
+
+      - name: Post to LinkedIn
+        if: success()
+        continue-on-error: true
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_ORG_ID: ${{ secrets.LINKEDIN_ORG_ID }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: pnpm tsx scripts/post-linkedin.ts
