@@ -32,6 +32,7 @@ const englishRoutes = [
   "/contact",
   "/portfolio",
   "/blog",
+  "/privacy",
 ];
 
 export function middleware(request: NextRequest) {
