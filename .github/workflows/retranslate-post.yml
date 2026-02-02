@@ -12,10 +12,6 @@ on:
         required: true
         type: string
 
-concurrency:
-  group: retranslate-${{ github.event.inputs.post_slug }}
-  cancel-in-progress: true
-
 permissions:
   contents: read
 
