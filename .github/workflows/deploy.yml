@@ -58,29 +58,20 @@ jobs:
 
       - name: Run D1 migrations
         run: |
-          # Ensure migrations tracking table exists
-          pnpm wrangler d1 execute itguys-ro --remote --file="migrations/0000_migrations_tracking.sql"
+          # One-time: migrate from custom _migrations to wrangler's d1_migrations
+          HAS_OLD=$(pnpm wrangler d1 execute itguys-ro --remote --command "SELECT name FROM sqlite_master WHERE type='table' AND name='_migrations'" --json 2>/dev/null | jq -r '.[0].results | length' || echo "0")
+          HAS_NEW=$(pnpm wrangler d1 execute itguys-ro --remote --command "SELECT name FROM sqlite_master WHERE type='table' AND name='d1_migrations'" --json 2>/dev/null | jq -r '.[0].results | length' || echo "0")
 
-          # Get list of applied migrations
-          APPLIED=$(pnpm wrangler d1 execute itguys-ro --remote --command "SELECT name FROM _migrations" --json | jq -r '.[0].results[].name' 2>/dev/null || echo "")
+          if [ "$HAS_OLD" != "0" ] && [ "$HAS_NEW" = "0" ]; then
+            echo "Migrating tracking table from _migrations to d1_migrations..."
+            APPLIED=$(pnpm wrangler d1 execute itguys-ro --remote --command "SELECT name FROM _migrations ORDER BY id" --json | jq -r '.[0].results[].name' 2>/dev/null || echo "")
+            pnpm wrangler d1 execute itguys-ro --remote --command "CREATE TABLE IF NOT EXISTS d1_migrations (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE NOT NULL, applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)"
+            for name in $APPLIED; do
+              pnpm wrangler d1 execute itguys-ro --remote --command "INSERT OR IGNORE INTO d1_migrations (name) VALUES ('$name')"
+            done
+          fi
 
-          for migration in migrations/*.sql; do
-            if [ -f "$migration" ]; then
-              MIGRATION_NAME=$(basename "$migration")
-
-              # Skip if already applied
-              if echo "$APPLIED" | grep -q "^${MIGRATION_NAME}$"; then
-                echo "Skipping (already applied): $MIGRATION_NAME"
-                continue
-              fi
-
-              echo "Running migration: $MIGRATION_NAME"
-              pnpm wrangler d1 execute itguys-ro --remote --file="$migration"
-
-              # Record migration as applied
-              pnpm wrangler d1 execute itguys-ro --remote --command "INSERT INTO _migrations (name) VALUES ('$MIGRATION_NAME')"
-            fi
-          done
+          pnpm wrangler d1 migrations apply itguys-ro --remote
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 

@@ -22,7 +22,7 @@
     "dev": "next build && npx @opennextjs/cloudflare build --skipBuild && wrangler dev",
     "build": "next build && npx @opennextjs/cloudflare build --skipBuild",
     "lint": "eslint .",
-    "db:migrate:local": "for f in migrations/*.sql; do pnpm wrangler d1 execute itguys-ro --local --file=\"$f\"; done"
+    "db:migrate:local": "pnpm wrangler d1 migrations apply itguys-ro --local"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
