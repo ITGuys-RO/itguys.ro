@@ -11,6 +11,7 @@ import type {
   PostInput,
   TeamMemberLocalized,
 } from './schema';
+import { getSocialShares, getSocialSharesForPosts } from './social-shares';
 
 export async function getPosts(publishedOnly = true): Promise<Post[]> {
   if (publishedOnly) {
@@ -48,9 +49,10 @@ export async function getPostWithTranslations(id: number): Promise<PostWithTrans
   const post = await getPostById(id);
   if (!post) return null;
 
-  const [translations, tags] = await Promise.all([
+  const [translations, tags, socialShares] = await Promise.all([
     getPostTranslations(id),
     getPostTags(id),
+    getSocialShares(id),
   ]);
 
   const translationsMap = translations.reduce((acc, t) => {
@@ -63,7 +65,7 @@ export async function getPostWithTranslations(id: number): Promise<PostWithTrans
     author = (await getTeamMemberLocalized(post.author_id, 'en')) ?? undefined;
   }
 
-  return { ...post, translations: translationsMap, tags, author };
+  return { ...post, translations: translationsMap, tags, author, socialShares };
 }
 
 export async function getAllPostsWithTranslations(): Promise<PostWithTranslations[]> {
@@ -71,10 +73,16 @@ export async function getAllPostsWithTranslations(): Promise<PostWithTranslation
     'SELECT * FROM posts ORDER BY created_at DESC'
   );
 
+  const postIds = posts.map((p) => p.id);
+  const sharesMap = await getSocialSharesForPosts(postIds);
+
   const result: PostWithTranslations[] = [];
   for (const post of posts) {
     const fullPost = await getPostWithTranslations(post.id);
-    if (fullPost) result.push(fullPost);
+    if (fullPost) {
+      fullPost.socialShares = sharesMap[post.id] ?? [];
+      result.push(fullPost);
+    }
   }
   return result;
 }

@@ -172,6 +172,15 @@ export interface PostTag {
   tag: string;
 }
 
+export interface PostSocialShare {
+  id: number;
+  post_id: number;
+  platform: 'twitter' | 'facebook';
+  platform_post_id: string | null;
+  shared_at: string;
+  shared_by: 'manual' | 'automation';
+}
+
 export interface Translation {
   id: number;
   key: string;
@@ -287,6 +296,7 @@ export interface PostWithTranslations extends Post {
   translations: Record<Locale, PostTranslation | undefined>;
   tags: string[];
   author?: TeamMemberLocalized;
+  socialShares?: PostSocialShare[];
 }
 
 export interface PostLocalized {
