@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { CookieConsentProvider } from "@/components/providers/CookieConsentProvider";
 import { ConditionalGTM } from "@/components/ui/ConditionalGTM";
+import { ConditionalClarity } from "@/components/ui/ConditionalClarity";
 import { CookieConsentBanner } from "@/components/ui/CookieConsent";
 import "./globals.css";
 
@@ -99,6 +100,7 @@ export default function RootLayout({
             {children}
             <CookieConsentBanner />
             <ConditionalGTM />
+            <ConditionalClarity />
           </CookieConsentProvider>
         </ThemeProvider>
       </body>
