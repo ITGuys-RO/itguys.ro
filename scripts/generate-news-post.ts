@@ -997,12 +997,22 @@ async function main() {
   // Step 2: Write structured blog post (Claude)
   const englishPost = await writeEnglishPost(research.text);
 
-  // Step 2b: Store featured image (R2 in CI, local disk otherwise)
-  if (featuredImage) {
-    const storedUrl = await storeImage(featuredImage, englishPost.slug);
+  // Step 2b: Store all candidate images locally/R2, replacing URLs with stored paths
+  console.log(`Storing ${allCandidates.length} candidate image(s)...`);
+  let storedFeaturedImage: string | null = null;
+  for (let i = 0; i < allCandidates.length; i++) {
+    const candidate = allCandidates[i];
+    const originalUrl = candidate.imageUrl;
+    const storedUrl = await storeImage(originalUrl, `${englishPost.slug}-${i}`);
     if (storedUrl) {
-      englishPost.image_path = storedUrl;
+      candidate.imageUrl = storedUrl;
+      if (originalUrl === featuredImage) {
+        storedFeaturedImage = storedUrl;
+      }
     }
+  }
+  if (storedFeaturedImage) {
+    englishPost.image_path = storedFeaturedImage;
   }
   console.log(`Generated English post with slug: ${englishPost.slug}`);
 
