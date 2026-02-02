@@ -38,13 +38,7 @@ const sections = [
     href: '/admin/posts',
     count: 'posts',
   },
-  {
-    title: 'Translations',
-    description: 'UI text and localization',
-    href: '/admin/translations',
-    count: null,
-  },
-  {
+{
     title: 'IndexNow',
     description: 'Search engine URL submissions',
     href: '/admin/indexnow',
