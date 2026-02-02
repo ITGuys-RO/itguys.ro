@@ -12,5 +12,6 @@ export * from './companies';
 export * from './services';
 export * from './faq';
 export * from './posts';
+export * from './social-shares';
 export * from './translations';
 export * from './search';

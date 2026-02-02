@@ -1,17 +1,30 @@
-name: Daily Tech News Generator
+name: Share to Social Media
 
 on:
-  workflow_dispatch:  # Triggered by Cloudflare cron worker or manual
+  workflow_dispatch:
+    inputs:
+      post_slug:
+        description: 'Blog post slug to share'
+        required: true
+        type: string
+      platform:
+        description: 'Platform to share to'
+        required: true
+        type: choice
+        options:
+          - twitter
+          - facebook
+          - all
 
 concurrency:
-  group: daily-tech-news
+  group: share-social-${{ github.event.inputs.post_slug }}
   cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
-  generate-post:
+  share:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -33,63 +46,33 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate blog post
-        run: pnpm tsx scripts/generate-news-post.ts
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
-          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
-          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          R2_PUBLIC_URL: ${{ vars.R2_PUBLIC_URL }}
-
-      - name: Publish to database
+      - name: Fetch post data
         env:
           SITE_URL: ${{ vars.SITE_URL }}
           CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
           CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
           AUTOMATION_API_KEY: ${{ secrets.AUTOMATION_API_KEY }}
+          POST_SLUG: ${{ github.event.inputs.post_slug }}
         run: |
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${SITE_URL}/api/automation/posts" \
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
             -H "CF-Access-Client-Id: ${CF_ACCESS_CLIENT_ID}" \
             -H "CF-Access-Client-Secret: ${CF_ACCESS_CLIENT_SECRET}" \
             -H "Authorization: Bearer ${AUTOMATION_API_KEY}" \
-            -H "Content-Type: application/json" \
-            -d @blog-post.json)
+            "${SITE_URL}/api/automation/posts/${POST_SLUG}")
 
           HTTP_CODE=$(echo "$RESPONSE" | tail -1)
           BODY=$(echo "$RESPONSE" | sed '$d')
 
-          echo "HTTP Status: $HTTP_CODE"
-
-          # Check for Cloudflare challenge page
-          if echo "$BODY" | grep -q "Just a moment"; then
-            echo "::error::Cloudflare Access challenge detected - service token authentication failed"
-            exit 1
-          fi
-
-          # Check for successful response
           if [ "$HTTP_CODE" -ne 200 ]; then
-            echo "::error::API request failed with status $HTTP_CODE"
-            echo "::error::$(echo "$BODY" | jq -r '.error // .message // "Unknown error"' 2>/dev/null || echo "Non-JSON response")"
+            echo "::error::Failed to fetch post data (HTTP $HTTP_CODE)"
             exit 1
           fi
 
-          # Verify success field in response
-          if ! echo "$BODY" | grep -q '"success":true'; then
-            echo "::error::API did not return success"
-            exit 1
-          fi
-
-          echo "Post published successfully"
-
-          # Extract slug for share status reporting
-          POST_SLUG=$(jq -r '.slug' blog-post.json)
-          echo "POST_SLUG=${POST_SLUG}" >> "$GITHUB_ENV"
+          echo "$BODY" > blog-post.json
+          echo "Post data fetched successfully"
 
       - name: Post to Twitter/X
-        id: twitter
-        if: success()
+        if: github.event.inputs.platform == 'twitter' || github.event.inputs.platform == 'all'
         continue-on-error: true
         env:
           TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
@@ -100,13 +83,14 @@ jobs:
         run: pnpm tsx scripts/post-tweet.ts
 
       - name: Report Twitter share status
-        if: steps.twitter.outcome == 'success'
+        if: (github.event.inputs.platform == 'twitter' || github.event.inputs.platform == 'all') && success()
         continue-on-error: true
         env:
           SITE_URL: ${{ vars.SITE_URL }}
           CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
           CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
           AUTOMATION_API_KEY: ${{ secrets.AUTOMATION_API_KEY }}
+          POST_SLUG: ${{ github.event.inputs.post_slug }}
         run: |
           curl -s -X POST \
             -H "CF-Access-Client-Id: ${CF_ACCESS_CLIENT_ID}" \
@@ -116,20 +100,8 @@ jobs:
             -d '{"platform":"twitter"}' \
             "${SITE_URL}/api/automation/posts/${POST_SLUG}/share-status"
 
-      - name: Refresh Facebook token
-        if: success()
-        continue-on-error: true
-        env:
-          FACEBOOK_ACCESS_TOKEN: ${{ secrets.FACEBOOK_ACCESS_TOKEN }}
-          FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }}
-          FACEBOOK_APP_SECRET: ${{ secrets.FACEBOOK_APP_SECRET }}
-          GH_PAT_WORKFLOW: ${{ secrets.GH_PAT_WORKFLOW }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-        run: pnpm tsx scripts/refresh-facebook-token.ts
-
       - name: Post to Facebook
-        id: facebook
-        if: success()
+        if: github.event.inputs.platform == 'facebook' || github.event.inputs.platform == 'all'
         continue-on-error: true
         env:
           FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
@@ -138,13 +110,14 @@ jobs:
         run: pnpm tsx scripts/post-facebook.ts
 
       - name: Report Facebook share status
-        if: steps.facebook.outcome == 'success'
+        if: (github.event.inputs.platform == 'facebook' || github.event.inputs.platform == 'all') && success()
         continue-on-error: true
         env:
           SITE_URL: ${{ vars.SITE_URL }}
           CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
           CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
           AUTOMATION_API_KEY: ${{ secrets.AUTOMATION_API_KEY }}
+          POST_SLUG: ${{ github.event.inputs.post_slug }}
         run: |
           curl -s -X POST \
             -H "CF-Access-Client-Id: ${CF_ACCESS_CLIENT_ID}" \

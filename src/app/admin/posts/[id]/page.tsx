@@ -4,7 +4,7 @@ import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { InputField, TextareaField, CheckboxField, DateTimePicker, TagInput, LocaleFields, DeleteButton, MarkdownEditor, ValidationSummary, useFormValidation, validateTranslations } from '@/components/admin';
-import type { PostWithTranslations, PostInput } from '@/lib/db';
+import type { PostWithTranslations, PostInput, PostSocialShare } from '@/lib/db';
 import { generateSlug } from '@/lib/utils';
 
 type TranslationData = {
@@ -31,6 +31,8 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [socialShares, setSocialShares] = useState<PostSocialShare[]>([]);
+  const [sharing, setSharing] = useState<string | null>(null);
   const [formData, setFormData] = useState<PostInput>({
     slug: '',
     image_path: '',
@@ -60,6 +62,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
           ])
         ) as PostInput['translations'];
 
+        setSocialShares(post.socialShares ?? []);
         setFormData({
           slug: post.slug,
           image_path: post.image_path,
@@ -138,6 +141,30 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
     await fetch(`/api/admin/posts/${id}`, { method: 'DELETE' });
     router.push('/admin/posts');
   };
+
+  const handleShare = async (platform: 'twitter' | 'facebook' | 'all') => {
+    setSharing(platform);
+    try {
+      const res = await fetch(`/api/admin/posts/${id}/share`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ platform }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to trigger share');
+      }
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Share failed');
+    } finally {
+      setSharing(null);
+    }
+  };
+
+  const getShareStatus = (platform: string) =>
+    socialShares.find((s) => s.platform === platform);
 
   if (loading) return <div className="text-brand-400">Loading...</div>;
 
@@ -263,6 +290,52 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
           <button type="submit" disabled={saving} className="px-4 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-500 disabled:opacity-50 rounded-lg transition-colors">{saving ? 'Saving...' : 'Save'}</button>
         </div>
       </form>
+      {formData.is_published === 1 && (
+        <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6 mt-8">
+          <h2 className="text-lg font-semibold text-white mb-4">Social Sharing</h2>
+          <div className="space-y-3">
+            {(['twitter', 'facebook'] as const).map((platform) => {
+              const status = getShareStatus(platform);
+              const label = platform === 'twitter' ? 'Twitter/X' : 'Facebook';
+              const isSharing = sharing === platform || sharing === 'all';
+              return (
+                <div key={platform} className="flex items-center justify-between p-3 bg-brand-800/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-white">{label}</span>
+                    {status ? (
+                      <span className="flex items-center gap-1.5 text-xs text-green-400">
+                        <span className="w-2 h-2 rounded-full bg-green-400" />
+                        Shared {new Date(status.shared_at + 'Z').toLocaleDateString()} via {status.shared_by}
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1.5 text-xs text-brand-400">
+                        <span className="w-2 h-2 rounded-full bg-brand-600" />
+                        Not shared
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => handleShare(platform)}
+                    disabled={isSharing}
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-brand-600 hover:bg-brand-500 disabled:opacity-50 rounded-lg transition-colors"
+                  >
+                    {isSharing ? 'Sharing...' : status ? 'Re-share' : 'Share'}
+                  </button>
+                </div>
+              );
+            })}
+            <div className="pt-2">
+              <button
+                onClick={() => handleShare('all')}
+                disabled={sharing !== null}
+                className="px-4 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-500 disabled:opacity-50 rounded-lg transition-colors"
+              >
+                {sharing === 'all' ? 'Sharing...' : 'Share to All'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
