@@ -54,7 +54,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
 
   useEffect(() => {
     fetchProject();
-  }, [id]);
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps -- fetchProject is stable, only re-fetch on id change
 
   const fetchProject = async () => {
     try {

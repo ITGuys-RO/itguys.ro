@@ -18,7 +18,6 @@ import {
 } from '@/components/admin';
 import type { ServiceWithTranslations, ServiceInput, SubserviceInput } from '@/lib/db';
 import type { Locale } from '@/i18n/config';
-import { locales } from '@/i18n/config';
 import { TrashIcon, PlusIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 
 type TranslationData = { title: string; description: string | null; details: string | null; note: string | null; long_description: string | null };
@@ -52,7 +51,7 @@ function SubservicesEditor({ subservices, onChange, initialExpandedSlug }: Subse
     if (initialExpandedSlug && subservices.length > 0) {
       const index = subservices.findIndex(sub => sub.slug === initialExpandedSlug);
       if (index >= 0) {
-        setExpandedIndex(index);
+        setExpandedIndex(index); // eslint-disable-line react-hooks/set-state-in-effect -- syncing expanded state from prop
       }
     }
   }, [initialExpandedSlug, subservices]);

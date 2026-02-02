@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { DataTable, StatusBadge, LocaleCompletion } from '@/components/admin';
 import type { TeamMemberWithTranslations } from '@/lib/db';
 
@@ -10,7 +9,6 @@ export default function TeamListPage() {
   const [members, setMembers] = useState<TeamMemberWithTranslations[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     fetchMembers();

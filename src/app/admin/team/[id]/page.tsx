@@ -38,7 +38,7 @@ export default function EditTeamMemberPage({ params }: { params: Promise<{ id: s
 
   useEffect(() => {
     fetchMember();
-  }, [id]);
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps -- fetchMember is stable, only re-fetch on id change
 
   const fetchMember = async () => {
     try {

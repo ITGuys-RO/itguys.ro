@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback } from "react";
 
 export type ConsentCategories = {
   necessary: true;
@@ -36,26 +36,24 @@ const defaultConsent: ConsentCategories = {
 
 const CookieConsentContext = createContext<CookieConsentContextType | undefined>(undefined);
 
-export function CookieConsentProvider({ children }: { children: React.ReactNode }) {
-  const [state, setState] = useState<{
-    consent: ConsentCategories;
-    consentGiven: boolean;
-    showBanner: boolean;
-  }>({ consent: defaultConsent, consentGiven: false, showBanner: false });
-
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const data: ConsentData = JSON.parse(stored);
-        setState({ consent: data.categories, consentGiven: true, showBanner: false });
-      } else {
-        setState((s) => ({ ...s, showBanner: true }));
-      }
-    } catch {
-      setState((s) => ({ ...s, showBanner: true }));
+function getInitialState(): { consent: ConsentCategories; consentGiven: boolean; showBanner: boolean } {
+  if (typeof window === "undefined") {
+    return { consent: defaultConsent, consentGiven: false, showBanner: false };
+  }
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const data: ConsentData = JSON.parse(stored);
+      return { consent: data.categories, consentGiven: true, showBanner: false };
     }
-  }, []);
+  } catch {
+    // ignore
+  }
+  return { consent: defaultConsent, consentGiven: false, showBanner: true };
+}
+
+export function CookieConsentProvider({ children }: { children: React.ReactNode }) {
+  const [state, setState] = useState(getInitialState);
 
   const setShowBanner = useCallback((show: boolean) => {
     setState((s) => ({ ...s, showBanner: show }));

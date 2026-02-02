@@ -78,7 +78,7 @@ export function DevelopmentIllustration({ className = "" }: { className?: string
         <text x="65" y="102" className="fill-blue-400" style={{ fontSize: "11px", fontFamily: "monospace" }}>deploy()</text>
 
         <text x="30" y="122" className="fill-purple-400" style={{ fontSize: "11px", fontFamily: "monospace" }}>return</text>
-        <text x="72" y="122" className="fill-green-400" style={{ fontSize: "11px", fontFamily: "monospace" }}>"success"</text>
+        <text x="72" y="122" className="fill-green-400" style={{ fontSize: "11px", fontFamily: "monospace" }}>{'"success"'}</text>
 
         <text x="20" y="142" className="fill-[var(--terminal-text)]" style={{ fontSize: "11px", fontFamily: "monospace" }}>{"}"}</text>
 

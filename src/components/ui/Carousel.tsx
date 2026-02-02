@@ -29,12 +29,17 @@ export function Carousel({ children, className }: CarouselProps) {
 
   useEffect(() => {
     if (!emblaApi) return;
-    setScrollSnaps(emblaApi.scrollSnapList());
-    const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
-    emblaApi.on("select", onSelect);
-    onSelect();
+    // Sync state from external embla carousel API
+    const syncState = () => {
+      setScrollSnaps(emblaApi.scrollSnapList());
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+    };
+    syncState();
+    emblaApi.on("reInit", syncState);
+    emblaApi.on("select", syncState);
     return () => {
-      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", syncState);
+      emblaApi.off("select", syncState);
     };
   }, [emblaApi]);
 

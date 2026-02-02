@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { DataTable, StatusBadge, LocaleCompletion } from '@/components/admin';
+import { DataTable, LocaleCompletion } from '@/components/admin';
 import type { PostWithTranslations } from '@/lib/db';
 
 export default function PostsListPage() {

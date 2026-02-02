@@ -5,13 +5,22 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  // Override default ignores of eslint-config-next.
+  {
+    rules: {
+      // next/image is disabled (unoptimized: true) for Cloudflare Workers compatibility
+      "@next/next/no-img-element": "off",
+    },
+  },
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
+    ".open-next/**",
+    ".wrangler/**",
+    "node_modules/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "workers/**",
+    "scripts/**",
   ]),
 ]);
 

@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { InputField, TextareaField } from '@/components/admin';
-import { locales, localeNames, type Locale } from '@/i18n/config';
+import { locales, localeNames } from '@/i18n/config';
 
 interface TranslationData {
   namespaces: string[];
