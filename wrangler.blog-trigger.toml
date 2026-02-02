@@ -3,7 +3,7 @@ main = "workers/blog-trigger/index.ts"
 compatibility_date = "2024-09-23"
 
 [triggers]
-crons = ["30 10 * * *"]  # 10:30 AM UTC daily
+crons = ["0 8 * * *"]  # 8:00 AM UTC daily
 
 [vars]
 # GITHUB_TOKEN is set via wrangler secret
