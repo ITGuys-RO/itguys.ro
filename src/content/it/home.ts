@@ -1,4 +1,4 @@
-import { getCombinedYears, getCombinedYearsText } from "@/lib/utils";
+import { getCombinedYearsText } from "@/lib/utils";
 
 export const homeContent = {
   hero: {

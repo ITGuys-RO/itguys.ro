@@ -14,33 +14,30 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const STORAGE_KEY = "itguys-theme";
 
+function updateDocument(newTheme: Theme) {
+  const root = document.documentElement;
+  if (newTheme === "light") {
+    root.classList.add("light");
+    root.classList.remove("dark");
+  } else {
+    root.classList.add("dark");
+    root.classList.remove("light");
+  }
+}
+
+function getInitialTheme(): Theme {
+  if (typeof window === "undefined") return "dark";
+  const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
+  return stored === "light" || stored === "dark" ? stored : "dark";
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("dark");
-  const [mounted, setMounted] = useState(false);
+  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
+  const [mounted] = useState(() => typeof window !== "undefined");
 
   useEffect(() => {
-    setMounted(true);
-    // Read from localStorage on mount
-    const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
-    if (stored === "light" || stored === "dark") {
-      setThemeState(stored);
-      updateDocument(stored);
-    } else {
-      // Default to dark
-      updateDocument("dark");
-    }
-  }, []);
-
-  const updateDocument = (newTheme: Theme) => {
-    const root = document.documentElement;
-    if (newTheme === "light") {
-      root.classList.add("light");
-      root.classList.remove("dark");
-    } else {
-      root.classList.add("dark");
-      root.classList.remove("light");
-    }
-  };
+    updateDocument(theme);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- apply theme on mount only
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);

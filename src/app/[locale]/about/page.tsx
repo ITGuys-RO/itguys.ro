@@ -7,7 +7,7 @@ import { AboutIllustration } from "@/components/illustrations";
 import { getContent } from "@/content";
 import { getGravatarUrl } from "@/lib/gravatar";
 import { getTeamMembersLocalized, getCompaniesLocalized } from "@/lib/db";
-import { locales, type Locale, generateAlternates } from "@/i18n/config";
+import { type Locale, generateAlternates } from "@/i18n/config";
 import {
   AcademicCapIcon,
   UserGroupIcon,
