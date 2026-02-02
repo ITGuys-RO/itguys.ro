@@ -27,9 +27,9 @@ export async function POST(
       }
     }
 
-    const ghToken = process.env.GH_PAT_WORKFLOW;
+    const ghToken = process.env.GITHUB_TOKEN;
     if (!ghToken) {
-      return NextResponse.json({ error: 'GH_PAT_WORKFLOW not configured' }, { status: 500 });
+      return NextResponse.json({ error: 'GITHUB_TOKEN not configured' }, { status: 500 });
     }
 
     const response = await fetch(
