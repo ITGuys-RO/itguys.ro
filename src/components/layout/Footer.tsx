@@ -30,6 +30,15 @@ const footerText = {
   },
 };
 
+const privacyLabel: Record<string, string> = {
+  en: "Privacy Policy",
+  ro: "Confidentialitate",
+  fr: "Confidentialité",
+  de: "Datenschutz",
+  it: "Privacy",
+  es: "Privacidad",
+};
+
 type Props = {
   locale: Locale;
 };
@@ -108,6 +117,12 @@ export function Footer({ locale }: Props) {
             >
               +40 726 205 856
             </a>
+            <Link
+              href="/privacy"
+              className="text-sm text-brand-300 hover:text-neon transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(0,212,255,0.4)]"
+            >
+              {privacyLabel[locale]}
+            </Link>
             <CookieSettingsButton locale={locale} />
           </div>
         </div>
