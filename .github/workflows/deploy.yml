@@ -96,6 +96,7 @@ jobs:
           echo "$TURNSTILE_SECRET_KEY" | pnpm wrangler secret put TURNSTILE_SECRET_KEY
           echo "$INDEXNOW_KEY" | pnpm wrangler secret put INDEXNOW_KEY
           echo "$AUTOMATION_API_KEY" | pnpm wrangler secret put AUTOMATION_API_KEY
+          echo "$GITHUB_TOKEN_SECRET" | pnpm wrangler secret put GITHUB_TOKEN
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -103,6 +104,7 @@ jobs:
           TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
           AUTOMATION_API_KEY: ${{ secrets.AUTOMATION_API_KEY }}
+          GITHUB_TOKEN_SECRET: ${{ secrets.GH_PAT_WORKFLOW }}
 
       - name: Deploy blog-trigger worker
         run: |
