@@ -28,7 +28,7 @@ const hashtags = tags
   .join(" ");
 
 async function main() {
-  const message = `${title}\n\n${desc}\n\n${url}\n\n${hashtags}`.trim();
+  const message = `${title}\n\n${desc}\n\n${hashtags}`.trim();
 
   // Facebook Graph API — publish to Page feed
   // Token is auto-refreshed by refresh-facebook-token.ts before each run.

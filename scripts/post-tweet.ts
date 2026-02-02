@@ -34,14 +34,26 @@ const hashtags = tags
   )
   .join(" ");
 
+// Twitter shortens all URLs to 23 chars via t.co
+const T_CO_LENGTH = 23;
+const urlPlaceholder = "x".repeat(T_CO_LENGTH);
+
 // Build tweet, progressively trimming if over 280 chars
-let tweet = `${title}\n\n${desc}\n\n${url}\n\n${hashtags}`;
-if (tweet.length > 280) {
-  tweet = `${title}\n\n${url}\n\n${hashtags}`;
+// Use placeholder for length calculation, real URL in final tweet
+function buildTweet(...parts: string[]): string {
+  const withPlaceholder = parts.join("\n\n").replace(url, urlPlaceholder);
+  if (withPlaceholder.length <= 280) {
+    return parts.join("\n\n");
+  }
+  return "";
 }
-if (tweet.length > 280) {
-  tweet = `${title}\n\n${url}`;
-}
+
+const tweet =
+  buildTweet(title, desc, url, hashtags) ||
+  buildTweet(title, desc, url) ||
+  buildTweet(title, url, hashtags) ||
+  buildTweet(title, url) ||
+  `${title}\n\n${url}`;
 
 async function main() {
   const client = new TwitterApi({

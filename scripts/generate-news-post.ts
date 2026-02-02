@@ -236,24 +236,8 @@ async function pickBestImage(
     // Still validate relevance for single candidate
     const c = candidates[0];
     console.log(`  Single candidate: "${c.pageTitle}" from ${c.sourceUrl}`);
-    const response = await anthropic.messages.create({
-      model: ANTHROPIC_MODEL,
-      max_tokens: 10,
-      messages: [{
-        role: 'user',
-        content: `Does this image URL suggest it shows a brand, product, or company NOT mentioned in the article? Answer ONLY "yes" (it's mismatched) or "no" (it's fine to use).
-
-Article topic:
-${researchText.substring(0, 500)}
-
-Image URL: ${c.imageUrl}
-Source page: "${c.pageTitle}"`,
-      }],
-    });
-    const answer = response.content[0]?.type === 'text' ? response.content[0].text.trim().toLowerCase() : '';
-    if (answer.startsWith('no')) return c.imageUrl;
-    console.log(`  Image rejected: shows unrelated brand`);
-    return null;
+    // Image comes from a source article, so it's likely relevant — use it
+    return c.imageUrl;
   }
 
   // Multiple candidates: ask Claude to pick the best one
@@ -266,7 +250,7 @@ Source page: "${c.pageTitle}"`,
     max_tokens: 10,
     messages: [{
       role: 'user',
-      content: `Pick the best image for this article. Reject any image whose URL suggests it shows a brand or company NOT mentioned in the article. Generic/stock images are fine. Answer with ONLY the number (1-${candidates.length}), or "none" if all show unrelated brands.
+      content: `Pick the best image for this tech article. These images come from the article's source pages, so they are relevant. Pick the one that looks most like a hero/banner image (not a tiny icon or avatar). Answer with ONLY the number (1-${candidates.length}).
 
 Article topic:
 ${researchText.substring(0, 500)}
@@ -277,16 +261,14 @@ ${listing}`,
   });
 
   const answer = response.content[0]?.type === 'text' ? response.content[0].text.trim() : '';
-  if (answer.toLowerCase() === 'none') {
-    console.log(`  All images rejected: unrelated brands`);
-    return null;
-  }
   const idx = parseInt(answer, 10) - 1;
   if (idx >= 0 && idx < candidates.length) {
     console.log(`  Picked image from "${candidates[idx].pageTitle}"`);
     return candidates[idx].imageUrl;
   }
-  return null;
+  // Fallback: use the first candidate
+  console.log(`  Unexpected answer "${answer}", using first candidate`);
+  return candidates[0].imageUrl;
 }
 
 function getWritePostPrompt(research: string): string {
