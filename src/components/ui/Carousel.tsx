@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useCallback } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { clsx } from "clsx";
 
@@ -22,6 +22,20 @@ export function Carousel({ children, className }: CarouselProps) {
 
   const scrollNext = useCallback(() => {
     emblaApi?.scrollNext();
+  }, [emblaApi]);
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    setScrollSnaps(emblaApi.scrollSnapList());
+    const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
+    emblaApi.on("select", onSelect);
+    onSelect();
+    return () => {
+      emblaApi.off("select", onSelect);
+    };
   }, [emblaApi]);
 
   return (
@@ -83,6 +97,23 @@ export function Carousel({ children, className }: CarouselProps) {
           />
         </svg>
       </button>
+
+      {/* Dot Indicators */}
+      <div className="flex justify-center gap-2 mt-4">
+        {scrollSnaps.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => emblaApi?.scrollTo(index)}
+            className={clsx(
+              "w-2.5 h-2.5 rounded-full transition-colors",
+              index === selectedIndex
+                ? "bg-brand-500"
+                : "bg-brand-700/40 hover:bg-brand-700/70"
+            )}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
     </div>
   );
 }
