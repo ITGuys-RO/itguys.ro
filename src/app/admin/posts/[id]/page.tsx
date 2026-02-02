@@ -33,6 +33,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
   const [success, setSuccess] = useState(false);
   const [socialShares, setSocialShares] = useState<PostSocialShare[]>([]);
   const [sharing, setSharing] = useState<string | null>(null);
+  const [retranslating, setRetranslating] = useState<string | null>(null);
   const [formData, setFormData] = useState<PostInput>({
     slug: '',
     image_path: '',
@@ -163,6 +164,31 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
     }
   };
 
+  const handleRetranslate = async (locales: string[]) => {
+    setRetranslating(locales.join(','));
+    try {
+      const res = await fetch(`/api/admin/posts/${id}/retranslate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ locales }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to trigger retranslation');
+      }
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Retranslation failed');
+    } finally {
+      setRetranslating(null);
+    }
+  };
+
+  const nonEnLocales = ['ro', 'fr', 'de', 'it', 'es'] as const;
+  const localeNames: Record<string, string> = { ro: 'Romanian', fr: 'French', de: 'German', it: 'Italian', es: 'Spanish' };
+  const missingLocales = nonEnLocales.filter((l) => !formData.translations[l]?.title);
+
   const getShareStatus = (platform: string) =>
     socialShares.find((s) => s.platform === platform);
 
@@ -290,6 +316,51 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
           <button type="submit" disabled={saving} className="px-4 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-500 disabled:opacity-50 rounded-lg transition-colors">{saving ? 'Saving...' : 'Save'}</button>
         </div>
       </form>
+      <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6 mt-8">
+        <h2 className="text-lg font-semibold text-white mb-4">Translation Status</h2>
+        <div className="space-y-3">
+          {nonEnLocales.map((locale) => {
+            const hasContent = !!formData.translations[locale]?.title;
+            const isRetranslating = retranslating === locale || retranslating === nonEnLocales.join(',');
+            return (
+              <div key={locale} className="flex items-center justify-between p-3 bg-brand-800/50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-white">{localeNames[locale]}</span>
+                  {hasContent ? (
+                    <span className="flex items-center gap-1.5 text-xs text-green-400">
+                      <span className="w-2 h-2 rounded-full bg-green-400" />
+                      Has content
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1.5 text-xs text-red-400">
+                      <span className="w-2 h-2 rounded-full bg-red-400" />
+                      Missing
+                    </span>
+                  )}
+                </div>
+                <button
+                  onClick={() => handleRetranslate([locale])}
+                  disabled={isRetranslating || retranslating !== null}
+                  className="px-3 py-1.5 text-xs font-medium text-white bg-brand-600 hover:bg-brand-500 disabled:opacity-50 rounded-lg transition-colors"
+                >
+                  {isRetranslating ? 'Retranslating...' : 'Retranslate'}
+                </button>
+              </div>
+            );
+          })}
+          {missingLocales.length > 0 && (
+            <div className="pt-2">
+              <button
+                onClick={() => handleRetranslate([...missingLocales])}
+                disabled={retranslating !== null}
+                className="px-4 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-500 disabled:opacity-50 rounded-lg transition-colors"
+              >
+                {retranslating === nonEnLocales.join(',') ? 'Retranslating...' : `Retranslate All Missing (${missingLocales.length})`}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
       {formData.is_published === 1 && (
         <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6 mt-8">
           <h2 className="text-lg font-semibold text-white mb-4">Social Sharing</h2>

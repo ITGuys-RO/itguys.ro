@@ -1,0 +1,99 @@
+name: Retranslate Blog Post
+
+on:
+  workflow_dispatch:
+    inputs:
+      post_slug:
+        description: 'Blog post slug to retranslate'
+        required: true
+        type: string
+      locales:
+        description: 'Comma-separated locales (e.g. "ro" or "ro,fr,de")'
+        required: true
+        type: string
+
+concurrency:
+  group: retranslate-${{ github.event.inputs.post_slug }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  retranslate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          submodules: true
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Fetch post data
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+          AUTOMATION_API_KEY: ${{ secrets.AUTOMATION_API_KEY }}
+          POST_SLUG: ${{ github.event.inputs.post_slug }}
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -H "CF-Access-Client-Id: ${CF_ACCESS_CLIENT_ID}" \
+            -H "CF-Access-Client-Secret: ${CF_ACCESS_CLIENT_SECRET}" \
+            -H "Authorization: Bearer ${AUTOMATION_API_KEY}" \
+            "${SITE_URL}/api/automation/posts/${POST_SLUG}")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::Failed to fetch post data (HTTP $HTTP_CODE)"
+            exit 1
+          fi
+
+          echo "$BODY" > blog-post.json
+          echo "Post data fetched successfully"
+
+      - name: Retranslate
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          LOCALES: ${{ github.event.inputs.locales }}
+        run: pnpm tsx scripts/retranslate-post.ts
+
+      - name: Publish translations
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+          AUTOMATION_API_KEY: ${{ secrets.AUTOMATION_API_KEY }}
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            -H "CF-Access-Client-Id: ${CF_ACCESS_CLIENT_ID}" \
+            -H "CF-Access-Client-Secret: ${CF_ACCESS_CLIENT_SECRET}" \
+            -H "Authorization: Bearer ${AUTOMATION_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d @blog-post.json \
+            "${SITE_URL}/api/automation/posts")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::Failed to publish translations (HTTP $HTTP_CODE): $BODY"
+            exit 1
+          fi
+
+          echo "Translations published successfully: $BODY"
