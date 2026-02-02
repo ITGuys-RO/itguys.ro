@@ -4,6 +4,14 @@ type RouteParams = { params: Promise<{ path: string[] }> };
 
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   const { path } = await params;
+
+  // Validate path segments to prevent directory traversal
+  for (const segment of path) {
+    if (!segment || segment.includes('..') || segment.includes('/')) {
+      return NextResponse.json({ error: 'Invalid path' }, { status: 400 });
+    }
+  }
+
   const key = `blog/${path.join('/')}`;
 
   try {
@@ -19,8 +27,6 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       return new NextResponse(null, { status: 404 });
     }
 
-    const data = await object.arrayBuffer();
-
     // Infer content type from extension
     const ext = key.split('.').pop()?.toLowerCase();
     const contentTypes: Record<string, string> = {
@@ -32,7 +38,8 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     };
     const contentType = contentTypes[ext || ''] || 'application/octet-stream';
 
-    return new NextResponse(data, {
+    // Stream response directly instead of buffering into memory
+    return new Response(object.body, {
       headers: {
         'Content-Type': contentType,
         'Cache-Control': 'public, max-age=31536000, immutable',

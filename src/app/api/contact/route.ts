@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 type ContactFormData = {
   name: string;
@@ -60,6 +61,16 @@ async function sendTelegramMessage(text: string, botToken: string, chatId: strin
 }
 
 export async function POST(request: Request) {
+  // Rate limit: 5 requests per 5 minutes per IP
+  const clientIp = getClientIp(request);
+  const rateLimit = checkRateLimit(clientIp, { maxRequests: 5, windowMs: 300_000 });
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429 },
+    );
+  }
+
   try {
     const data: ContactFormData = await request.json();
 

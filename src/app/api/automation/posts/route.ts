@@ -2,19 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createPost, getPostBySlug, updatePost } from '@/lib/db/posts';
 import { createImageCandidates, type PostImageCandidateInput } from '@/lib/db/image-candidates';
 import { PostInput } from '@/lib/db/schema';
-
-function validateApiKey(request: NextRequest): boolean {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return false;
-  }
-  const apiKey = authHeader.slice(7);
-  return apiKey === process.env.AUTOMATION_API_KEY;
-}
+import { validateAutomationKey } from '@/lib/automation-auth';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
-  // Validate API key
-  if (!validateApiKey(request)) {
+  const clientIp = getClientIp(request);
+  const rateLimit = checkRateLimit(clientIp, { maxRequests: 60, windowMs: 60_000 });
+  if (!rateLimit.allowed) {
+    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+  }
+
+  if (!(await validateAutomationKey(request))) {
     return NextResponse.json(
       { error: 'Unauthorized' },
       { status: 401 }

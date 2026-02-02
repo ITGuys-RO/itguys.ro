@@ -1,5 +1,9 @@
 import { query } from './client';
 
+function escapeLikePattern(input: string): string {
+  return input.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_');
+}
+
 export interface SearchResult {
   entityType: 'team' | 'projects' | 'companies' | 'services' | 'faq' | 'posts';
   entityId: number;
@@ -66,22 +70,22 @@ async function searchTeam(searchPattern: string): Promise<RawSearchResult[]> {
       tm.id as entity_id,
       COALESCE(en_t.name, t.name) as display_name,
       CASE
-        WHEN LOWER(t.name) LIKE LOWER(?) THEN 'name'
-        WHEN LOWER(t.role) LIKE LOWER(?) THEN 'role'
+        WHEN LOWER(t.name) LIKE LOWER(?) ESCAPE '\' THEN 'name'
+        WHEN LOWER(t.role) LIKE LOWER(?) ESCAPE '\' THEN 'role'
         ELSE 'bio'
       END as match_field,
       t.locale as match_locale,
       CASE
-        WHEN LOWER(t.name) LIKE LOWER(?) THEN t.name
-        WHEN LOWER(t.role) LIKE LOWER(?) THEN t.role
+        WHEN LOWER(t.name) LIKE LOWER(?) ESCAPE '\' THEN t.name
+        WHEN LOWER(t.role) LIKE LOWER(?) ESCAPE '\' THEN t.role
         ELSE t.bio
       END as match_value
     FROM team_members tm
     JOIN team_member_translations t ON t.team_member_id = tm.id
     LEFT JOIN team_member_translations en_t ON en_t.team_member_id = tm.id AND en_t.locale = 'en'
-    WHERE LOWER(t.name) LIKE LOWER(?)
-       OR LOWER(t.role) LIKE LOWER(?)
-       OR LOWER(t.bio) LIKE LOWER(?)
+    WHERE LOWER(t.name) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.role) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.bio) LIKE LOWER(?) ESCAPE '\'
     LIMIT 10
   `;
   return query<RawSearchResult>(sql, [
@@ -96,31 +100,31 @@ async function searchProjects(searchPattern: string): Promise<RawSearchResult[]>
       p.id as entity_id,
       COALESCE(en_t.name, t.name) as display_name,
       CASE
-        WHEN LOWER(t.name) LIKE LOWER(?) THEN 'name'
-        WHEN LOWER(t.client_type) LIKE LOWER(?) THEN 'client_type'
-        WHEN LOWER(t.industry) LIKE LOWER(?) THEN 'industry'
-        WHEN LOWER(t.challenge) LIKE LOWER(?) THEN 'challenge'
-        WHEN LOWER(t.solution) LIKE LOWER(?) THEN 'solution'
+        WHEN LOWER(t.name) LIKE LOWER(?) ESCAPE '\' THEN 'name'
+        WHEN LOWER(t.client_type) LIKE LOWER(?) ESCAPE '\' THEN 'client_type'
+        WHEN LOWER(t.industry) LIKE LOWER(?) ESCAPE '\' THEN 'industry'
+        WHEN LOWER(t.challenge) LIKE LOWER(?) ESCAPE '\' THEN 'challenge'
+        WHEN LOWER(t.solution) LIKE LOWER(?) ESCAPE '\' THEN 'solution'
         ELSE 'result'
       END as match_field,
       t.locale as match_locale,
       CASE
-        WHEN LOWER(t.name) LIKE LOWER(?) THEN t.name
-        WHEN LOWER(t.client_type) LIKE LOWER(?) THEN t.client_type
-        WHEN LOWER(t.industry) LIKE LOWER(?) THEN t.industry
-        WHEN LOWER(t.challenge) LIKE LOWER(?) THEN t.challenge
-        WHEN LOWER(t.solution) LIKE LOWER(?) THEN t.solution
+        WHEN LOWER(t.name) LIKE LOWER(?) ESCAPE '\' THEN t.name
+        WHEN LOWER(t.client_type) LIKE LOWER(?) ESCAPE '\' THEN t.client_type
+        WHEN LOWER(t.industry) LIKE LOWER(?) ESCAPE '\' THEN t.industry
+        WHEN LOWER(t.challenge) LIKE LOWER(?) ESCAPE '\' THEN t.challenge
+        WHEN LOWER(t.solution) LIKE LOWER(?) ESCAPE '\' THEN t.solution
         ELSE t.result
       END as match_value
     FROM projects p
     JOIN project_translations t ON t.project_id = p.id
     LEFT JOIN project_translations en_t ON en_t.project_id = p.id AND en_t.locale = 'en'
-    WHERE LOWER(t.name) LIKE LOWER(?)
-       OR LOWER(t.client_type) LIKE LOWER(?)
-       OR LOWER(t.industry) LIKE LOWER(?)
-       OR LOWER(t.challenge) LIKE LOWER(?)
-       OR LOWER(t.solution) LIKE LOWER(?)
-       OR LOWER(t.result) LIKE LOWER(?)
+    WHERE LOWER(t.name) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.client_type) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.industry) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.challenge) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.solution) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.result) LIKE LOWER(?) ESCAPE '\'
     LIMIT 10
   `;
   // CASE match_field: 5, CASE match_value: 5, WHERE: 6 = 16 params
@@ -137,19 +141,19 @@ async function searchCompanies(searchPattern: string): Promise<RawSearchResult[]
       c.id as entity_id,
       COALESCE(en_t.name, t.name) as display_name,
       CASE
-        WHEN LOWER(t.name) LIKE LOWER(?) THEN 'name'
+        WHEN LOWER(t.name) LIKE LOWER(?) ESCAPE '\' THEN 'name'
         ELSE 'description'
       END as match_field,
       t.locale as match_locale,
       CASE
-        WHEN LOWER(t.name) LIKE LOWER(?) THEN t.name
+        WHEN LOWER(t.name) LIKE LOWER(?) ESCAPE '\' THEN t.name
         ELSE t.description
       END as match_value
     FROM companies c
     JOIN company_translations t ON t.company_id = c.id
     LEFT JOIN company_translations en_t ON en_t.company_id = c.id AND en_t.locale = 'en'
-    WHERE LOWER(t.name) LIKE LOWER(?)
-       OR LOWER(t.description) LIKE LOWER(?)
+    WHERE LOWER(t.name) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.description) LIKE LOWER(?) ESCAPE '\'
     LIMIT 10
   `;
   return query<RawSearchResult>(sql, [
@@ -163,25 +167,25 @@ async function searchServices(searchPattern: string): Promise<RawSearchResult[]>
       s.id as entity_id,
       COALESCE(en_t.title, t.title) as display_name,
       CASE
-        WHEN LOWER(t.title) LIKE LOWER(?) THEN 'title'
-        WHEN LOWER(t.description) LIKE LOWER(?) THEN 'description'
-        WHEN LOWER(t.details) LIKE LOWER(?) THEN 'details'
+        WHEN LOWER(t.title) LIKE LOWER(?) ESCAPE '\' THEN 'title'
+        WHEN LOWER(t.description) LIKE LOWER(?) ESCAPE '\' THEN 'description'
+        WHEN LOWER(t.details) LIKE LOWER(?) ESCAPE '\' THEN 'details'
         ELSE 'note'
       END as match_field,
       t.locale as match_locale,
       CASE
-        WHEN LOWER(t.title) LIKE LOWER(?) THEN t.title
-        WHEN LOWER(t.description) LIKE LOWER(?) THEN t.description
-        WHEN LOWER(t.details) LIKE LOWER(?) THEN t.details
+        WHEN LOWER(t.title) LIKE LOWER(?) ESCAPE '\' THEN t.title
+        WHEN LOWER(t.description) LIKE LOWER(?) ESCAPE '\' THEN t.description
+        WHEN LOWER(t.details) LIKE LOWER(?) ESCAPE '\' THEN t.details
         ELSE t.note
       END as match_value
     FROM services s
     JOIN service_translations t ON t.service_id = s.id
     LEFT JOIN service_translations en_t ON en_t.service_id = s.id AND en_t.locale = 'en'
-    WHERE LOWER(t.title) LIKE LOWER(?)
-       OR LOWER(t.description) LIKE LOWER(?)
-       OR LOWER(t.details) LIKE LOWER(?)
-       OR LOWER(t.note) LIKE LOWER(?)
+    WHERE LOWER(t.title) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.description) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.details) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.note) LIKE LOWER(?) ESCAPE '\'
     LIMIT 10
   `;
   // CASE match_field: 3, CASE match_value: 3, WHERE: 4 = 10 params
@@ -198,20 +202,20 @@ async function searchSubservices(searchPattern: string): Promise<RawSearchResult
       sub.service_id as entity_id,
       COALESCE(en_t.title, t.title) || ' (subservice)' as display_name,
       CASE
-        WHEN LOWER(t.title) LIKE LOWER(?) THEN 'subservice title'
+        WHEN LOWER(t.title) LIKE LOWER(?) ESCAPE '\' THEN 'subservice title'
         ELSE 'subservice description'
       END as match_field,
       t.locale as match_locale,
       CASE
-        WHEN LOWER(t.title) LIKE LOWER(?) THEN t.title
+        WHEN LOWER(t.title) LIKE LOWER(?) ESCAPE '\' THEN t.title
         ELSE t.description
       END as match_value,
       sub.slug as subservice_slug
     FROM subservices sub
     JOIN subservice_translations t ON t.subservice_id = sub.id
     LEFT JOIN subservice_translations en_t ON en_t.subservice_id = sub.id AND en_t.locale = 'en'
-    WHERE LOWER(t.title) LIKE LOWER(?)
-       OR LOWER(t.description) LIKE LOWER(?)
+    WHERE LOWER(t.title) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.description) LIKE LOWER(?) ESCAPE '\'
     LIMIT 10
   `;
   return query<RawSearchResult>(sql, [
@@ -225,19 +229,19 @@ async function searchFaq(searchPattern: string): Promise<RawSearchResult[]> {
       f.id as entity_id,
       COALESCE(en_t.question, t.question) as display_name,
       CASE
-        WHEN LOWER(t.question) LIKE LOWER(?) THEN 'question'
+        WHEN LOWER(t.question) LIKE LOWER(?) ESCAPE '\' THEN 'question'
         ELSE 'answer'
       END as match_field,
       t.locale as match_locale,
       CASE
-        WHEN LOWER(t.question) LIKE LOWER(?) THEN t.question
+        WHEN LOWER(t.question) LIKE LOWER(?) ESCAPE '\' THEN t.question
         ELSE t.answer
       END as match_value
     FROM faq_items f
     JOIN faq_translations t ON t.faq_id = f.id
     LEFT JOIN faq_translations en_t ON en_t.faq_id = f.id AND en_t.locale = 'en'
-    WHERE LOWER(t.question) LIKE LOWER(?)
-       OR LOWER(t.answer) LIKE LOWER(?)
+    WHERE LOWER(t.question) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.answer) LIKE LOWER(?) ESCAPE '\'
     LIMIT 10
   `;
   return query<RawSearchResult>(sql, [
@@ -251,28 +255,28 @@ async function searchPosts(searchPattern: string): Promise<RawSearchResult[]> {
       p.id as entity_id,
       COALESCE(en_t.title, t.title) as display_name,
       CASE
-        WHEN LOWER(t.title) LIKE LOWER(?) THEN 'title'
-        WHEN LOWER(t.excerpt) LIKE LOWER(?) THEN 'excerpt'
-        WHEN LOWER(t.content) LIKE LOWER(?) THEN 'content'
-        WHEN LOWER(t.meta_title) LIKE LOWER(?) THEN 'meta_title'
+        WHEN LOWER(t.title) LIKE LOWER(?) ESCAPE '\' THEN 'title'
+        WHEN LOWER(t.excerpt) LIKE LOWER(?) ESCAPE '\' THEN 'excerpt'
+        WHEN LOWER(t.content) LIKE LOWER(?) ESCAPE '\' THEN 'content'
+        WHEN LOWER(t.meta_title) LIKE LOWER(?) ESCAPE '\' THEN 'meta_title'
         ELSE 'meta_description'
       END as match_field,
       t.locale as match_locale,
       CASE
-        WHEN LOWER(t.title) LIKE LOWER(?) THEN t.title
-        WHEN LOWER(t.excerpt) LIKE LOWER(?) THEN t.excerpt
-        WHEN LOWER(t.content) LIKE LOWER(?) THEN t.content
-        WHEN LOWER(t.meta_title) LIKE LOWER(?) THEN t.meta_title
+        WHEN LOWER(t.title) LIKE LOWER(?) ESCAPE '\' THEN t.title
+        WHEN LOWER(t.excerpt) LIKE LOWER(?) ESCAPE '\' THEN t.excerpt
+        WHEN LOWER(t.content) LIKE LOWER(?) ESCAPE '\' THEN t.content
+        WHEN LOWER(t.meta_title) LIKE LOWER(?) ESCAPE '\' THEN t.meta_title
         ELSE t.meta_description
       END as match_value
     FROM posts p
     JOIN post_translations t ON t.post_id = p.id
     LEFT JOIN post_translations en_t ON en_t.post_id = p.id AND en_t.locale = 'en'
-    WHERE LOWER(t.title) LIKE LOWER(?)
-       OR LOWER(t.excerpt) LIKE LOWER(?)
-       OR LOWER(t.content) LIKE LOWER(?)
-       OR LOWER(t.meta_title) LIKE LOWER(?)
-       OR LOWER(t.meta_description) LIKE LOWER(?)
+    WHERE LOWER(t.title) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.excerpt) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.content) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.meta_title) LIKE LOWER(?) ESCAPE '\'
+       OR LOWER(t.meta_description) LIKE LOWER(?) ESCAPE '\'
     LIMIT 10
   `;
   // CASE match_field: 4, CASE match_value: 4, WHERE: 5 = 13 params
@@ -288,7 +292,7 @@ export async function searchAllEntities(searchQuery: string): Promise<SearchResu
     return [];
   }
 
-  const searchPattern = `%${searchQuery}%`;
+  const searchPattern = `%${escapeLikePattern(searchQuery)}%`;
 
   // Run all searches in parallel
   const [team, projects, companies, services, subservices, faq, posts] = await Promise.all([

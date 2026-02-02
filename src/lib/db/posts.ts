@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { query, queryFirst, execute, batch } from './client';
 import type { Locale } from './schema';
 import { getTeamMemberLocalized } from './team';
@@ -139,9 +140,17 @@ export async function getAllPostsWithTranslations(): Promise<PostWithTranslation
   }));
 }
 
-export async function getPostsLocalized(locale: Locale, limit?: number): Promise<PostLocalized[]> {
-  // Use LEFT JOIN with COALESCE to fall back to English if translation is missing
-  // For slug: prefer locale-specific slug, then English locale slug, then posts.slug
+export async function getPublishedPostCount(): Promise<number> {
+  const result = await queryFirst<{ count: number }>(
+    'SELECT COUNT(*) as count FROM posts WHERE is_published = 1'
+  );
+  return result?.count ?? 0;
+}
+
+export async function getPostsLocalized(
+  locale: Locale,
+  options?: { limit?: number; offset?: number },
+): Promise<PostLocalized[]> {
   let sql = `
     SELECT p.*,
       COALESCE(t.title, t_en.title) as title,
@@ -158,9 +167,13 @@ export async function getPostsLocalized(locale: Locale, limit?: number): Promise
   `;
   const params: unknown[] = [locale];
 
-  if (limit) {
+  if (options?.limit) {
     sql += ' LIMIT ?';
-    params.push(limit);
+    params.push(options.limit);
+    if (options.offset) {
+      sql += ' OFFSET ?';
+      params.push(options.offset);
+    }
   }
 
   const rows = await query<Post & PostTranslation & { resolved_slug: string }>(sql, params);
@@ -229,7 +242,7 @@ export async function getPostsLocalized(locale: Locale, limit?: number): Promise
   }));
 }
 
-export async function getPostLocalized(slug: string, locale: Locale): Promise<PostLocalized | null> {
+export const getPostLocalized = cache(async function getPostLocalized(slug: string, locale: Locale): Promise<PostLocalized | null> {
   // First try to find by locale-specific slug in post_translations
   // Then fall back to posts.slug (canonical/English slug)
   const row = await queryFirst<Post & PostTranslation & { resolved_slug: string }>(
@@ -270,7 +283,7 @@ export async function getPostLocalized(slug: string, locale: Locale): Promise<Po
     tags,
     author,
   };
-}
+});
 
 export async function getPostsByTag(tag: string, locale: Locale): Promise<PostLocalized[]> {
   const rows = await query<Post & PostTranslation & { resolved_slug: string }>(
@@ -405,6 +418,8 @@ export async function createPost(input: PostInput): Promise<number> {
 }
 
 export async function updatePost(id: number, input: Partial<PostInput>): Promise<void> {
+  const statements: { sql: string; params: unknown[] }[] = [];
+
   const updates: string[] = [];
   const values: unknown[] = [];
 
@@ -432,39 +447,48 @@ export async function updatePost(id: number, input: Partial<PostInput>): Promise
   if (updates.length > 0) {
     updates.push('updated_at = CURRENT_TIMESTAMP');
     values.push(id);
-    await execute(`UPDATE posts SET ${updates.join(', ')} WHERE id = ?`, values);
+    statements.push({
+      sql: `UPDATE posts SET ${updates.join(', ')} WHERE id = ?`,
+      params: values,
+    });
   }
 
-  // Update translations
+  // Translations
   if (input.translations) {
     for (const [locale, t] of Object.entries(input.translations)) {
       if (t) {
-        await execute(
-          `INSERT INTO post_translations (post_id, locale, title, excerpt, content, meta_title, meta_description, slug)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-           ON CONFLICT(post_id, locale) DO UPDATE SET
-             title = excluded.title,
-             excerpt = excluded.excerpt,
-             content = excluded.content,
-             meta_title = excluded.meta_title,
-             meta_description = excluded.meta_description,
-             slug = excluded.slug`,
-          [id, locale, t.title, t.excerpt ?? null, t.content, t.meta_title ?? null, t.meta_description ?? null, t.slug || generateSlug(t.title)]
-        );
+        statements.push({
+          sql: `INSERT INTO post_translations (post_id, locale, title, excerpt, content, meta_title, meta_description, slug)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(post_id, locale) DO UPDATE SET
+                  title = excluded.title,
+                  excerpt = excluded.excerpt,
+                  content = excluded.content,
+                  meta_title = excluded.meta_title,
+                  meta_description = excluded.meta_description,
+                  slug = excluded.slug`,
+          params: [id, locale, t.title, t.excerpt ?? null, t.content, t.meta_title ?? null, t.meta_description ?? null, t.slug || generateSlug(t.title)],
+        });
       }
     }
   }
 
-  // Update tags
+  // Tags
   if (input.tags !== undefined) {
-    await execute('DELETE FROM post_tags WHERE post_id = ?', [id]);
-    const tagStatements = input.tags.map((tag) => ({
-      sql: `INSERT INTO post_tags (post_id, tag) VALUES (?, ?)`,
-      params: [id, tag],
-    }));
-    if (tagStatements.length > 0) {
-      await batch(tagStatements);
+    statements.push({
+      sql: 'DELETE FROM post_tags WHERE post_id = ?',
+      params: [id],
+    });
+    for (const tag of input.tags) {
+      statements.push({
+        sql: 'INSERT INTO post_tags (post_id, tag) VALUES (?, ?)',
+        params: [id, tag],
+      });
     }
+  }
+
+  if (statements.length > 0) {
+    await batch(statements);
   }
 }
 

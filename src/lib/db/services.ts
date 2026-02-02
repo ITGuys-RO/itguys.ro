@@ -277,6 +277,9 @@ export async function createService(input: ServiceInput): Promise<number> {
 }
 
 export async function updateService(id: number, input: Partial<ServiceInput>): Promise<void> {
+  // Batch base table update, translations, and technologies together
+  const statements: { sql: string; params: unknown[] }[] = [];
+
   const updates: string[] = [];
   const values: unknown[] = [];
 
@@ -304,42 +307,51 @@ export async function updateService(id: number, input: Partial<ServiceInput>): P
   if (updates.length > 0) {
     updates.push('updated_at = CURRENT_TIMESTAMP');
     values.push(id);
-    await execute(`UPDATE services SET ${updates.join(', ')} WHERE id = ?`, values);
+    statements.push({
+      sql: `UPDATE services SET ${updates.join(', ')} WHERE id = ?`,
+      params: values,
+    });
   }
 
-  // Update translations
+  // Translations
   if (input.translations) {
     for (const [locale, t] of Object.entries(input.translations)) {
       if (t) {
-        await execute(
-          `INSERT INTO service_translations (service_id, locale, slug, title, description, details, note, long_description)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-           ON CONFLICT(service_id, locale) DO UPDATE SET
-             slug = excluded.slug,
-             title = excluded.title,
-             description = excluded.description,
-             details = excluded.details,
-             note = excluded.note,
-             long_description = excluded.long_description`,
-          [id, locale, t.slug ?? null, t.title, t.description ?? null, t.details ?? null, t.note ?? null, t.long_description ?? null]
-        );
+        statements.push({
+          sql: `INSERT INTO service_translations (service_id, locale, slug, title, description, details, note, long_description)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(service_id, locale) DO UPDATE SET
+                  slug = excluded.slug,
+                  title = excluded.title,
+                  description = excluded.description,
+                  details = excluded.details,
+                  note = excluded.note,
+                  long_description = excluded.long_description`,
+          params: [id, locale, t.slug ?? null, t.title, t.description ?? null, t.details ?? null, t.note ?? null, t.long_description ?? null],
+        });
       }
     }
   }
 
-  // Update technologies
+  // Technologies
   if (input.technologies !== undefined) {
-    await execute('DELETE FROM service_technologies WHERE service_id = ?', [id]);
-    const techStatements = input.technologies.map((tech, idx) => ({
-      sql: `INSERT INTO service_technologies (service_id, technology, sort_order) VALUES (?, ?, ?)`,
-      params: [id, tech, idx],
-    }));
-    if (techStatements.length > 0) {
-      await batch(techStatements);
+    statements.push({
+      sql: 'DELETE FROM service_technologies WHERE service_id = ?',
+      params: [id],
+    });
+    for (let idx = 0; idx < input.technologies.length; idx++) {
+      statements.push({
+        sql: 'INSERT INTO service_technologies (service_id, technology, sort_order) VALUES (?, ?, ?)',
+        params: [id, input.technologies[idx], idx],
+      });
     }
   }
 
-  // Update subservices (full replace)
+  if (statements.length > 0) {
+    await batch(statements);
+  }
+
+  // Subservices require sequential inserts (need lastRowId for translations)
   if (input.subservices !== undefined) {
     await execute('DELETE FROM subservices WHERE service_id = ?', [id]);
     for (let i = 0; i < input.subservices.length; i++) {

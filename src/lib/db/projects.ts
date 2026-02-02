@@ -235,6 +235,8 @@ export async function createProject(input: ProjectInput): Promise<number> {
 }
 
 export async function updateProject(id: number, input: Partial<ProjectInput>): Promise<void> {
+  const statements: { sql: string; params: unknown[] }[] = [];
+
   const updates: string[] = [];
   const values: unknown[] = [];
 
@@ -274,43 +276,52 @@ export async function updateProject(id: number, input: Partial<ProjectInput>): P
   if (updates.length > 0) {
     updates.push('updated_at = CURRENT_TIMESTAMP');
     values.push(id);
-    await execute(`UPDATE projects SET ${updates.join(', ')} WHERE id = ?`, values);
+    statements.push({
+      sql: `UPDATE projects SET ${updates.join(', ')} WHERE id = ?`,
+      params: values,
+    });
   }
 
-  // Update translations
+  // Translations
   if (input.translations) {
     for (const [locale, t] of Object.entries(input.translations)) {
       if (t) {
-        await execute(
-          `INSERT INTO project_translations (project_id, locale, name, client_type, industry, challenge, solution, result, content, meta_title, meta_description, slug)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-           ON CONFLICT(project_id, locale) DO UPDATE SET
-             name = excluded.name,
-             client_type = excluded.client_type,
-             industry = excluded.industry,
-             challenge = excluded.challenge,
-             solution = excluded.solution,
-             result = excluded.result,
-             content = excluded.content,
-             meta_title = excluded.meta_title,
-             meta_description = excluded.meta_description,
-             slug = excluded.slug`,
-          [id, locale, t.name, t.client_type ?? null, t.industry ?? null, t.challenge ?? null, t.solution ?? null, t.result ?? null, t.content ?? null, t.meta_title ?? null, t.meta_description ?? null, t.slug ?? null]
-        );
+        statements.push({
+          sql: `INSERT INTO project_translations (project_id, locale, name, client_type, industry, challenge, solution, result, content, meta_title, meta_description, slug)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(project_id, locale) DO UPDATE SET
+                  name = excluded.name,
+                  client_type = excluded.client_type,
+                  industry = excluded.industry,
+                  challenge = excluded.challenge,
+                  solution = excluded.solution,
+                  result = excluded.result,
+                  content = excluded.content,
+                  meta_title = excluded.meta_title,
+                  meta_description = excluded.meta_description,
+                  slug = excluded.slug`,
+          params: [id, locale, t.name, t.client_type ?? null, t.industry ?? null, t.challenge ?? null, t.solution ?? null, t.result ?? null, t.content ?? null, t.meta_title ?? null, t.meta_description ?? null, t.slug ?? null],
+        });
       }
     }
   }
 
-  // Update technologies
+  // Technologies
   if (input.technologies !== undefined) {
-    await execute('DELETE FROM project_technologies WHERE project_id = ?', [id]);
-    const techStatements = input.technologies.map((tech, idx) => ({
-      sql: `INSERT INTO project_technologies (project_id, technology, sort_order) VALUES (?, ?, ?)`,
-      params: [id, tech, idx],
-    }));
-    if (techStatements.length > 0) {
-      await batch(techStatements);
+    statements.push({
+      sql: 'DELETE FROM project_technologies WHERE project_id = ?',
+      params: [id],
+    });
+    for (let idx = 0; idx < input.technologies.length; idx++) {
+      statements.push({
+        sql: 'INSERT INTO project_technologies (project_id, technology, sort_order) VALUES (?, ?, ?)',
+        params: [id, input.technologies[idx], idx],
+      });
     }
+  }
+
+  if (statements.length > 0) {
+    await batch(statements);
   }
 }
 

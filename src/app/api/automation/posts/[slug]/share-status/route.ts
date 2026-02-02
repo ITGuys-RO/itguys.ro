@@ -1,18 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPostBySlug } from '@/lib/db/posts';
 import { upsertSocialShare } from '@/lib/db/social-shares';
-
-function validateApiKey(request: NextRequest): boolean {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) return false;
-  return authHeader.slice(7) === process.env.AUTOMATION_API_KEY;
-}
+import { validateAutomationKey } from '@/lib/automation-auth';
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  if (!validateApiKey(request)) {
+  const clientIp = getClientIp(request);
+  const rateLimit = checkRateLimit(clientIp, { maxRequests: 60, windowMs: 60_000 });
+  if (!rateLimit.allowed) {
+    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+  }
+
+  if (!(await validateAutomationKey(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
