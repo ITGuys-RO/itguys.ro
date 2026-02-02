@@ -4,11 +4,12 @@ const {
   FACEBOOK_ACCESS_TOKEN,
   FACEBOOK_APP_ID,
   FACEBOOK_APP_SECRET,
+  FACEBOOK_PAGE_ID,
   GH_PAT_WORKFLOW,
   GITHUB_REPOSITORY,
 } = process.env;
 
-if (!FACEBOOK_ACCESS_TOKEN || !FACEBOOK_APP_ID || !FACEBOOK_APP_SECRET) {
+if (!FACEBOOK_ACCESS_TOKEN || !FACEBOOK_APP_ID || !FACEBOOK_APP_SECRET || !FACEBOOK_PAGE_ID) {
   console.error("Missing Facebook credentials for token refresh");
   process.exit(1);
 }
@@ -34,14 +35,27 @@ async function main() {
     process.exit(1);
   }
 
-  if (data.access_token === FACEBOOK_ACCESS_TOKEN) {
+  // Exchange long-lived user token for a Page Access Token
+  const pageResponse = await fetch(
+    `https://graph.facebook.com/v24.0/${FACEBOOK_PAGE_ID}?fields=access_token&access_token=${data.access_token}`
+  );
+  const pageData = await pageResponse.json();
+
+  if (!pageResponse.ok || !pageData.access_token) {
+    console.error("Page token fetch failed:", pageData.error?.message ?? `HTTP ${pageResponse.status}`);
+    process.exit(1);
+  }
+
+  const pageToken = pageData.access_token;
+
+  if (pageToken === FACEBOOK_ACCESS_TOKEN) {
     console.log("Token unchanged, skipping secret update");
     process.exit(0);
   }
 
   // Update the GitHub secret via gh CLI (requires GH_TOKEN env var)
   execSync(`gh secret set FACEBOOK_ACCESS_TOKEN`, {
-    input: data.access_token,
+    input: pageToken,
     env: { ...process.env, GH_TOKEN: GH_PAT_WORKFLOW },
     stdio: ["pipe", "inherit", "inherit"],
   });

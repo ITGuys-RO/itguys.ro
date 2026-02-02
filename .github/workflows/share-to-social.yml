@@ -16,9 +16,6 @@ on:
           - facebook
           - all
 
-concurrency:
-  group: share-social-${{ github.event.inputs.post_slug }}
-  cancel-in-progress: true
 
 permissions:
   contents: read
