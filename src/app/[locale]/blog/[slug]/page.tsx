@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { Section, Card, AnimateOnScroll, Breadcrumb } from '@/components/ui';
 import { BreadcrumbSchema, OrganizationSchema, BlogPostingSchema } from '@/components/structured-data';
 import { getPostLocalized, getPostLocaleSlugs } from '@/lib/db';
@@ -74,6 +74,11 @@ export default async function BlogPostPage({ params }: Props) {
 
   if (!post) {
     notFound();
+  }
+
+  // Redirect if the slug doesn't match the locale-specific slug (e.g., English slug used under French locale)
+  if (post.slug !== slug) {
+    permanentRedirect(`/${locale}/blog/${post.slug}`);
   }
 
   const baseUrl = locale === 'en' ? '' : `/${locale}`;

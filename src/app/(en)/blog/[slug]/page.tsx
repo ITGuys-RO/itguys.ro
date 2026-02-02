@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { Section, Card, AnimateOnScroll, Breadcrumb } from '@/components/ui';
 import { BreadcrumbSchema, OrganizationSchema, BlogPostingSchema } from '@/components/structured-data';
 import { getPostLocalized, getPostLocaleSlugs } from '@/lib/db';
@@ -63,6 +63,11 @@ export default async function BlogPostPage({ params }: Props) {
 
   if (!post) {
     notFound();
+  }
+
+  // Redirect if the slug doesn't match the resolved English slug
+  if (post.slug !== slug) {
+    permanentRedirect(`/blog/${post.slug}`);
   }
 
   return (
