@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import Clarity from "@microsoft/clarity";
 import { useCookieConsent } from "@/components/providers/CookieConsentProvider";
 
 const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID;
@@ -18,8 +17,10 @@ export function ConditionalClarity() {
   useEffect(() => {
     if (!enabled || initialized.current) return;
 
-    Clarity.init(CLARITY_ID!);
-    initialized.current = true;
+    import("@microsoft/clarity").then((mod) => {
+      mod.default.init(CLARITY_ID!);
+      initialized.current = true;
+    });
   }, [enabled]);
 
   return null;
