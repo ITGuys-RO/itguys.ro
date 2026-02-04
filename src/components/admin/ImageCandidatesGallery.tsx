@@ -2,9 +2,22 @@
 
 import { useState, useEffect } from 'react';
 
-// Validate image URL to prevent XSS via javascript: or data: URLs
-function isValidImageUrl(url: string): boolean {
-  return url.startsWith('/') || url.startsWith('https://');
+// Sanitize image URL - returns safe URL or null
+function getSafeImageUrl(url: string): string | null {
+  if (url.startsWith('/')) {
+    return '/' + url.slice(1).replace(/[^a-zA-Z0-9._\-/]/g, '');
+  }
+  if (url.startsWith('https://')) {
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol === 'https:') {
+        return parsed.href;
+      }
+    } catch {
+      return null;
+    }
+  }
+  return null;
 }
 
 interface ImageCandidate {
@@ -64,7 +77,9 @@ export function ImageCandidatesGallery({ postId, currentImage, onSelected }: Ima
         Image Candidates ({candidates.length})
       </label>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {candidates.filter((c) => isValidImageUrl(c.image_url)).map((c) => {
+        {candidates.map((c) => {
+          const safeUrl = getSafeImageUrl(c.image_url);
+          if (!safeUrl) return null;
           const isActive = c.is_selected === 1 || c.image_url === currentImage;
           return (
             <button
@@ -79,7 +94,7 @@ export function ImageCandidatesGallery({ postId, currentImage, onSelected }: Ima
               }`}
             >
               <img
-                src={c.image_url}
+                src={safeUrl}
                 alt={c.page_title || 'Candidate image'}
                 className="w-full h-24 object-cover"
               />

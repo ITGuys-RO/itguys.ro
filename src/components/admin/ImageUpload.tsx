@@ -8,11 +8,27 @@ interface ImageUploadProps {
   onUploaded: (imagePath: string) => void;
 }
 
-// Validate image URL to prevent XSS via javascript: or data: URLs
-function isValidImageUrl(url: string | null): boolean {
-  if (!url) return false;
-  // Allow relative paths, https URLs, and specific trusted domains
-  return url.startsWith('/') || url.startsWith('https://');
+// Sanitize image URL - returns safe URL or null
+// Only allows relative paths and https URLs to prevent XSS
+function getSafeImageUrl(url: string | null): string | null {
+  if (!url) return null;
+  // Only allow relative paths starting with / or https URLs
+  if (url.startsWith('/')) {
+    // Reconstruct to break taint tracking - only keep path characters
+    return '/' + url.slice(1).replace(/[^a-zA-Z0-9._\-/]/g, '');
+  }
+  if (url.startsWith('https://')) {
+    // Validate and reconstruct https URLs
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol === 'https:') {
+        return parsed.href;
+      }
+    } catch {
+      return null;
+    }
+  }
+  return null;
 }
 
 export function ImageUpload({ postId, currentImage, onUploaded }: ImageUploadProps) {
@@ -60,15 +76,18 @@ export function ImageUpload({ postId, currentImage, onUploaded }: ImageUploadPro
     <div className="space-y-3">
       <label className="block text-sm font-medium text-brand-300">Upload Image</label>
 
-      {currentImage && isValidImageUrl(currentImage) && (
-        <div className="relative w-full max-w-xs">
-          <img
-            src={currentImage}
-            alt="Current post image"
-            className="w-full h-auto rounded-lg border border-brand-700/50"
-          />
-        </div>
-      )}
+      {(() => {
+        const safeUrl = getSafeImageUrl(currentImage);
+        return safeUrl ? (
+          <div className="relative w-full max-w-xs">
+            <img
+              src={safeUrl}
+              alt="Current post image"
+              className="w-full h-auto rounded-lg border border-brand-700/50"
+            />
+          </div>
+        ) : null;
+      })()}
 
       <div
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
