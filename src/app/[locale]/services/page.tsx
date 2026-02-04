@@ -30,21 +30,21 @@ type Props = {
 };
 
 const titles: Record<string, string> = {
-  en: "Professional Services - Cybersecurity, QA & Analytics",
-  ro: "Servicii Profesionale - Securitate Cibernetică, QA & Analytics",
-  fr: "Services Professionnels - Cybersécurité, QA & Analytics",
-  de: "Professionelle Dienste - Cybersicherheit, QA & Analytics",
-  it: "Servizi Professionali - Cybersicurezza, QA & Analytics",
-  es: "Servicios Profesionales - Ciberseguridad, QA & Analytics",
+  en: "Professional Services - Consulting, QA, Analytics & Security",
+  ro: "Servicii Profesionale - Consultanță, QA, Analytics & Securitate",
+  fr: "Services Professionnels - Conseil, QA, Analytics & Sécurité",
+  de: "Professionelle Dienste - Beratung, QA, Analytics & Sicherheit",
+  it: "Servizi Professionali - Consulenza, QA, Analytics & Sicurezza",
+  es: "Servicios Profesionales - Consultoría, QA, Analytics & Seguridad",
 };
 
 const servicesDescriptions: Record<string, string> = {
-  en: "Cybersecurity services, penetration testing, security audits, and QA testing. Expert cybersecurity team from Electronic Arts and TUI veterans.",
-  ro: "Servicii de securitate cibernetică, teste de penetrare, audituri de securitate și testare QA. Experți în cybersecurity de la Electronic Arts și TUI.",
-  fr: "Services de cybersécurité, tests de pénétration, audits de sécurité et tests QA. Équipe experte en cybersécurité d'Electronic Arts et TUI.",
-  de: "Cybersicherheitsdienste, Penetrationstests, Sicherheitsaudits und QA-Tests. Cybersecurity-Expertenteam von Electronic Arts und TUI.",
-  it: "Servizi di cybersicurezza, penetration test, audit di sicurezza e test QA. Team esperto di cybersecurity da Electronic Arts e TUI.",
-  es: "Servicios de ciberseguridad, pruebas de penetración, auditorías de seguridad y pruebas QA. Equipo experto en ciberseguridad de Electronic Arts y TUI.",
+  en: "Technical consulting, QA testing, data analytics, and cybersecurity services. Expert guidance from Electronic Arts, TUI, and Nagarro engineers.",
+  ro: "Consultanță tehnică, testare QA, analiză de date și servicii de securitate cibernetică. Expertiză de la ingineri Electronic Arts, TUI și Nagarro.",
+  fr: "Conseil technique, tests QA, analyse de données et services de cybersécurité. Expertise d'ingénieurs d'Electronic Arts, TUI et Nagarro.",
+  de: "Technische Beratung, QA-Tests, Datenanalyse und Cybersicherheitsdienste. Expertenwissen von Electronic Arts, TUI und Nagarro Ingenieuren.",
+  it: "Consulenza tecnica, test QA, analisi dei dati e servizi di cybersicurezza. Esperienza da ingegneri di Electronic Arts, TUI e Nagarro.",
+  es: "Consultoría técnica, pruebas QA, análisis de datos y servicios de ciberseguridad. Experiencia de ingenieros de Electronic Arts, TUI y Nagarro.",
 };
 
 const learnMoreText: Record<string, string> = {

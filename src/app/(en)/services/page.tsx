@@ -26,19 +26,19 @@ const serviceIcons: Record<string, typeof ShieldCheckIcon> = {
 };
 
 export const metadata: Metadata = {
-  title: "Professional Services - Cybersecurity, QA & Analytics",
-  description: "Cybersecurity services, penetration testing, security audits, and QA testing. Expert cybersecurity team from Electronic Arts and TUI veterans.",
+  title: "Professional Services - Consulting, QA, Analytics & Security",
+  description: "Technical consulting, QA testing, data analytics, and cybersecurity services. Expert guidance from Electronic Arts, TUI, and Nagarro engineers.",
   openGraph: {
-    title: "Professional Services - Cybersecurity & QA | ITGuys",
-    description: "Cybersecurity services, penetration testing, security audits, and QA testing. Expert cybersecurity team from Electronic Arts and TUI veterans.",
+    title: "Professional Services - Consulting, QA & Security | ITGuys",
+    description: "Technical consulting, QA testing, data analytics, and cybersecurity services. Expert guidance from Electronic Arts, TUI, and Nagarro engineers.",
     url: "https://itguys.ro/services",
     type: "website",
   },
   alternates: generateAlternates("/services"),
   twitter: {
     card: "summary_large_image",
-    title: "Professional Services - Cybersecurity, QA & Analytics",
-    description: "Cybersecurity services, penetration testing, security audits, and QA testing. Expert cybersecurity team from Electronic Arts and TUI veterans.",
+    title: "Professional Services - Consulting, QA, Analytics & Security",
+    description: "Technical consulting, QA testing, data analytics, and cybersecurity services. Expert guidance from Electronic Arts, TUI, and Nagarro engineers.",
     images: ["/og-image.png"],
   },
 };

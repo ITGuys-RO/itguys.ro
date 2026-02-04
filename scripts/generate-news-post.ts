@@ -132,17 +132,27 @@ function loadHumanizerRules(): string {
 }
 
 function getResearchPrompt(): string {
-  return `Search for today's most significant tech news in these categories ONLY:
-- Security vulnerabilities, breaches, or patches
-- DDoS attacks, CDN, or WAF topics (Akamai, Cloudflare)
-- Cloud infrastructure: AWS, Docker, Kubernetes
-- PHP framework updates or vulnerabilities
-- Native iOS/Android development: Swift, Kotlin, mobile security
-- API security, authentication flaws, OAuth/JWT
-- Enterprise compliance: GDPR, SOC2, HIPAA
-- Web application security: XSS, SQLi, CSRF
+  return `Search for today's most significant tech news, rotating across these categories:
 
-If nothing relevant is trending today, find the most recent security advisory or CVE affecting PHP, AWS, iOS, or Android.
+**Software Development (50% priority):**
+- PHP framework updates: Laravel, Symfony, new features, performance improvements
+- JavaScript/TypeScript ecosystem: React, Vue, Next.js, Node.js releases
+- Web performance improvements, browser APIs, WebAssembly developments
+- Database technology updates: PostgreSQL, MySQL, MongoDB, Redis
+- API design patterns, GraphQL/REST developments, developer tooling
+
+**Mobile Development (30% priority):**
+- iOS updates: Swift improvements, Xcode releases, SwiftUI developments
+- Android updates: Kotlin news, Jetpack Compose, Android Studio features
+- Mobile performance optimization, battery efficiency, offline-first patterns
+- App Store/Play Store policy changes affecting developers
+
+**Security (20% priority):**
+- Critical CVEs affecting PHP, Node.js, iOS, or Android platforms
+- Security patches for popular frameworks and development tools
+- Authentication and authorization best practices
+
+Prioritize development-focused stories first. Only lead with security if there's a major CVE affecting common development tools or a significant breach with lessons for developers.
 
 Return your findings as PLAIN TEXT (not JSON) with:
 - Headline: what happened
@@ -198,7 +208,7 @@ async function researchNews(): Promise<ResearchResult> {
   } catch (error) {
     console.warn('Perplexity failed, falling back to Claude knowledge:', (error as Error).message);
     return {
-      text: 'FALLBACK: No live research available. Write about a recent security advisory, CVE, or notable tech development from your knowledge. Focus on practical implications for web developers, mobile developers, and security teams.',
+      text: 'FALLBACK: No live research available. Write about a recent notable tech development from your knowledge. Prioritize: web development (PHP, React, Node.js), mobile development (Swift, Kotlin, iOS/Android), or cloud/DevOps topics. Only write about security if no development news is available. Focus on practical implications for development teams.',
       sourceUrls: [],
       images: [],
     };

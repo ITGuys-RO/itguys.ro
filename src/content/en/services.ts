@@ -1,8 +1,8 @@
 export const servicesContent = {
   hero: {
-    headline: "Cybersecurity & Professional Services",
+    headline: "Professional Services",
     subheadline:
-      "Cybersecurity, penetration testing, QA, and data analytics. Expert services that keep your software secure and reliable.",
+      "Technical consulting, quality assurance, data analytics, and security services. Expert guidance from Electronic Arts, TUI, and Nagarro veterans.",
   },
 
   cta: {
