@@ -23,13 +23,22 @@ function escapeAttr(value: string): string {
 }
 
 export function sanitizeHtml(html: string): string {
-  return html
-    // Remove dangerous tags and their content (script, iframe, etc.)
-    .replace(DANGEROUS_TAGS, '')
-    // Remove event handler attributes (onclick, onerror, etc.)
-    .replace(EVENT_HANDLER_ATTRS, '')
-    // Sanitize href URLs in anchor tags
-    .replace(DANGEROUS_HREF, (_match, before: string, url: string, after: string) => {
-      return `<a ${before}href="${sanitizeUrl(url)}"${after}>`;
-    });
+  let result = html;
+  let previous: string;
+
+  // Loop until no more changes occur to handle nested/reconstructed patterns
+  // e.g., "<scrip<script>t>" becoming "<script>" after first pass
+  do {
+    previous = result;
+    result = result
+      // Remove dangerous tags and their content (script, iframe, etc.)
+      .replace(DANGEROUS_TAGS, '')
+      // Remove event handler attributes (onclick, onerror, etc.)
+      .replace(EVENT_HANDLER_ATTRS, '');
+  } while (result !== previous);
+
+  // Sanitize href URLs in anchor tags (single pass is sufficient)
+  return result.replace(DANGEROUS_HREF, (_match, before: string, url: string, after: string) => {
+    return `<a ${before}href="${sanitizeUrl(url)}"${after}>`;
+  });
 }

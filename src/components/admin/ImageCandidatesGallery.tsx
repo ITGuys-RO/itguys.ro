@@ -2,6 +2,11 @@
 
 import { useState, useEffect } from 'react';
 
+// Validate image URL to prevent XSS via javascript: or data: URLs
+function isValidImageUrl(url: string): boolean {
+  return url.startsWith('/') || url.startsWith('https://');
+}
+
 interface ImageCandidate {
   id: number;
   image_url: string;
@@ -59,7 +64,7 @@ export function ImageCandidatesGallery({ postId, currentImage, onSelected }: Ima
         Image Candidates ({candidates.length})
       </label>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {candidates.map((c) => {
+        {candidates.filter((c) => isValidImageUrl(c.image_url)).map((c) => {
           const isActive = c.is_selected === 1 || c.image_url === currentImage;
           return (
             <button

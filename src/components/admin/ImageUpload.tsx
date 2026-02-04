@@ -8,6 +8,13 @@ interface ImageUploadProps {
   onUploaded: (imagePath: string) => void;
 }
 
+// Validate image URL to prevent XSS via javascript: or data: URLs
+function isValidImageUrl(url: string | null): boolean {
+  if (!url) return false;
+  // Allow relative paths, https URLs, and specific trusted domains
+  return url.startsWith('/') || url.startsWith('https://');
+}
+
 export function ImageUpload({ postId, currentImage, onUploaded }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
@@ -53,7 +60,7 @@ export function ImageUpload({ postId, currentImage, onUploaded }: ImageUploadPro
     <div className="space-y-3">
       <label className="block text-sm font-medium text-brand-300">Upload Image</label>
 
-      {currentImage && (
+      {currentImage && isValidImageUrl(currentImage) && (
         <div className="relative w-full max-w-xs">
           <img
             src={currentImage}
