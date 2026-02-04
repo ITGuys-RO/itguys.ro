@@ -285,9 +285,12 @@ export const getPostLocalized = cache(async function getPostLocalized(slug: stri
   };
 });
 
-export async function getPostsByTag(tag: string, locale: Locale): Promise<PostLocalized[]> {
-  const rows = await query<Post & PostTranslation & { resolved_slug: string }>(
-    `SELECT p.*,
+export async function getPostsByTag(
+  tag: string,
+  locale: Locale,
+  options?: { limit?: number; offset?: number }
+): Promise<PostLocalized[]> {
+  let sql = `SELECT p.*,
        COALESCE(t.title, t_en.title) as title,
        COALESCE(t.excerpt, t_en.excerpt) as excerpt,
        COALESCE(t.content, t_en.content) as content,
@@ -299,9 +302,19 @@ export async function getPostsByTag(tag: string, locale: Locale): Promise<PostLo
      LEFT JOIN post_translations t ON t.post_id = p.id AND t.locale = ?
      LEFT JOIN post_translations t_en ON t_en.post_id = p.id AND t_en.locale = 'en'
      WHERE p.is_published = 1
-     ORDER BY p.published_at DESC`,
-    [tag, locale]
-  );
+     ORDER BY p.published_at DESC`;
+  const params: unknown[] = [tag, locale];
+
+  if (options?.limit) {
+    sql += ' LIMIT ?';
+    params.push(options.limit);
+    if (options.offset) {
+      sql += ' OFFSET ?';
+      params.push(options.offset);
+    }
+  }
+
+  const rows = await query<Post & PostTranslation & { resolved_slug: string }>(sql, params);
 
   if (rows.length === 0) return [];
 
@@ -367,9 +380,23 @@ export async function getPostsByTag(tag: string, locale: Locale): Promise<PostLo
 
 export async function getAllTags(): Promise<string[]> {
   const rows = await query<{ tag: string }>(
-    'SELECT DISTINCT tag FROM post_tags ORDER BY tag ASC'
+    `SELECT DISTINCT pt.tag
+     FROM post_tags pt
+     INNER JOIN posts p ON p.id = pt.post_id AND p.is_published = 1
+     ORDER BY pt.tag ASC`
   );
   return rows.map((r) => r.tag);
+}
+
+export async function getPostCountByTag(tag: string): Promise<number> {
+  const result = await queryFirst<{ count: number }>(
+    `SELECT COUNT(*) as count
+     FROM posts p
+     INNER JOIN post_tags pt ON pt.post_id = p.id AND pt.tag = ?
+     WHERE p.is_published = 1`,
+    [tag]
+  );
+  return result?.count ?? 0;
 }
 
 export async function createPost(input: PostInput): Promise<number> {

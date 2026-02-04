@@ -1,12 +1,13 @@
 import { Metadata } from 'next';
+import NextLink from 'next/link';
 import { Hero } from '@/components/sections';
 import { Section, Card, AnimateOnScroll } from '@/components/ui';
 import { BlogIllustration } from '@/components/illustrations';
 import { BreadcrumbSchema, OrganizationSchema } from '@/components/structured-data';
-import { getPostsLocalized, getPublishedPostCount } from '@/lib/db';
+import { getPostsLocalized, getPublishedPostCount, getAllTags, getPostsByTag, getPostCountByTag } from '@/lib/db';
 import { Link } from '@/i18n/navigation';
 import { generateAlternates } from '@/i18n';
-import { CalendarIcon, UserIcon, TagIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { CalendarIcon, UserIcon, TagIcon, ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,25 +34,46 @@ const POSTS_PER_PAGE = 12;
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; tag?: string }>;
 }) {
-  const { page: pageParam } = await searchParams;
+  const { page: pageParam, tag: activeTag } = await searchParams;
   const currentPage = Math.max(1, parseInt(pageParam || '1', 10) || 1);
   const offset = (currentPage - 1) * POSTS_PER_PAGE;
 
   let posts: Awaited<ReturnType<typeof getPostsLocalized>> = [];
   let totalPosts = 0;
+  let allTags: string[] = [];
 
   try {
-    [posts, totalPosts] = await Promise.all([
-      getPostsLocalized('en', { limit: POSTS_PER_PAGE, offset }),
-      getPublishedPostCount(),
-    ]);
+    // Fetch tags for the filter bar
+    allTags = await getAllTags();
+
+    // Fetch posts (filtered by tag if selected)
+    if (activeTag) {
+      [posts, totalPosts] = await Promise.all([
+        getPostsByTag(activeTag, 'en', { limit: POSTS_PER_PAGE, offset }),
+        getPostCountByTag(activeTag),
+      ]);
+    } else {
+      [posts, totalPosts] = await Promise.all([
+        getPostsLocalized('en', { limit: POSTS_PER_PAGE, offset }),
+        getPublishedPostCount(),
+      ]);
+    }
   } catch {
     // Database not available
   }
 
   const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
+
+  // Build URL helper that preserves tag param
+  const buildPageUrl = (page: number) => {
+    const params = new URLSearchParams();
+    if (page > 1) params.set('page', String(page));
+    if (activeTag) params.set('tag', activeTag);
+    const qs = params.toString();
+    return `/blog${qs ? `?${qs}` : ''}`;
+  };
 
   return (
     <>
@@ -67,14 +89,74 @@ export default async function BlogPage({
 
       <Section>
         <div className="max-w-6xl mx-auto">
+          {/* Tag Filter Bar */}
+          {allTags.length > 0 && (
+            <AnimateOnScroll animation="fade-in-up" className="mb-8">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-brand-400 text-sm mr-2">Filter:</span>
+                <NextLink
+                  href="/blog"
+                  className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors border ${
+                    !activeTag
+                      ? 'bg-neon/20 text-neon border-neon/40'
+                      : 'bg-brand-800/50 text-brand-300 border-brand-700/30 hover:bg-brand-700/50 hover:text-white'
+                  }`}
+                >
+                  All
+                </NextLink>
+                {allTags.map((tag) => (
+                  <NextLink
+                    key={tag}
+                    href={`/blog?tag=${encodeURIComponent(tag)}`}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors border ${
+                      activeTag === tag
+                        ? 'bg-neon/20 text-neon border-neon/40'
+                        : 'bg-brand-800/50 text-brand-300 border-brand-700/30 hover:bg-brand-700/50 hover:text-white'
+                    }`}
+                  >
+                    {tag}
+                  </NextLink>
+                ))}
+              </div>
+            </AnimateOnScroll>
+          )}
+
+          {/* Active Tag Indicator */}
+          {activeTag && (
+            <AnimateOnScroll animation="fade-in-up" className="mb-6">
+              <div className="flex items-center gap-2 text-brand-300">
+                <span>Showing posts tagged</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-neon/20 text-neon rounded-full border border-neon/40">
+                  <TagIcon className="w-4 h-4" />
+                  {activeTag}
+                  <NextLink
+                    href="/blog"
+                    className="ml-1 hover:text-white transition-colors"
+                    aria-label="Clear filter"
+                  >
+                    <XMarkIcon className="w-4 h-4" />
+                  </NextLink>
+                </span>
+              </div>
+            </AnimateOnScroll>
+          )}
+
           {posts.length === 0 ? (
             <AnimateOnScroll animation="fade-in-up">
               <Card className="text-center py-16">
                 <div className="text-brand-400 mb-4">
                   <TagIcon className="w-12 h-12 mx-auto opacity-50" />
                 </div>
-                <p className="text-xl text-brand-300 mb-2">No posts yet</p>
-                <p className="text-brand-400">Check back soon for articles on development and security.</p>
+                <p className="text-xl text-brand-300 mb-2">
+                  {activeTag ? `No posts with tag "${activeTag}"` : 'No posts yet'}
+                </p>
+                <p className="text-brand-400">
+                  {activeTag ? (
+                    <NextLink href="/blog" className="text-neon hover:underline">View all posts</NextLink>
+                  ) : (
+                    'Check back soon for articles on development and security.'
+                  )}
+                </p>
               </Card>
             </AnimateOnScroll>
           ) : (
@@ -103,14 +185,20 @@ export default async function BlogPage({
                           )}
                           <div className="flex-1 flex flex-col">
                             {post.tags.length > 0 && (
-                              <div className="flex flex-wrap gap-2 mb-3">
+                              <div className="flex flex-wrap gap-2 mb-3" onClick={(e) => e.preventDefault()}>
                                 {post.tags.map((tag) => (
-                                  <span
+                                  <NextLink
                                     key={tag}
-                                    className="px-2.5 py-1 bg-brand-800/50 text-brand-300 text-xs font-medium rounded-full border border-brand-700/30"
+                                    href={`/blog?tag=${encodeURIComponent(tag)}`}
+                                    onClick={(e) => e.stopPropagation()}
+                                    className={`px-2.5 py-1 text-xs font-medium rounded-full border transition-colors ${
+                                      activeTag === tag
+                                        ? 'bg-neon/20 text-neon border-neon/40'
+                                        : 'bg-brand-800/50 text-brand-300 border-brand-700/30 hover:bg-brand-700/50 hover:text-white'
+                                    }`}
                                   >
                                     {tag}
-                                  </span>
+                                  </NextLink>
                                 ))}
                               </div>
                             )}
@@ -153,13 +241,13 @@ export default async function BlogPage({
               {totalPages > 1 && (
                 <nav className="flex justify-center items-center gap-2 mt-12" aria-label="Pagination">
                   {currentPage > 1 ? (
-                    <a
-                      href={`/blog${currentPage === 2 ? '' : `?page=${currentPage - 1}`}`}
+                    <NextLink
+                      href={buildPageUrl(currentPage - 1)}
                       className="p-2 bg-brand-800/50 text-brand-300 rounded-lg hover:bg-brand-700/50 transition-colors border border-brand-700/30"
                       aria-label="Previous page"
                     >
                       <ChevronLeftIcon className="w-5 h-5" />
-                    </a>
+                    </NextLink>
                   ) : (
                     <span className="p-2 text-brand-600 rounded-lg border border-brand-800/30">
                       <ChevronLeftIcon className="w-5 h-5" />
@@ -178,8 +266,8 @@ export default async function BlogPage({
                             {showEllipsis && (
                               <span className="px-2 text-brand-500">...</span>
                             )}
-                            <a
-                              href={page === 1 ? '/blog' : `/blog?page=${page}`}
+                            <NextLink
+                              href={buildPageUrl(page)}
                               className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors border ${
                                 page === currentPage
                                   ? 'bg-neon/20 text-neon border-neon/40'
@@ -188,20 +276,20 @@ export default async function BlogPage({
                               aria-current={page === currentPage ? 'page' : undefined}
                             >
                               {page}
-                            </a>
+                            </NextLink>
                           </span>
                         );
                       })}
                   </div>
 
                   {currentPage < totalPages ? (
-                    <a
-                      href={`/blog?page=${currentPage + 1}`}
+                    <NextLink
+                      href={buildPageUrl(currentPage + 1)}
                       className="p-2 bg-brand-800/50 text-brand-300 rounded-lg hover:bg-brand-700/50 transition-colors border border-brand-700/30"
                       aria-label="Next page"
                     >
                       <ChevronRightIcon className="w-5 h-5" />
-                    </a>
+                    </NextLink>
                   ) : (
                     <span className="p-2 text-brand-600 rounded-lg border border-brand-800/30">
                       <ChevronRightIcon className="w-5 h-5" />
