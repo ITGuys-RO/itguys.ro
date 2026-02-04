@@ -13,6 +13,7 @@ directory = ".open-next/assets"
 [vars]
 # Sensitive values are set via `wrangler secret put` in the deploy workflow
 # Non-secret vars can be added here
+R2_PUBLIC_URL = "https://r2.itguys.ro"
 
 [[d1_databases]]
 binding = "DB"

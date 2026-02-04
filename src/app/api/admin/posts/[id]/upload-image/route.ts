@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin, handleApiError, parseId } from '@/lib/admin-auth';
 import { getPostById, updatePost } from '@/lib/db';
+import { createImageCandidates, selectImageCandidate, getImageCandidates } from '@/lib/db/image-candidates';
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -69,6 +70,23 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     const publicUrl = r2PublicUrl
       ? `${r2PublicUrl}/blog/${post.slug}${ext}`
       : `/api/images/blog/${post.slug}${ext}`;
+
+    // Check if this image already exists in candidates
+    const existingCandidates = await getImageCandidates(postId);
+    const existing = existingCandidates.find(c => c.image_url === publicUrl);
+
+    if (existing) {
+      // Select the existing candidate
+      await selectImageCandidate(postId, existing.id);
+    } else {
+      // Add as new candidate and select it
+      await createImageCandidates(postId, [{ image_url: publicUrl, page_title: 'Uploaded image' }]);
+      const candidates = await getImageCandidates(postId);
+      const newCandidate = candidates.find(c => c.image_url === publicUrl);
+      if (newCandidate) {
+        await selectImageCandidate(postId, newCandidate.id);
+      }
+    }
 
     // Update post image_path
     await updatePost(postId, { image_path: publicUrl });

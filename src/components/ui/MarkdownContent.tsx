@@ -16,7 +16,7 @@ function markdownToHtml(content: string): string {
     .replace(/`([^`]+)`/g, '<code class="bg-brand-800/50 px-1.5 py-0.5 rounded text-sm text-neon">$1</code>')
     .replace(/^> (.*$)/gim, '<blockquote class="border-l-4 border-neon/50 pl-4 text-brand-300 italic my-6">$1</blockquote>')
     .replace(/^- (.*$)/gim, '<li class="ml-6 text-brand-300 mb-2">$1</li>')
-    .replace(/(<li.*<\/li>\n?)+/g, '<ul class="list-disc my-4">$&</ul>')
+    .replace(/(<li[^>]*>.*<\/li>\n?)+/g, (match) => `<ul class="list-disc my-4">${match.replace(/\n/g, '')}</ul>`)
     .replace(/\n\n/g, '</p><p class="text-brand-300 mb-4 leading-relaxed">')
     .replace(/\n/g, '<br />');
 }

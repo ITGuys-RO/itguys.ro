@@ -34,6 +34,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
   const [socialShares, setSocialShares] = useState<PostSocialShare[]>([]);
   const [sharing, setSharing] = useState<string | null>(null);
   const [retranslating, setRetranslating] = useState<string | null>(null);
+  const [candidatesKey, setCandidatesKey] = useState(0);
   const [formData, setFormData] = useState<PostInput>({
     slug: '',
     image_path: '',
@@ -249,6 +250,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
           <h2 className="text-lg font-semibold text-white mb-4">Post Image</h2>
           <div className="space-y-6">
             <ImageCandidatesGallery
+              key={candidatesKey}
               postId={id}
               currentImage={formData.image_path || null}
               onSelected={(path) => setFormData({ ...formData, image_path: path })}
@@ -256,7 +258,10 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
             <ImageUpload
               postId={id}
               currentImage={formData.image_path || null}
-              onUploaded={(path) => setFormData({ ...formData, image_path: path })}
+              onUploaded={(path) => {
+                setFormData({ ...formData, image_path: path });
+                setCandidatesKey(k => k + 1);
+              }}
             />
           </div>
         </div>
