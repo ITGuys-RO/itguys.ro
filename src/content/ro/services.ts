@@ -1,8 +1,8 @@
 export const servicesContent = {
   hero: {
-    headline: "Servicii Profesionale",
+    headline: "Securitate Cibernetică & Servicii Profesionale",
     subheadline:
-      "Asigurarea calității, expertiză în securitate și data analytics. Serviciile care mențin software-ul tău fiabil, sigur și optimizat.",
+      "Securitate cibernetică, teste de penetrare, QA și data analytics. Servicii de specialitate care mențin software-ul tău sigur și fiabil.",
   },
 
   cta: {

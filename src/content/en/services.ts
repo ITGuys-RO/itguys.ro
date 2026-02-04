@@ -1,8 +1,8 @@
 export const servicesContent = {
   hero: {
-    headline: "Professional Services",
+    headline: "Cybersecurity & Professional Services",
     subheadline:
-      "Quality assurance, security expertise, and data analytics. The services that keep your software reliable, secure, and optimized.",
+      "Cybersecurity, penetration testing, QA, and data analytics. Expert services that keep your software secure and reliable.",
   },
 
   cta: {

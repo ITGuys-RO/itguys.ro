@@ -30,21 +30,21 @@ type Props = {
 };
 
 const titles: Record<string, string> = {
-  en: "Professional Services - QA, Security & Analytics",
-  ro: "Servicii Profesionale - QA, Securitate & Analytics",
-  fr: "Services Professionnels - QA, Securite & Analytics",
-  de: "Professionelle Dienste - QA, Sicherheit & Analytics",
-  it: "Servizi Professionali - QA, Sicurezza & Analytics",
-  es: "Servicios Profesionales - QA, Seguridad & Analytics",
+  en: "Professional Services - Cybersecurity, QA & Analytics",
+  ro: "Servicii Profesionale - Securitate Cibernetică, QA & Analytics",
+  fr: "Services Professionnels - Cybersécurité, QA & Analytics",
+  de: "Professionelle Dienste - Cybersicherheit, QA & Analytics",
+  it: "Servizi Professionali - Cybersicurezza, QA & Analytics",
+  es: "Servicios Profesionales - Ciberseguridad, QA & Analytics",
 };
 
 const servicesDescriptions: Record<string, string> = {
-  en: "QA testing, security audits, penetration testing, and data analytics. Expert services from EA and TUI veterans.",
-  ro: "Testare QA, audituri de securitate, teste de penetrare si analiza datelor. Servicii de la experti EA si TUI.",
-  fr: "Tests QA, audits de securite, tests de penetration et analyse de donnees. Services d'experts EA et TUI.",
-  de: "QA-Tests, Sicherheitsaudits, Penetrationstests und Datenanalyse. Expertendienste von EA- und TUI-Veteranen.",
-  it: "Test QA, audit di sicurezza, penetration test e analisi dati. Servizi esperti da veterani EA e TUI.",
-  es: "Pruebas QA, auditorias de seguridad, pentesting y analisis de datos. Servicios de expertos de EA y TUI.",
+  en: "Cybersecurity services, penetration testing, security audits, and QA testing. Expert cybersecurity team from Electronic Arts and TUI veterans.",
+  ro: "Servicii de securitate cibernetică, teste de penetrare, audituri de securitate și testare QA. Experți în cybersecurity de la Electronic Arts și TUI.",
+  fr: "Services de cybersécurité, tests de pénétration, audits de sécurité et tests QA. Équipe experte en cybersécurité d'Electronic Arts et TUI.",
+  de: "Cybersicherheitsdienste, Penetrationstests, Sicherheitsaudits und QA-Tests. Cybersecurity-Expertenteam von Electronic Arts und TUI.",
+  it: "Servizi di cybersicurezza, penetration test, audit di sicurezza e test QA. Team esperto di cybersecurity da Electronic Arts e TUI.",
+  es: "Servicios de ciberseguridad, pruebas de penetración, auditorías de seguridad y pruebas QA. Equipo experto en ciberseguridad de Electronic Arts y TUI.",
 };
 
 const learnMoreText: Record<string, string> = {

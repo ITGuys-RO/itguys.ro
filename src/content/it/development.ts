@@ -2,9 +2,9 @@ import { getCombinedYearsText } from "@/lib/utils";
 
 export const developmentContent = {
   hero: {
-    headline: "Cosa Costruiamo",
+    headline: "Servizi di Sviluppo Software",
     subheadline:
-      `Sviluppo software personalizzato supportato da ${getCombinedYearsText()} anni combinati in EA, TUI e Nagarro. Soluzioni web, mobile, cloud e AI.`,
+      `Sviluppo software personalizzato e sviluppo mobile supportato da ${getCombinedYearsText()} anni di esperienza in EA, TUI e Nagarro. App web, app mobile native, cloud e AI.`,
   },
 
   cta: {

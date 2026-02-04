@@ -10,7 +10,7 @@ export function OrganizationSchema() {
     taxID: "RO34846943",
     logo: "https://itguys.ro/itguys_logo.png",
     description:
-      "Custom software development and security services. We build web apps, mobile apps, APIs, and provide security audits and penetration testing.",
+      "Custom software development, mobile development, and cybersecurity services. We build web apps, native mobile apps, APIs, and provide cybersecurity audits and penetration testing.",
     foundingDate: "2010",
     email: "contact@itguys.ro",
     telephone: "+40726205856",
@@ -58,18 +58,18 @@ export function OrganizationSchema() {
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
-            name: "Mobile App Development",
+            name: "Mobile Development",
             description:
-              "Native and cross-platform mobile applications for iOS and Android",
+              "Native mobile development for iOS and Android. Custom mobile app development with real native performance.",
           },
         },
         {
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
-            name: "Security Services",
+            name: "Cybersecurity Services",
             description:
-              "Security audits, penetration testing, and vulnerability assessments",
+              "Cybersecurity audits, penetration testing, vulnerability assessments, and security consulting",
           },
         },
         {

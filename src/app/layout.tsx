@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     template: "%s | ITGuys"
   },
   description: "Custom web and mobile apps with security services. Expert development team from EA, TUI, and Nagarro.",
-  keywords: ["software development", "web development", "mobile apps", "security services", "penetration testing", "custom software", "React", "Next.js", "Node.js", "cloud infrastructure", "Romania software company"],
+  keywords: ["software development", "custom software development", "software development company", "web development", "mobile development", "mobile app development", "mobile apps", "cybersecurity", "cybersecurity services", "security services", "penetration testing", "custom software", "React", "Next.js", "Node.js", "cloud infrastructure", "Romania software company"],
   authors: [{ name: "ITGuys Team" }],
   creator: "ITGuys",
   publisher: "ITGuys",

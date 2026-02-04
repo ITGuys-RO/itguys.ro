@@ -50,8 +50,8 @@ export default function HomePage() {
     <>
       <OrganizationSchema />
       <WebPageSchema
-        title="ITGuys - Custom Software Development & Security Services"
-        description="Custom web and mobile apps, plus security services. We build software with the right technology for your problem."
+        title="ITGuys - Custom Software Development & Cybersecurity Services"
+        description="Custom software development and cybersecurity services. Web apps, mobile development, and security solutions from EA, TUI, and Nagarro veterans."
         url="https://itguys.ro"
         language="en"
       />

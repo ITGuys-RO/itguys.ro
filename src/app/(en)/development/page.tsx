@@ -28,19 +28,19 @@ const serviceIcons: Record<string, typeof CodeBracketIcon> = {
 };
 
 export const metadata: Metadata = {
-  title: "Development Services - Web, Mobile, Cloud & AI",
-  description: "Web apps, mobile apps, cloud infrastructure, and AI solutions. Custom software built by EA, TUI, and Nagarro experts.",
+  title: "Software Development Services - Web, Mobile & Cloud",
+  description: "Custom software development for web and mobile. Native mobile development, cloud infrastructure, and AI solutions from Nagarro and EA experts.",
   openGraph: {
-    title: "Development Services - ITGuys",
-    description: "Web apps, mobile apps, cloud infrastructure, and AI solutions. Custom software built by EA, TUI, and Nagarro experts.",
+    title: "Software Development Services | ITGuys",
+    description: "Custom software development for web and mobile. Native mobile development, cloud infrastructure, and AI solutions from Nagarro and EA experts.",
     url: "https://itguys.ro/development",
     type: "website",
   },
   alternates: generateAlternates("/development"),
   twitter: {
     card: "summary_large_image",
-    title: "Development Services - Web, Mobile, Cloud & AI",
-    description: "Web apps, mobile apps, cloud infrastructure, and AI solutions. Custom software built by EA, TUI, and Nagarro experts.",
+    title: "Software Development Services - Web, Mobile & Cloud",
+    description: "Custom software development for web and mobile. Native mobile development, cloud infrastructure, and AI solutions from Nagarro and EA experts.",
     images: ["/og-image.png"],
   },
 };

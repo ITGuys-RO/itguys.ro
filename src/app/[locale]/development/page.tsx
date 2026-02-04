@@ -32,21 +32,21 @@ type Props = {
 };
 
 const devTitles: Record<string, string> = {
-  en: "Development Services - Web, Mobile, Cloud & AI",
-  ro: "Servicii Dezvoltare - Web, Mobile, Cloud & AI",
-  fr: "Services de Developpement - Web, Mobile, Cloud & IA",
-  de: "Entwicklungsdienste - Web, Mobile, Cloud & KI",
-  it: "Servizi di Sviluppo - Web, Mobile, Cloud & IA",
-  es: "Servicios de Desarrollo - Web, Movil, Cloud & IA",
+  en: "Software Development Services - Web, Mobile & Cloud",
+  ro: "Servicii Dezvoltare Software - Web, Mobile & Cloud",
+  fr: "Services de Développement Logiciel - Web, Mobile & Cloud",
+  de: "Softwareentwicklung - Web, Mobile & Cloud",
+  it: "Servizi di Sviluppo Software - Web, Mobile & Cloud",
+  es: "Servicios de Desarrollo de Software - Web, Móvil & Cloud",
 };
 
 const devDescriptions: Record<string, string> = {
-  en: "Web apps, mobile apps, cloud infrastructure, and AI solutions. Custom software built by EA, TUI, and Nagarro experts.",
-  ro: "Aplicatii web, mobile, infrastructura cloud si solutii AI. Software personalizat de experti EA, TUI si Nagarro.",
-  fr: "Apps web, mobiles, infrastructure cloud et solutions IA. Logiciels sur mesure par des experts EA, TUI et Nagarro.",
-  de: "Web-Apps, Mobile Apps, Cloud-Infrastruktur und KI-Losungen. Software von EA-, TUI- und Nagarro-Experten.",
-  it: "App web, mobile, infrastruttura cloud e soluzioni IA. Software personalizzato da esperti EA, TUI e Nagarro.",
-  es: "Apps web, moviles, infraestructura cloud y soluciones IA. Software a medida de expertos EA, TUI y Nagarro.",
+  en: "Custom software development for web and mobile. Native mobile development, cloud infrastructure, and AI solutions from Nagarro and EA experts.",
+  ro: "Dezvoltare software personalizat pentru web și mobile. Dezvoltare mobile nativă, infrastructură cloud și soluții AI de la experți Nagarro și EA.",
+  fr: "Développement logiciel sur mesure pour web et mobile. Développement mobile natif, infrastructure cloud et solutions IA par des experts Nagarro et EA.",
+  de: "Individuelle Softwareentwicklung für Web und Mobile. Native Mobile-Entwicklung, Cloud-Infrastruktur und KI-Lösungen von Nagarro- und EA-Experten.",
+  it: "Sviluppo software personalizzato per web e mobile. Sviluppo mobile nativo, infrastruttura cloud e soluzioni IA da esperti Nagarro ed EA.",
+  es: "Desarrollo de software a medida para web y móvil. Desarrollo móvil nativo, infraestructura cloud y soluciones IA de expertos Nagarro y EA.",
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

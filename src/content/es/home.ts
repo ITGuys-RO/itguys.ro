@@ -2,9 +2,9 @@ import { getCombinedYearsText } from "@/lib/utils";
 
 export const homeContent = {
   hero: {
-    headline: "Web, Movil y Seguridad. Bien Hecho.",
+    headline: "Desarrollo de Software & Ciberseguridad. Bien Hecho.",
     subheadline:
-      `${getCombinedYearsText()} anos de experiencia combinada de Electronic Arts, TUI y Nagarro. Construimos aplicaciones personalizadas y las mantenemos protegidas.`,
+      `${getCombinedYearsText()} años de experiencia combinada de Electronic Arts, TUI y Nagarro. Desarrollo de software personalizado y servicios de ciberseguridad que escalan.`,
     cta: {
       text: "Hablemos",
       href: "/contact",
