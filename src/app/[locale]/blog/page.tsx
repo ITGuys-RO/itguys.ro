@@ -4,7 +4,7 @@ import { Hero } from '@/components/sections';
 import { Section, Card, AnimateOnScroll } from '@/components/ui';
 import { BlogIllustration } from '@/components/illustrations';
 import { BreadcrumbSchema, OrganizationSchema } from '@/components/structured-data';
-import { getPostsLocalized, getPublishedPostCount, getAllTags, getPostsByTag, getPostCountByTag } from '@/lib/db';
+import { getPostsLocalized, getPublishedPostCount, getPostsByTag, getPostCountByTag } from '@/lib/db';
 import { Link } from '@/i18n/navigation';
 import { CalendarIcon, UserIcon, TagIcon, ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { locales, type Locale, generateAlternates } from '@/i18n/config';
@@ -21,8 +21,6 @@ const content: Record<Locale, {
   subheadline: string;
   empty: string;
   emptyDesc: string;
-  filter: string;
-  all: string;
   showingTagged: string;
   noPostsWithTag: string;
   viewAll: string;
@@ -32,8 +30,6 @@ const content: Record<Locale, {
     subheadline: 'Insights on software development, security, and technology from our team.',
     empty: 'No posts yet',
     emptyDesc: 'Check back soon for articles on development and security.',
-    filter: 'Filter:',
-    all: 'All',
     showingTagged: 'Showing posts tagged',
     noPostsWithTag: 'No posts with tag',
     viewAll: 'View all posts',
@@ -43,8 +39,6 @@ const content: Record<Locale, {
     subheadline: 'Perspective despre dezvoltare software, securitate și tehnologie de la echipa noastră.',
     empty: 'Niciun articol încă',
     emptyDesc: 'Reveniți în curând pentru articole despre dezvoltare și securitate.',
-    filter: 'Filtrare:',
-    all: 'Toate',
     showingTagged: 'Afișare articole cu eticheta',
     noPostsWithTag: 'Niciun articol cu eticheta',
     viewAll: 'Vezi toate articolele',
@@ -54,8 +48,6 @@ const content: Record<Locale, {
     subheadline: 'Perspectives sur le développement logiciel, la sécurité et la technologie de notre équipe.',
     empty: 'Pas encore d\'articles',
     emptyDesc: 'Revenez bientôt pour des articles sur le développement et la sécurité.',
-    filter: 'Filtrer:',
-    all: 'Tout',
     showingTagged: 'Affichage des articles avec le tag',
     noPostsWithTag: 'Aucun article avec le tag',
     viewAll: 'Voir tous les articles',
@@ -65,8 +57,6 @@ const content: Record<Locale, {
     subheadline: 'Einblicke in Softwareentwicklung, Sicherheit und Technologie von unserem Team.',
     empty: 'Noch keine Beiträge',
     emptyDesc: 'Schauen Sie bald wieder vorbei für Artikel über Entwicklung und Sicherheit.',
-    filter: 'Filter:',
-    all: 'Alle',
     showingTagged: 'Beiträge mit Tag anzeigen',
     noPostsWithTag: 'Keine Beiträge mit Tag',
     viewAll: 'Alle Beiträge anzeigen',
@@ -76,8 +66,6 @@ const content: Record<Locale, {
     subheadline: 'Approfondimenti sullo sviluppo software, sicurezza e tecnologia dal nostro team.',
     empty: 'Nessun articolo ancora',
     emptyDesc: 'Torna presto per articoli su sviluppo e sicurezza.',
-    filter: 'Filtra:',
-    all: 'Tutti',
     showingTagged: 'Visualizzazione articoli con tag',
     noPostsWithTag: 'Nessun articolo con tag',
     viewAll: 'Vedi tutti gli articoli',
@@ -87,8 +75,6 @@ const content: Record<Locale, {
     subheadline: 'Perspectivas sobre desarrollo de software, seguridad y tecnología de nuestro equipo.',
     empty: 'Sin artículos aún',
     emptyDesc: 'Vuelve pronto para artículos sobre desarrollo y seguridad.',
-    filter: 'Filtrar:',
-    all: 'Todos',
     showingTagged: 'Mostrando artículos con etiqueta',
     noPostsWithTag: 'Sin artículos con etiqueta',
     viewAll: 'Ver todos los artículos',
@@ -120,12 +106,8 @@ export default async function BlogPage({ params, searchParams }: Props) {
 
   let posts: Awaited<ReturnType<typeof getPostsLocalized>> = [];
   let totalPosts = 0;
-  let allTags: string[] = [];
 
   try {
-    // Fetch tags for the filter bar
-    allTags = await getAllTags();
-
     // Fetch posts (filtered by tag if selected)
     if (activeTag) {
       [posts, totalPosts] = await Promise.all([
@@ -168,39 +150,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
 
       <Section>
         <div className="max-w-6xl mx-auto">
-          {/* Tag Filter Bar */}
-          {allTags.length > 0 && (
-            <AnimateOnScroll animation="fade-in-up" className="mb-8">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-brand-400 text-sm mr-2">{t.filter}</span>
-                <NextLink
-                  href={blogBase}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors border ${
-                    !activeTag
-                      ? 'bg-neon/20 text-neon border-neon/40'
-                      : 'bg-brand-800/50 text-brand-300 border-brand-700/30 hover:bg-brand-700/50 hover:text-white'
-                  }`}
-                >
-                  {t.all}
-                </NextLink>
-                {allTags.map((tag) => (
-                  <NextLink
-                    key={tag}
-                    href={`${blogBase}?tag=${encodeURIComponent(tag)}`}
-                    className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors border ${
-                      activeTag === tag
-                        ? 'bg-neon/20 text-neon border-neon/40'
-                        : 'bg-brand-800/50 text-brand-300 border-brand-700/30 hover:bg-brand-700/50 hover:text-white'
-                    }`}
-                  >
-                    {tag}
-                  </NextLink>
-                ))}
-              </div>
-            </AnimateOnScroll>
-          )}
-
-          {/* Active Tag Indicator */}
+          {/* Active Tag Filter */}
           {activeTag && (
             <AnimateOnScroll animation="fade-in-up" className="mb-6">
               <div className="flex items-center gap-2 text-brand-300">

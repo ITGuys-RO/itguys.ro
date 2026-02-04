@@ -4,7 +4,7 @@ import { Hero } from '@/components/sections';
 import { Section, Card, AnimateOnScroll } from '@/components/ui';
 import { BlogIllustration } from '@/components/illustrations';
 import { BreadcrumbSchema, OrganizationSchema } from '@/components/structured-data';
-import { getPostsLocalized, getPublishedPostCount, getAllTags, getPostsByTag, getPostCountByTag } from '@/lib/db';
+import { getPostsLocalized, getPublishedPostCount, getPostsByTag, getPostCountByTag } from '@/lib/db';
 import { Link } from '@/i18n/navigation';
 import { generateAlternates } from '@/i18n';
 import { CalendarIcon, UserIcon, TagIcon, ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -42,12 +42,8 @@ export default async function BlogPage({
 
   let posts: Awaited<ReturnType<typeof getPostsLocalized>> = [];
   let totalPosts = 0;
-  let allTags: string[] = [];
 
   try {
-    // Fetch tags for the filter bar
-    allTags = await getAllTags();
-
     // Fetch posts (filtered by tag if selected)
     if (activeTag) {
       [posts, totalPosts] = await Promise.all([
@@ -89,39 +85,7 @@ export default async function BlogPage({
 
       <Section>
         <div className="max-w-6xl mx-auto">
-          {/* Tag Filter Bar */}
-          {allTags.length > 0 && (
-            <AnimateOnScroll animation="fade-in-up" className="mb-8">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-brand-400 text-sm mr-2">Filter:</span>
-                <NextLink
-                  href="/blog"
-                  className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors border ${
-                    !activeTag
-                      ? 'bg-neon/20 text-neon border-neon/40'
-                      : 'bg-brand-800/50 text-brand-300 border-brand-700/30 hover:bg-brand-700/50 hover:text-white'
-                  }`}
-                >
-                  All
-                </NextLink>
-                {allTags.map((tag) => (
-                  <NextLink
-                    key={tag}
-                    href={`/blog?tag=${encodeURIComponent(tag)}`}
-                    className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors border ${
-                      activeTag === tag
-                        ? 'bg-neon/20 text-neon border-neon/40'
-                        : 'bg-brand-800/50 text-brand-300 border-brand-700/30 hover:bg-brand-700/50 hover:text-white'
-                    }`}
-                  >
-                    {tag}
-                  </NextLink>
-                ))}
-              </div>
-            </AnimateOnScroll>
-          )}
-
-          {/* Active Tag Indicator */}
+          {/* Active Tag Filter */}
           {activeTag && (
             <AnimateOnScroll animation="fade-in-up" className="mb-6">
               <div className="flex items-center gap-2 text-brand-300">
