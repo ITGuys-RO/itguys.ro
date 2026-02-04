@@ -264,13 +264,12 @@ export default async function BlogPage({ params, searchParams }: Props) {
                           )}
                           <div className="flex-1 flex flex-col">
                             {post.tags.length > 0 && (
-                              <div className="flex flex-wrap gap-2 mb-3" onClick={(e) => e.preventDefault()}>
+                              <div className="flex flex-wrap gap-2 mb-3">
                                 {post.tags.map((tag) => (
                                   <NextLink
                                     key={tag}
                                     href={`${blogBase}?tag=${encodeURIComponent(tag)}`}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className={`px-2.5 py-1 text-xs font-medium rounded-full border transition-colors ${
+                                    className={`relative z-10 px-2.5 py-1 text-xs font-medium rounded-full border transition-colors ${
                                       activeTag === tag
                                         ? 'bg-neon/20 text-neon border-neon/40'
                                         : 'bg-brand-800/50 text-brand-300 border-brand-700/30 hover:bg-brand-700/50 hover:text-white'
