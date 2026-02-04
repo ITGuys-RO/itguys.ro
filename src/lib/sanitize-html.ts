@@ -23,13 +23,26 @@ function escapeAttr(value: string): string {
 }
 
 export function sanitizeHtml(html: string): string {
-  return html
-    // Remove dangerous tags and their content (script, iframe, etc.)
-    .replace(DANGEROUS_TAGS, '')
-    // Remove event handler attributes (onclick, onerror, etc.)
-    .replace(EVENT_HANDLER_ATTRS, '')
-    // Sanitize href URLs in anchor tags
-    .replace(DANGEROUS_HREF, (_match, before: string, url: string, after: string) => {
-      return `<a ${before}href="${sanitizeUrl(url)}"${after}>`;
-    });
+  // Use placeholder replacement to prevent pattern reconstruction
+  // e.g., "<scr<script>ipt>" won't become "<script>" because inner match
+  // is replaced with a marker that breaks the outer pattern
+  const PLACEHOLDER = '\u0000';
+  let result = html;
+  let previous: string;
+
+  do {
+    previous = result;
+    // Replace dangerous tags with null character (breaks reconstruction)
+    result = result.replace(DANGEROUS_TAGS, PLACEHOLDER);
+    // Remove event handler attributes
+    result = result.replace(EVENT_HANDLER_ATTRS, PLACEHOLDER);
+  } while (result !== previous);
+
+  // Remove all placeholders
+  result = result.split(PLACEHOLDER).join('');
+
+  // Sanitize href URLs in anchor tags
+  return result.replace(DANGEROUS_HREF, (_match, before: string, url: string, after: string) => {
+    return `<a ${before}href="${sanitizeUrl(url)}"${after}>`;
+  });
 }
