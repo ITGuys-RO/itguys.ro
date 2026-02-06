@@ -51,7 +51,7 @@ jobs:
           AUTOMATION_API_KEY: ${{ secrets.AUTOMATION_API_KEY }}
           POST_SLUG: ${{ github.event.inputs.post_slug }}
         run: |
-          RESPONSE=$(curl -s -w "\n%{http_code}" \
+          RESPONSE=$(curl -s --http2 -w "\n%{http_code}" \
             -H "CF-Access-Client-Id: ${CF_ACCESS_CLIENT_ID}" \
             -H "CF-Access-Client-Secret: ${CF_ACCESS_CLIENT_SECRET}" \
             -H "Authorization: Bearer ${AUTOMATION_API_KEY}" \
@@ -90,7 +90,7 @@ jobs:
           AUTOMATION_API_KEY: ${{ secrets.AUTOMATION_API_KEY }}
           POST_SLUG: ${{ github.event.inputs.post_slug }}
         run: |
-          curl -s -X POST \
+          curl -s --http2 -X POST \
             -H "CF-Access-Client-Id: ${CF_ACCESS_CLIENT_ID}" \
             -H "CF-Access-Client-Secret: ${CF_ACCESS_CLIENT_SECRET}" \
             -H "Authorization: Bearer ${AUTOMATION_API_KEY}" \
@@ -118,7 +118,7 @@ jobs:
           AUTOMATION_API_KEY: ${{ secrets.AUTOMATION_API_KEY }}
           POST_SLUG: ${{ github.event.inputs.post_slug }}
         run: |
-          curl -s -X POST \
+          curl -s --http2 -X POST \
             -H "CF-Access-Client-Id: ${CF_ACCESS_CLIENT_ID}" \
             -H "CF-Access-Client-Secret: ${CF_ACCESS_CLIENT_SECRET}" \
             -H "Authorization: Bearer ${AUTOMATION_API_KEY}" \
