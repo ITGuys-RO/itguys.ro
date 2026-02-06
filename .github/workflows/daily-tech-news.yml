@@ -154,3 +154,42 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"platform":"facebook"}' \
             "${SITE_URL}/api/automation/posts/${POST_SLUG}/share-status"
+
+      - name: Refresh LinkedIn token
+        if: success()
+        continue-on-error: true
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_REFRESH_TOKEN: ${{ secrets.LINKEDIN_REFRESH_TOKEN }}
+          LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
+          LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
+          GH_PAT_WORKFLOW: ${{ secrets.GH_PAT_WORKFLOW }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: pnpm tsx scripts/refresh-linkedin-token.ts
+
+      - name: Post to LinkedIn
+        id: linkedin
+        if: success()
+        continue-on-error: true
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_ORG_ID: ${{ secrets.LINKEDIN_ORG_ID }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: pnpm tsx scripts/post-linkedin.ts
+
+      - name: Report LinkedIn share status
+        if: steps.linkedin.outcome == 'success'
+        continue-on-error: true
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+          AUTOMATION_API_KEY: ${{ secrets.AUTOMATION_API_KEY }}
+        run: |
+          curl -s -X POST \
+            -H "CF-Access-Client-Id: ${CF_ACCESS_CLIENT_ID}" \
+            -H "CF-Access-Client-Secret: ${CF_ACCESS_CLIENT_SECRET}" \
+            -H "Authorization: Bearer ${AUTOMATION_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{"platform":"linkedin"}' \
+            "${SITE_URL}/api/automation/posts/${POST_SLUG}/share-status"
