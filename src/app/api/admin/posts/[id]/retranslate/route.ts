@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin, handleApiError } from '@/lib/admin-auth';
+import { requireAdmin, handleApiError, parseId } from '@/lib/admin-auth';
 import { getPostById } from '@/lib/db/posts';
 
 const VALID_LOCALES = ['ro', 'fr', 'de', 'it', 'es'];
@@ -11,7 +11,7 @@ export async function POST(
   try {
     requireAdmin(request);
     const { id } = await params;
-    const post = await getPostById(Number(id));
+    const post = await getPostById(parseId(id));
     if (!post) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
     }

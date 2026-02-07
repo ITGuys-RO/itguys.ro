@@ -47,10 +47,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ id: postId, success: true, action });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Automation post creation failed:', errorMessage, error);
+    console.error('Automation post creation failed:', error);
     return NextResponse.json(
-      { error: 'Failed to create post', details: errorMessage },
+      { error: 'Failed to create post' },
       { status: 500 }
     );
   }

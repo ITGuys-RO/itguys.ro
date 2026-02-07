@@ -67,7 +67,8 @@ jobs:
             APPLIED=$(pnpm wrangler d1 execute itguys-ro --remote --command "SELECT name FROM _migrations ORDER BY id" --json | jq -r '.[0].results[].name' 2>/dev/null || echo "")
             pnpm wrangler d1 execute itguys-ro --remote --command "CREATE TABLE IF NOT EXISTS d1_migrations (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE NOT NULL, applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)"
             for name in $APPLIED; do
-              pnpm wrangler d1 execute itguys-ro --remote --command "INSERT OR IGNORE INTO d1_migrations (name) VALUES ('$name')"
+              safe_name="${name//\'/}"
+              pnpm wrangler d1 execute itguys-ro --remote --command "INSERT OR IGNORE INTO d1_migrations (name) VALUES ('$safe_name')"
             done
           fi
 

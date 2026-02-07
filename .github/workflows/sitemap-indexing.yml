@@ -31,7 +31,7 @@ jobs:
           node-version: "22"
 
       - name: Install wrangler
-        run: npm install -g wrangler
+        run: npm install -g wrangler@4.63.0
 
       - name: Generate wrangler.toml
         run: envsubst < wrangler.toml.example > wrangler.toml
@@ -336,9 +336,10 @@ jobs:
 
           while IFS= read -r url; do
             if [ -n "$url" ]; then
-              # Use INSERT OR IGNORE for idempotency
+              # Sanitize: strip any single quotes to prevent SQL injection
+              safe_url="${url//\'/}"
               wrangler d1 execute itguys-ro --remote \
-                --command "INSERT OR IGNORE INTO indexnow_submitted (url) VALUES ('$url')"
+                --command "INSERT OR IGNORE INTO indexnow_submitted (url) VALUES ('$safe_url')"
               STORED_COUNT=$((STORED_COUNT + 1))
             fi
           done < all-submitted.txt
@@ -364,8 +365,10 @@ jobs:
 
           while IFS= read -r url; do
             if [ -n "$url" ]; then
+              # Sanitize: strip any single quotes to prevent SQL injection
+              safe_url="${url//\'/}"
               wrangler d1 execute itguys-ro --remote \
-                --command "DELETE FROM indexnow_submitted WHERE url = '$url'"
+                --command "DELETE FROM indexnow_submitted WHERE url = '$safe_url'"
               REMOVED=$((REMOVED + 1))
             fi
           done < stale-urls.txt
