@@ -19,7 +19,7 @@
     ]
   },
   "scripts": {
-    "dev": "next build && npx @opennextjs/cloudflare build --skipBuild && wrangler dev",
+    "dev": "BUILD_CPUS=8 next build && npx @opennextjs/cloudflare build --skipBuild && wrangler dev",
     "build": "next build && npx @opennextjs/cloudflare build --skipBuild",
     "lint": "eslint .",
     "db:migrate:local": "pnpm wrangler d1 migrations apply itguys-ro --local"

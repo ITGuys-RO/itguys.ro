@@ -3,8 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: 'standalone',
   experimental: {
-    // Limit parallel workers to reduce memory usage during build
-    cpus: 1,
+    cpus: process.env.BUILD_CPUS ? parseInt(process.env.BUILD_CPUS) : 1,
     workerThreads: false,
   },
   images: {

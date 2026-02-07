@@ -1,23 +1,28 @@
 import { NextRequest } from 'next/server';
 import { withAdmin } from '@/lib/admin-auth';
-import { query } from '@/lib/db/client';
+import { batch } from '@/lib/db/client';
 
 export const dynamic = 'force-dynamic';
 
+const tables = [
+  { key: 'team', table: 'team_members' },
+  { key: 'projects', table: 'projects' },
+  { key: 'companies', table: 'companies' },
+  { key: 'services', table: 'services' },
+  { key: 'faq', table: 'faq_items' },
+  { key: 'posts', table: 'posts' },
+];
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const GET = withAdmin(async (_request: NextRequest) => {
-  const rows = await query<{ tbl: string; count: number }>(
-    `SELECT 'team' as tbl, COUNT(*) as count FROM team_members
-     UNION ALL SELECT 'projects', COUNT(*) FROM projects
-     UNION ALL SELECT 'companies', COUNT(*) FROM companies
-     UNION ALL SELECT 'services', COUNT(*) FROM services
-     UNION ALL SELECT 'faq', COUNT(*) FROM faq_items
-     UNION ALL SELECT 'posts', COUNT(*) FROM posts`
+  const results = await batch(
+    tables.map(({ table }) => ({ sql: `SELECT COUNT(*) as count FROM ${table}` }))
   );
 
   const counts: Record<string, number> = {};
-  for (const row of rows) {
-    counts[row.tbl] = row.count;
+  for (let i = 0; i < tables.length; i++) {
+    const row = results[i].results[0] as { count: number } | undefined;
+    counts[tables[i].key] = row?.count ?? 0;
   }
   return counts;
 });

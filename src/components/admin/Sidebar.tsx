@@ -22,9 +22,12 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
 
   useEffect(() => {
     fetch('/api/admin/stats')
-      .then((r) => r.ok ? r.json() : null)
+      .then((r) => {
+        if (!r.ok) console.warn('Stats fetch failed:', r.status);
+        return r.ok ? r.json() : null;
+      })
       .then((data) => { if (data) setCounts(data); })
-      .catch(() => {});
+      .catch((err) => console.warn('Stats fetch error:', err));
   }, []);
 
   const handleNavClick = () => {
