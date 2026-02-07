@@ -148,7 +148,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
     router.push('/admin/posts');
   };
 
-  const handleShare = async (platform: 'twitter' | 'facebook' | 'all') => {
+  const handleShare = async (platform: 'twitter' | 'facebook' | 'linkedin' | 'all') => {
     setSharing(platform);
     try {
       const res = await fetch(`/api/admin/posts/${id}/share`, {
@@ -232,18 +232,70 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
         </div>
       )}
       <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Basic Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <InputField label="Slug" name="slug" value={formData.slug} onChange={() => {}} disabled required helpText="Cannot be changed after creation" />
-            <InputField label="Image Path" name="image_path" value={formData.image_path || ''} onChange={(v) => setFormData({ ...formData, image_path: v || null })} helpText="Direct URL or uploaded via controls below" />
-            <DateTimePicker label="Published At" name="published_at" value={formData.published_at ?? null} onChange={(v) => setFormData({ ...formData, published_at: v })} />
-            <div className="flex items-end">
-              <CheckboxField label="Published" name="is_published" checked={formData.is_published === 1} onChange={(c) => setFormData({ ...formData, is_published: c ? 1 : 0 })} description="Make this post visible to the public" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 bg-brand-900/60 rounded-lg border border-brand-700/50 p-6">
+            <h2 className="text-lg font-semibold text-white mb-4">Basic Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField label="Slug" name="slug" value={formData.slug} onChange={() => {}} disabled required helpText="Cannot be changed after creation" />
+              <InputField label="Image Path" name="image_path" value={formData.image_path || ''} onChange={(v) => setFormData({ ...formData, image_path: v || null })} helpText="Direct URL or uploaded via controls below" />
+              <DateTimePicker label="Published At" name="published_at" value={formData.published_at ?? null} onChange={(v) => setFormData({ ...formData, published_at: v })} />
+              <div className="flex items-end">
+                <CheckboxField label="Published" name="is_published" checked={formData.is_published === 1} onChange={(c) => setFormData({ ...formData, is_published: c ? 1 : 0 })} description="Make this post visible to the public" />
+              </div>
+            </div>
+            <div className="mt-4">
+              <TagInput label="Tags" value={formData.tags} onChange={(v) => setFormData({ ...formData, tags: v })} />
             </div>
           </div>
-          <div className="mt-4">
-            <TagInput label="Tags" value={formData.tags} onChange={(v) => setFormData({ ...formData, tags: v })} />
+          <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6">
+            <h2 className="text-lg font-semibold text-white mb-4">Social Sharing</h2>
+            {formData.is_published === 1 ? (
+              <div className="space-y-3">
+                {(['twitter', 'facebook', 'linkedin'] as const).map((platform) => {
+                  const status = getShareStatus(platform);
+                  const label = platform === 'twitter' ? 'Twitter/X' : platform === 'linkedin' ? 'LinkedIn' : 'Facebook';
+                  const isSharing = sharing === platform || sharing === 'all';
+                  return (
+                    <div key={platform} className="flex items-center justify-between p-3 bg-brand-800/50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-medium text-white">{label}</span>
+                        {status ? (
+                          <span className="flex items-center gap-1.5 text-xs text-green-400">
+                            <span className="w-2 h-2 rounded-full bg-green-400" />
+                            Shared {new Date(status.shared_at + 'Z').toLocaleDateString()} via {status.shared_by}
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1.5 text-xs text-brand-400">
+                            <span className="w-2 h-2 rounded-full bg-brand-600" />
+                            Not shared
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleShare(platform)}
+                        disabled={isSharing}
+                        className="px-3 py-1.5 text-xs font-medium text-white bg-brand-600 hover:bg-brand-500 disabled:opacity-50 rounded-lg transition-colors"
+                      >
+                        {isSharing ? 'Sharing...' : status ? 'Re-share' : 'Share'}
+                      </button>
+                    </div>
+                  );
+                })}
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => handleShare('all')}
+                    disabled={sharing !== null}
+                    className="px-4 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-500 disabled:opacity-50 rounded-lg transition-colors"
+                  >
+                    {sharing === 'all' ? 'Sharing...' : 'Share to All'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-brand-400 text-sm">Publish the post to enable social sharing.</p>
+            )}
           </div>
         </div>
         <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6">
@@ -359,52 +411,6 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
           <button type="submit" disabled={saving} className="px-4 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-500 disabled:opacity-50 rounded-lg transition-colors">{saving ? 'Saving...' : 'Save'}</button>
         </div>
       </form>
-      {formData.is_published === 1 && (
-        <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6 mt-8">
-          <h2 className="text-lg font-semibold text-white mb-4">Social Sharing</h2>
-          <div className="space-y-3">
-            {(['twitter', 'facebook', 'linkedin'] as const).map((platform) => {
-              const status = getShareStatus(platform);
-              const label = platform === 'twitter' ? 'Twitter/X' : platform === 'linkedin' ? 'LinkedIn' : 'Facebook';
-              const isSharing = sharing === platform || sharing === 'all';
-              return (
-                <div key={platform} className="flex items-center justify-between p-3 bg-brand-800/50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-white">{label}</span>
-                    {status ? (
-                      <span className="flex items-center gap-1.5 text-xs text-green-400">
-                        <span className="w-2 h-2 rounded-full bg-green-400" />
-                        Shared {new Date(status.shared_at + 'Z').toLocaleDateString()} via {status.shared_by}
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1.5 text-xs text-brand-400">
-                        <span className="w-2 h-2 rounded-full bg-brand-600" />
-                        Not shared
-                      </span>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => handleShare(platform)}
-                    disabled={isSharing}
-                    className="px-3 py-1.5 text-xs font-medium text-white bg-brand-600 hover:bg-brand-500 disabled:opacity-50 rounded-lg transition-colors"
-                  >
-                    {isSharing ? 'Sharing...' : status ? 'Re-share' : 'Share'}
-                  </button>
-                </div>
-              );
-            })}
-            <div className="pt-2">
-              <button
-                onClick={() => handleShare('all')}
-                disabled={sharing !== null}
-                className="px-4 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-500 disabled:opacity-50 rounded-lg transition-colors"
-              >
-                {sharing === 'all' ? 'Sharing...' : 'Share to All'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

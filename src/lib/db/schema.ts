@@ -175,7 +175,7 @@ export interface PostTag {
 export interface PostSocialShare {
   id: number;
   post_id: number;
-  platform: 'twitter' | 'facebook';
+  platform: 'twitter' | 'facebook' | 'linkedin';
   platform_post_id: string | null;
   shared_at: string;
   shared_by: 'manual' | 'automation';
