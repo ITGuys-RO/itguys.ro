@@ -87,10 +87,12 @@ export default function PostsListPage() {
         const shares = p.socialShares ?? [];
         const twitter = shares.find((s) => s.platform === 'twitter');
         const facebook = shares.find((s) => s.platform === 'facebook');
+        const linkedin = shares.find((s) => s.platform === 'linkedin');
         return (
           <div className="flex gap-2">
             <span title={twitter ? `Shared ${new Date(twitter.shared_at + 'Z').toLocaleDateString()}` : 'Not shared to Twitter'} className={`text-xs font-medium ${twitter ? 'text-green-400' : 'text-brand-600'}`}>𝕏</span>
             <span title={facebook ? `Shared ${new Date(facebook.shared_at + 'Z').toLocaleDateString()}` : 'Not shared to Facebook'} className={`text-xs font-medium ${facebook ? 'text-green-400' : 'text-brand-600'}`}>f</span>
+            <span title={linkedin ? `Shared ${new Date(linkedin.shared_at + 'Z').toLocaleDateString()}` : 'Not shared to LinkedIn'} className={`text-xs font-medium ${linkedin ? 'text-green-400' : 'text-brand-600'}`}>in</span>
           </div>
         );
       },

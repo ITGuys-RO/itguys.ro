@@ -363,9 +363,9 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
         <div className="bg-brand-900/60 rounded-lg border border-brand-700/50 p-6 mt-8">
           <h2 className="text-lg font-semibold text-white mb-4">Social Sharing</h2>
           <div className="space-y-3">
-            {(['twitter', 'facebook'] as const).map((platform) => {
+            {(['twitter', 'facebook', 'linkedin'] as const).map((platform) => {
               const status = getShareStatus(platform);
-              const label = platform === 'twitter' ? 'Twitter/X' : 'Facebook';
+              const label = platform === 'twitter' ? 'Twitter/X' : platform === 'linkedin' ? 'LinkedIn' : 'Facebook';
               const isSharing = sharing === platform || sharing === 'all';
               return (
                 <div key={platform} className="flex items-center justify-between p-3 bg-brand-800/50 rounded-lg">

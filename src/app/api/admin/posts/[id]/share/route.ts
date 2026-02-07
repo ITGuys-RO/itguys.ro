@@ -15,7 +15,7 @@ export async function POST(
     }
 
     const { platform } = await request.json();
-    if (!platform || !['twitter', 'facebook', 'all'].includes(platform)) {
+    if (!platform || !['twitter', 'facebook', 'linkedin', 'all'].includes(platform)) {
       return NextResponse.json({ error: 'Invalid platform' }, { status: 400 });
     }
 
