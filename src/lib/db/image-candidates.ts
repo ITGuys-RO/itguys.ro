@@ -1,4 +1,4 @@
-import { query, execute, batch } from './client';
+import { query, queryFirst, execute, batch } from './client';
 
 export interface PostImageCandidate {
   id: number;
@@ -51,6 +51,22 @@ export async function createImageCandidates(
   });
 
   await batch(statements);
+}
+
+export async function deleteImageCandidate(
+  id: number,
+  postId: number
+): Promise<PostImageCandidate | null> {
+  const candidate = await queryFirst<PostImageCandidate>(
+    'SELECT * FROM post_image_candidates WHERE id = ? AND post_id = ?',
+    [id, postId]
+  );
+  if (!candidate) return null;
+  await execute(
+    'DELETE FROM post_image_candidates WHERE id = ? AND post_id = ?',
+    [id, postId]
+  );
+  return candidate;
 }
 
 export async function selectImageCandidate(

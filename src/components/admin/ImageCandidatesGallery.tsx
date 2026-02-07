@@ -38,6 +38,7 @@ export function ImageCandidatesGallery({ postId, currentImage, onSelected }: Ima
   const [candidates, setCandidates] = useState<ImageCandidate[]>([]);
   const [loading, setLoading] = useState(true);
   const [selecting, setSelecting] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState<number | null>(null);
 
   useEffect(() => {
     fetch(`/api/admin/posts/${postId}/image-candidates`)
@@ -71,6 +72,29 @@ export function ImageCandidatesGallery({ postId, currentImage, onSelected }: Ima
     }
   };
 
+  const handleDelete = async (e: React.MouseEvent, candidate: ImageCandidate) => {
+    e.stopPropagation();
+    setDeleting(candidate.id);
+    try {
+      const res = await fetch(`/api/admin/posts/${postId}/image-candidates`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ candidateId: candidate.id }),
+      });
+      if (res.ok) {
+        const { wasSelected } = await res.json();
+        setCandidates(prev => prev.filter(c => c.id !== candidate.id));
+        if (wasSelected) {
+          onSelected('');
+        }
+      }
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const busy = selecting !== null || deleting !== null;
+
   return (
     <div className="space-y-3">
       <label className="block text-sm font-medium text-brand-300">
@@ -86,7 +110,7 @@ export function ImageCandidatesGallery({ postId, currentImage, onSelected }: Ima
               key={c.id}
               type="button"
               onClick={() => handleSelect(c)}
-              disabled={selecting !== null}
+              disabled={busy}
               className={`relative group rounded-lg overflow-hidden border-2 transition-colors ${
                 isActive
                   ? 'border-green-500'
@@ -98,14 +122,23 @@ export function ImageCandidatesGallery({ postId, currentImage, onSelected }: Ima
                 alt={c.page_title || 'Candidate image'}
                 className="w-full h-24 object-cover"
               />
+              <span
+                role="button"
+                tabIndex={0}
+                onClick={(e) => handleDelete(e, c)}
+                className="absolute top-1 left-1 w-5 h-5 flex items-center justify-center rounded-full bg-red-500/80 hover:bg-red-500 text-white text-xs leading-none opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                title="Remove candidate"
+              >
+                &times;
+              </span>
               {isActive && (
                 <span className="absolute top-1 right-1 px-1.5 py-0.5 text-[10px] font-medium bg-green-500 text-white rounded">
                   Selected
                 </span>
               )}
-              {selecting === c.id && (
+              {(selecting === c.id || deleting === c.id) && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                  <span className="text-xs text-white">Selecting...</span>
+                  <span className="text-xs text-white">{deleting === c.id ? 'Removing...' : 'Selecting...'}</span>
                 </div>
               )}
               {c.page_title && (

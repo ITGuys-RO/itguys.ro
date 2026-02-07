@@ -33,6 +33,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         type: 'article',
         ...(post.imagePath && { images: [{ url: post.imagePath }] }),
       },
+      twitter: {
+        card: post.imagePath ? 'summary_large_image' : 'summary',
+        title,
+        description: post.metaDescription || post.excerpt || undefined,
+        ...(post.imagePath && { images: [post.imagePath] }),
+      },
       alternates: {
         canonical: `/blog/${post.slug}`,
         languages: {
