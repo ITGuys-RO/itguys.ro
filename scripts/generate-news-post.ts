@@ -1,8 +1,6 @@
 import { config } from 'dotenv';
 config({ path: '.env.local' });
 import Anthropic from '@anthropic-ai/sdk';
-import { createPerplexity } from '@ai-sdk/perplexity';
-import { generateText } from 'ai';
 import { readFileSync, writeFileSync } from 'fs';
 import { join, dirname, extname } from 'path';
 import { fileURLToPath } from 'url';
@@ -12,14 +10,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const anthropic = new Anthropic();
-const perplexity = createPerplexity({
-  apiKey: process.env.PERPLEXITY_API_KEY,
-});
 
-const ANTHROPIC_MODEL = 'claude-sonnet-4-20250514';
-const PERPLEXITY_MODEL = 'sonar-reasoning-pro';
+const ANTHROPIC_MODEL = 'claude-opus-4-6';
 const MAX_RETRIES = 3;
-const INITIAL_RETRY_DELAY_MS = 5000;
+const INITIAL_RETRY_DELAY_MS = 30000;
 
 const LOCALES = ['ro', 'fr', 'de', 'it', 'es'] as const;
 
@@ -41,7 +35,10 @@ async function withRetry<T>(
           error.message.includes('other side closed') ||
           error.message.includes('Failed to parse') ||
           error.message.includes('missing required fields') ||
-          error.message.includes('expected at position'));
+          error.message.includes('expected at position') ||
+          error.message.includes('429') ||
+          error.message.includes('rate_limit') ||
+          error.message.includes('overloaded'));
 
       if (!isRetryable || attempt === MAX_RETRIES) {
         throw error;
@@ -61,12 +58,22 @@ function stripMarkdownFences(text: string): string {
   return text.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
 }
 
-function stripThinkingTags(text: string): string {
-  return text.replace(/<think>[\s\S]*?<\/think>\s*/gi, '').trim();
-}
-
 function stripCitationMarkers(text: string): string {
   return text.replace(/\[\d+\]/g, '');
+}
+
+function extractJsonObject(text: string): string {
+  let cleaned = stripCitationMarkers(stripMarkdownFences(text));
+  // Find the first { and the matching last } to isolate the JSON object
+  const firstBrace = cleaned.indexOf('{');
+  if (firstBrace > 0) {
+    cleaned = cleaned.substring(firstBrace);
+  }
+  const lastBrace = cleaned.lastIndexOf('}');
+  if (lastBrace !== -1 && lastBrace < cleaned.length - 1) {
+    cleaned = cleaned.substring(0, lastBrace + 1);
+  }
+  return cleaned;
 }
 
 interface BlogPostTranslation {
@@ -128,90 +135,6 @@ function loadHumanizerRules(): string {
     console.error(`Warning: Could not load humanizer rules from ${skillPath}`);
     console.error(error);
     return '';
-  }
-}
-
-function getResearchPrompt(): string {
-  return `Search for today's most significant tech news, rotating across these categories:
-
-**Software Development (50% priority):**
-- PHP framework updates: Laravel, Symfony, new features, performance improvements
-- JavaScript/TypeScript ecosystem: React, Vue, Next.js, Node.js releases
-- Web performance improvements, browser APIs, WebAssembly developments
-- Database technology updates: PostgreSQL, MySQL, MongoDB, Redis
-- API design patterns, GraphQL/REST developments, developer tooling
-
-**Mobile Development (30% priority):**
-- iOS updates: Swift improvements, Xcode releases, SwiftUI developments
-- Android updates: Kotlin news, Jetpack Compose, Android Studio features
-- Mobile performance optimization, battery efficiency, offline-first patterns
-- App Store/Play Store policy changes affecting developers
-
-**Security (20% priority):**
-- Critical CVEs affecting PHP, Node.js, iOS, or Android platforms
-- Security patches for popular frameworks and development tools
-- Authentication and authorization best practices
-
-Prioritize development-focused stories first. Only lead with security if there's a major CVE affecting common development tools or a significant breach with lessons for developers.
-
-Return your findings as PLAIN TEXT (not JSON) with:
-- Headline: what happened
-- Summary: 2-3 paragraphs explaining the news
-- Key facts: bullet points of important details
-- Sources: URLs where you found this information
-- Why it matters: practical implications for developers and teams
-- Image: ONE landscape image URL (min 1200×630px) directly related to the topic. Must be from a source that allows hotlinking (vendor blogs, official press releases, GitHub, wikimedia). NOT from Getty, Shutterstock, or paywalled sites. If no suitable image, write "No image available."`;
-}
-
-interface ResearchResult {
-  text: string;
-  sourceUrls: string[];
-  images: ImageCandidate[];
-}
-
-async function researchNews(): Promise<ResearchResult> {
-  console.log('Step 1: Researching news with Perplexity...');
-  try {
-    return await withRetry(async () => {
-      const result = await generateText({
-        model: perplexity(PERPLEXITY_MODEL),
-        prompt: getResearchPrompt(),
-        providerOptions: {
-          perplexity: {
-            return_images: true,
-          },
-        },
-      });
-      const sourceUrls = (result.sources || [])
-        .filter(s => 'url' in s && typeof s.url === 'string')
-        .map(s => (s as { url: string }).url);
-
-      // Extract images from provider metadata
-      const metadata = result.providerMetadata?.perplexity as
-        | { images?: Array<{ imageUrl?: string; url?: string; originUrl?: string }> }
-        | undefined;
-      const rawImages = metadata?.images || [];
-      const images: ImageCandidate[] = rawImages
-        .filter(img => img.imageUrl || img.url)
-        .map(img => ({
-          imageUrl: (img.imageUrl || img.url)!,
-          pageTitle: 'Perplexity search result',
-          sourceUrl: img.originUrl || '',
-        }));
-
-      if (images.length > 0) {
-        console.log(`  Perplexity returned ${images.length} image(s)`);
-      }
-
-      return { text: stripThinkingTags(result.text), sourceUrls, images };
-    }, 'researchNews');
-  } catch (error) {
-    console.warn('Perplexity failed, falling back to Claude knowledge:', (error as Error).message);
-    return {
-      text: 'FALLBACK: No live research available. Write about a recent notable tech development from your knowledge. Prioritize: web development (PHP, React, Node.js), mobile development (Swift, Kotlin, iOS/Android), or cloud/DevOps topics. Only write about security if no development news is available. Focus on practical implications for development teams.',
-      sourceUrls: [],
-      images: [],
-    };
   }
 }
 
@@ -308,7 +231,7 @@ async function extractImageCandidates(sourceUrls: string[]): Promise<ImageCandid
   const candidates: ImageCandidate[] = [];
 
   const results = await Promise.allSettled(
-    sourceUrls.slice(0, 5).map(async (url) => {
+    sourceUrls.slice(0, 10).map(async (url) => {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 5000);
       const response = await fetch(url, {
@@ -354,9 +277,8 @@ function pickBestImage(candidates: ImageCandidate[]): string | null {
 }
 
 async function searchFallbackImage(articleTopic: string): Promise<ImageCandidate[]> {
-  console.log('  Searching for fallback image via Perplexity...');
+  console.log('  Searching for fallback image via Claude web search...');
   try {
-    // First, ask Claude to craft a good image search query from the article topic
     const queryResponse = await anthropic.messages.create({
       model: ANTHROPIC_MODEL,
       max_tokens: 50,
@@ -374,63 +296,69 @@ Topic: ${articleTopic.substring(0, 500)}`,
     console.log(`  Search query: "${searchQuery}"`);
 
     const result = await withRetry(async () => {
-      return await generateText({
-        model: perplexity(PERPLEXITY_MODEL),
-        prompt: `Find a high-quality landscape photo related to: ${searchQuery}`,
-        providerOptions: {
-          perplexity: {
-            return_images: true,
-          },
-        },
+      return await anthropic.messages.create({
+        model: ANTHROPIC_MODEL,
+        max_tokens: 1024,
+        tools: [{
+          type: 'web_search_20250305' as const,
+          name: 'web_search',
+          max_uses: 2,
+        }],
+        messages: [{
+          role: 'user',
+          content: `Find web pages with high-quality images related to: ${searchQuery}`,
+        }],
       });
     }, 'searchFallbackImage');
 
-    // Extract images from provider metadata
-    const metadata = result.providerMetadata?.perplexity as
-      | { images?: Array<{ imageUrl?: string; url?: string; originUrl?: string }> }
-      | undefined;
-    const images = metadata?.images;
-
-    if (!images || images.length === 0) {
-      console.log('  No images returned from Perplexity');
+    const urls = extractSourceUrls(result.content);
+    if (urls.length === 0) {
+      console.log('  No source URLs from fallback search');
       return [];
     }
 
-    const candidates: ImageCandidate[] = [];
-    for (const img of images.slice(0, 3)) {
-      const url = img.imageUrl || img.url;
-      if (!url) continue;
-
-      const valid = await validateImageUrl(url);
-      if (!valid) {
-        console.log(`  Fallback image invalid: ${url}`);
-        continue;
-      }
-
-      console.log(`  Found fallback image: ${url}`);
-      candidates.push({
-        imageUrl: url,
-        pageTitle: `Search: ${searchQuery}`,
-        sourceUrl: img.originUrl || '',
-      });
-    }
-
-    return candidates;
+    console.log(`  Found ${urls.length} source URL(s) for fallback images`);
+    return await extractImageCandidates(urls);
   } catch (err) {
     console.warn(`  Fallback image search failed: ${(err as Error).message}`);
     return [];
   }
 }
 
-function getWritePostPrompt(research: string): string {
+function getWritePostPrompt(): string {
   const today = new Date().toISOString().split('T')[0];
   const timestamp = new Date().toISOString();
   const humanizerRules = loadHumanizerRules();
 
-  return `You are a senior tech consultant at ITGuys writing an expert commentary. Based on the news research below, write an opinionated analysis. Don't just summarize the news — explain what it means for development teams, highlight risks or opportunities, and share practical recommendations informed by ITGuys' real-world experience across web development, native mobile apps, and security.
+  return `You are a senior tech consultant at ITGuys. Your task: use web search to find today's most significant tech news, then write an expert commentary blog post about it.
 
-## Research
-${research}
+## Step 1: Research
+
+Search the web for today's most important tech news, rotating across these categories:
+
+**Software Development (50% priority):**
+- PHP framework updates: Laravel, Symfony, new features, performance improvements
+- JavaScript/TypeScript ecosystem: React, Vue, Next.js, Node.js releases
+- Web performance improvements, browser APIs, WebAssembly developments
+- Database technology updates: PostgreSQL, MySQL, MongoDB, Redis
+- API design patterns, GraphQL/REST developments, developer tooling
+
+**Mobile Development (30% priority):**
+- iOS updates: Swift improvements, Xcode releases, SwiftUI developments
+- Android updates: Kotlin news, Jetpack Compose, Android Studio features
+- Mobile performance optimization, battery efficiency, offline-first patterns
+- App Store/Play Store policy changes affecting developers
+
+**Security (20% priority):**
+- Critical CVEs affecting PHP, Node.js, iOS, or Android platforms
+- Security patches for popular frameworks and development tools
+- Authentication and authorization best practices
+
+Prioritize development-focused stories first. Only lead with security if there's a major CVE affecting common development tools or a significant breach with lessons for developers.
+
+## Step 2: Write the Blog Post
+
+Based on your research, write an opinionated analysis. Don't just summarize the news — explain what it means for development teams, highlight risks or opportunities, and share practical recommendations informed by ITGuys' real-world experience across web development, native mobile apps, and security.
 
 ## About ITGuys
 ITGuys is a tech consultancy with 30+ combined years of experience in gaming, travel, and enterprise software.
@@ -541,87 +469,137 @@ function buildMinimalPost(title: string, excerpt: string, content: string): Blog
   };
 }
 
-async function writeEnglishPost(research: string): Promise<BlogPostEnglish> {
-  console.log('Step 2: Writing blog post with Claude...');
+function extractSourceUrls(content: unknown[]): string[] {
+  const urls = new Set<string>();
+  for (const block of content) {
+    const b = block as Record<string, unknown>;
+    if (b.type === 'web_search_tool_result' && Array.isArray(b.content)) {
+      for (const item of b.content) {
+        const r = item as Record<string, unknown>;
+        if (r.type === 'web_search_result' && typeof r.url === 'string') {
+          urls.add(r.url);
+        }
+      }
+    }
+  }
+  return [...urls];
+}
+
+interface WriteResult {
+  post: BlogPostEnglish;
+  sourceUrls: string[];
+}
+
+async function writeEnglishPost(): Promise<WriteResult> {
+  console.log('Step 1: Researching news + writing blog post with Claude...');
 
   try {
     return await withRetry(async () => {
       const response = await anthropic.messages.create({
         model: ANTHROPIC_MODEL,
         max_tokens: 8000,
+        thinking: { type: 'enabled', budget_tokens: 4000 },
+        tools: [{
+          type: 'web_search_20250305' as const,
+          name: 'web_search',
+          max_uses: 5,
+        }],
         messages: [
           {
             role: 'user',
-            content: getWritePostPrompt(research),
+            content: getWritePostPrompt(),
           },
         ],
       });
 
-      const textContent = response.content.find((block) => block.type === 'text');
-      if (!textContent || textContent.type !== 'text') {
+      const sourceUrls = extractSourceUrls(response.content);
+      console.log(`  Web search found ${sourceUrls.length} source URL(s)`);
+
+      // With extended thinking + web search, response has multiple content blocks.
+      // Collect all text blocks and try to extract JSON from each (last to first).
+      const textBlocks = response.content.filter(
+        (block): block is Anthropic.TextBlock => block.type === 'text'
+      );
+      if (textBlocks.length === 0) {
         throw new Error('No text content in Claude response');
       }
 
-      const jsonStr = stripCitationMarkers(stripMarkdownFences(textContent.text));
-
       let parsed: unknown;
-      try {
-        parsed = JSON.parse(jsonStr);
-      } catch {
-        console.log('JSON parse failed, attempting repair...');
-        const repaired = jsonrepair(jsonStr);
-        parsed = JSON.parse(repaired);
+      let parseSuccess = false;
+      for (let i = textBlocks.length - 1; i >= 0 && !parseSuccess; i--) {
+        const jsonStr = extractJsonObject(textBlocks[i].text);
+        if (!jsonStr.startsWith('{')) continue;
+        try {
+          parsed = JSON.parse(jsonStr);
+          parseSuccess = true;
+        } catch {
+          try {
+            const repaired = jsonrepair(jsonStr);
+            parsed = JSON.parse(repaired);
+            parseSuccess = true;
+          } catch {
+            // Try the next text block
+          }
+        }
       }
 
-      if (!isValidBlogPostEnglish(parsed)) {
-        console.error('Parsed JSON is missing required fields');
-        writeFileSync('debug-write-response.txt', textContent.text);
+      if (!parseSuccess || !isValidBlogPostEnglish(parsed)) {
+        const debugText = textBlocks.map(b => b.text).join('\n---\n');
+        writeFileSync('debug-write-response.txt', debugText);
         throw new Error('Claude response missing required fields');
       }
 
-      return parsed;
+      return { post: parsed, sourceUrls };
     }, 'writeEnglishPost');
   } catch (error) {
     console.warn('Full structured write failed, trying minimal schema...', (error as Error).message);
 
-    // Fallback: ask for just title/excerpt/content, build the rest programmatically
-    const response = await anthropic.messages.create({
-      model: ANTHROPIC_MODEL,
-      max_tokens: 8000,
-      messages: [
-        {
-          role: 'user',
-          content: `Write a blog post based on this research. Return ONLY a JSON object with exactly three fields: "title", "excerpt", "content". Use \\n for newlines in content. No other fields, no markdown fencing.
+    // Fallback: ask for just title/excerpt/content with web search for research
+    return await withRetry(async () => {
+      const response = await anthropic.messages.create({
+        model: ANTHROPIC_MODEL,
+        max_tokens: 8000,
+        tools: [{
+          type: 'web_search_20250305' as const,
+          name: 'web_search',
+          max_uses: 3,
+        }],
+        messages: [
+          {
+            role: 'user',
+            content: `Search the web for today's most significant tech news, then write a blog post about it. Return ONLY a JSON object with exactly three fields: "title", "excerpt", "content". Use \\n for newlines in content. No other fields, no markdown fencing.`,
+          },
+        ],
+      });
 
-Research:
-${research}`,
-        },
-      ],
-    });
+      const sourceUrls = extractSourceUrls(response.content);
+      const textBlocks = response.content.filter(
+        (block): block is Anthropic.TextBlock => block.type === 'text'
+      );
+      const lastText = textBlocks[textBlocks.length - 1];
+      if (!lastText) {
+        throw new Error('No text content in minimal fallback response');
+      }
 
-    const textContent = response.content.find((block) => block.type === 'text');
-    if (!textContent || textContent.type !== 'text') {
-      throw new Error('No text content in minimal fallback response');
-    }
+      const jsonStr = extractJsonObject(lastText.text);
+      let minimal: { title: string; excerpt: string; content: string };
+      try {
+        minimal = JSON.parse(jsonStr);
+      } catch {
+        const repaired = jsonrepair(jsonStr);
+        minimal = JSON.parse(repaired);
+      }
 
-    const jsonStr = stripMarkdownFences(textContent.text);
-    let minimal: { title: string; excerpt: string; content: string };
-    try {
-      minimal = JSON.parse(jsonStr);
-    } catch {
-      const repaired = jsonrepair(jsonStr);
-      minimal = JSON.parse(repaired);
-    }
-
-    console.log('Built post from minimal fallback');
-    return buildMinimalPost(minimal.title, minimal.excerpt, minimal.content);
+      console.log('Built post from minimal fallback');
+      return { post: buildMinimalPost(minimal.title, minimal.excerpt, minimal.content), sourceUrls };
+    }, 'writeEnglishPost-fallback');
   }
 }
 
 async function humanizeEnglishPost(
   englishContent: BlogPostTranslation
 ): Promise<BlogPostTranslation> {
-  console.log('Step 3: Humanizing English content with Claude...');
+  console.log('Step 4: Humanizing English content with Claude...');
 
   const response = await anthropic.messages.create({
     model: ANTHROPIC_MODEL,
@@ -799,7 +777,7 @@ ${JSON.stringify(englishContent, null, 2)}`,
 async function translateAll(
   englishContent: BlogPostTranslation
 ): Promise<Record<string, BlogPostTranslation>> {
-  console.log('Step 4: Translating to other languages...');
+  console.log('Step 5: Translating to other languages...');
 
   const translations: Record<string, BlogPostTranslation> = {
     en: englishContent,
@@ -925,7 +903,7 @@ async function storeImage(imageUrl: string, slug: string): Promise<string | null
 }
 
 async function validateAndFixBlogPost(post: BlogPost): Promise<BlogPost> {
-  console.log('Step 5: Validating and fixing blog post...');
+  console.log('Step 6: Validating and fixing blog post...');
   const today = new Date().toISOString().split('T')[0];
   const warnings: string[] = [];
 
@@ -994,22 +972,22 @@ async function validateAndFixBlogPost(post: BlogPost): Promise<BlogPost> {
 }
 
 async function main() {
-  // Step 1: Research news (Perplexity, plain text)
-  const research = await researchNews();
-  console.log(`Research complete (${research.text.length} chars, ${research.sourceUrls.length} sources)`);
+  // Step 1: Research news + write blog post (Claude with web search)
+  const { post: englishPost, sourceUrls } = await writeEnglishPost();
+  console.log(`Generated post: ${englishPost.slug} (${sourceUrls.length} sources)`);
 
-  // Step 1b: Extract featured image from source URLs + Perplexity images
-  console.log('Step 1b: Extracting featured image from sources...');
-  const ogCandidates = await extractImageCandidates(research.sourceUrls);
-  const allCandidates = [...ogCandidates, ...research.images];
-  console.log(`  Found ${allCandidates.length} image candidate(s) (${ogCandidates.length} OG + ${research.images.length} Perplexity)`);
-  const scoredCandidates = await scoreAndFilterCandidates(allCandidates, research.text);
+  // Step 2: Extract featured image from source URLs
+  console.log('Step 2: Extracting featured image from sources...');
+  const allCandidates = await extractImageCandidates(sourceUrls);
+  console.log(`  Found ${allCandidates.length} OG image candidate(s) from ${sourceUrls.length} sources`);
+  const articleTopic = englishPost.translations.en.title;
+  const scoredCandidates = await scoreAndFilterCandidates(allCandidates, articleTopic);
   let featuredImage = pickBestImage(scoredCandidates);
   if (!featuredImage) {
     console.log('  All candidates rejected or none found, trying targeted search...');
-    const fallbackCandidates = await searchFallbackImage(research.text);
+    const fallbackCandidates = await searchFallbackImage(articleTopic);
     if (fallbackCandidates.length > 0) {
-      const scored = await scoreAndFilterCandidates(fallbackCandidates, research.text);
+      const scored = await scoreAndFilterCandidates(fallbackCandidates, articleTopic);
       featuredImage = pickBestImage(scored);
       allCandidates.push(...fallbackCandidates);
     }
@@ -1020,10 +998,7 @@ async function main() {
     console.log('No featured image found');
   }
 
-  // Step 2: Write structured blog post (Claude)
-  const englishPost = await writeEnglishPost(research.text);
-
-  // Step 2b: Store all candidate images locally/R2, replacing URLs with stored paths
+  // Step 3: Store all candidate images locally/R2
   console.log(`Storing ${allCandidates.length} candidate image(s)...`);
   let storedFeaturedImage: string | null = null;
   for (let i = 0; i < allCandidates.length; i++) {
@@ -1040,9 +1015,9 @@ async function main() {
   if (storedFeaturedImage) {
     englishPost.image_path = storedFeaturedImage;
   }
-  console.log(`Generated English post with slug: ${englishPost.slug}`);
+  console.log(`Post slug: ${englishPost.slug}`);
 
-  // Step 3: Humanize English content (Claude, with fallback to skip)
+  // Step 4: Humanize English content (Claude, with fallback to skip)
   let humanized: BlogPostTranslation;
   try {
     humanized = await withRetry(
@@ -1055,10 +1030,10 @@ async function main() {
     humanized = englishPost.translations.en;
   }
 
-  // Step 4: Translate to other languages (parallel, partial OK)
+  // Step 5: Translate to other languages (parallel, partial OK)
   const allTranslations = await translateAll(humanized);
 
-  // Step 5: Combine and validate
+  // Step 6: Combine and validate
   let blogPost: BlogPost = {
     ...englishPost,
     translations: allTranslations,
@@ -1077,7 +1052,7 @@ async function main() {
 
 async function submitToLocalApi(post: BlogPost, baseUrl: string): Promise<void> {
   const url = `${baseUrl}/api/admin/posts`;
-  console.log(`Step 6: Submitting to ${url}...`);
+  console.log(`Step 7: Submitting to ${url}...`);
 
   try {
     const response = await fetch(url, {
