@@ -1,26 +1,40 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: HomeIcon },
-  { href: '/admin/team', label: 'Team', icon: UsersIcon },
-  { href: '/admin/projects', label: 'Projects', icon: FolderIcon },
-  { href: '/admin/companies', label: 'Companies', icon: BuildingIcon },
-  { href: '/admin/services', label: 'Services', icon: CogIcon },
-  { href: '/admin/faq', label: 'FAQ', icon: QuestionIcon },
-  { href: '/admin/posts', label: 'Blog Posts', icon: DocumentIcon },
+  { href: '/admin/team', label: 'Team', icon: UsersIcon, countKey: 'team' },
+  { href: '/admin/projects', label: 'Projects', icon: FolderIcon, countKey: 'projects' },
+  { href: '/admin/companies', label: 'Companies', icon: BuildingIcon, countKey: 'companies' },
+  { href: '/admin/services', label: 'Services', icon: CogIcon, countKey: 'services' },
+  { href: '/admin/faq', label: 'FAQ', icon: QuestionIcon, countKey: 'faq' },
+  { href: '/admin/posts', label: 'Blog Posts', icon: DocumentIcon, countKey: 'posts' },
+  { href: '/admin/indexnow', label: 'IndexNow', icon: GlobeIcon },
 ];
 
-export function Sidebar() {
+export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
   const pathname = usePathname();
+  const [counts, setCounts] = useState<Record<string, number>>({});
 
-  return (
-    <aside className="w-64 min-h-screen bg-brand-900/80 border-r border-brand-700/50 backdrop-blur-sm">
-      <div className="p-6">
-        <Link href="/admin" className="flex items-center gap-3">
+  useEffect(() => {
+    fetch('/api/admin/stats')
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => { if (data) setCounts(data); })
+      .catch(() => {});
+  }, []);
+
+  const handleNavClick = () => {
+    onClose?.();
+  };
+
+  const sidebarContent = (
+    <>
+      <div className="p-6 flex items-center justify-between">
+        <Link href="/admin" className="flex items-center gap-3" onClick={handleNavClick}>
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
             <span className="text-white font-bold text-lg">IT</span>
           </div>
@@ -29,6 +43,13 @@ export function Sidebar() {
             <div className="text-brand-400 text-xs">Admin Panel</div>
           </div>
         </Link>
+        <button
+          onClick={onClose}
+          className="md:hidden p-1.5 rounded-lg text-brand-300 hover:text-white hover:bg-brand-800/50 transition-colors"
+          aria-label="Close menu"
+        >
+          <CloseIcon className="w-5 h-5" />
+        </button>
       </div>
 
       <nav className="px-3 pb-6">
@@ -42,6 +63,7 @@ export function Sidebar() {
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  onClick={handleNavClick}
                   className={clsx(
                     'flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200',
                     isActive
@@ -49,8 +71,11 @@ export function Sidebar() {
                       : 'text-brand-300 hover:bg-brand-800/50 hover:text-white'
                   )}
                 >
-                  <Icon className="w-5 h-5" />
-                  <span className="text-sm font-medium">{item.label}</span>
+                  <Icon className="w-5 h-5 shrink-0" />
+                  <span className="text-sm font-medium flex-1">{item.label}</span>
+                  {item.countKey && counts[item.countKey] != null && (
+                    <span className="text-xs text-brand-400 tabular-nums">{counts[item.countKey]}</span>
+                  )}
                 </Link>
               </li>
             );
@@ -67,7 +92,36 @@ export function Sidebar() {
           Back to Site
         </Link>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar — always visible */}
+      <aside className="hidden md:block w-64 min-h-screen bg-brand-900/80 border-r border-brand-700/50 backdrop-blur-sm">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile sidebar — overlay */}
+      <div
+        className={clsx(
+          'fixed inset-0 z-40 md:hidden transition-opacity duration-300',
+          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        )}
+      >
+        {/* Backdrop */}
+        <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+        {/* Drawer */}
+        <aside
+          className={clsx(
+            'absolute inset-y-0 left-0 w-64 bg-brand-900 border-r border-brand-700/50 transition-transform duration-300',
+            isOpen ? 'translate-x-0' : '-translate-x-full'
+          )}
+        >
+          {sidebarContent}
+        </aside>
+      </div>
+    </>
   );
 }
 
@@ -125,6 +179,22 @@ function DocumentIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+    </svg>
+  );
+}
+
+function GlobeIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 003 12c0-1.605.42-3.113 1.157-4.418" />
+    </svg>
+  );
+}
+
+function CloseIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
     </svg>
   );
 }

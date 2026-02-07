@@ -157,7 +157,13 @@ export default async function AboutPage({ params }: Props) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {companies.map((company) => (
             <Card key={company.slug}>
-              <CardTitle>{company.name}</CardTitle>
+              <CardTitle>
+                {company.url ? (
+                  <a href={company.url} target="_blank" rel="noopener noreferrer" className="hover:text-neon transition-colors">
+                    {company.name}
+                  </a>
+                ) : company.name}
+              </CardTitle>
               <CardDescription>{company.description}</CardDescription>
             </Card>
           ))}

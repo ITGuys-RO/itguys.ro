@@ -171,6 +171,69 @@ jobs:
             echo "success=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Submit URLs to Bing Webmaster Tools
+        if: steps.find-new.outputs.has_new == 'true'
+        id: bing
+        env:
+          BING_API_KEY: ${{ secrets.BING_WEBMASTER_API_KEY }}
+        run: |
+          if [ -z "$BING_API_KEY" ]; then
+            echo "Warning: BING_WEBMASTER_API_KEY not set, skipping Bing submission"
+            echo "success=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          CHUNK_SIZE=100
+          SUCCESS_COUNT=0
+          TOTAL=$(wc -l < new-urls.txt | tr -d ' ')
+
+          split -l $CHUNK_SIZE new-urls.txt bing_chunk_
+
+          for chunk in bing_chunk_*; do
+            CHUNK_COUNT=$(wc -l < "$chunk" | tr -d ' ')
+            echo "Submitting $CHUNK_COUNT URLs to Bing..."
+
+            URL_ARRAY=$(jq -R -s -c 'split("\n") | map(select(length > 0))' < "$chunk")
+
+            JSON_PAYLOAD=$(jq -n \
+              --arg siteUrl "https://itguys.ro" \
+              --argjson urlList "$URL_ARRAY" \
+              '{siteUrl: $siteUrl, urlList: $urlList}')
+
+            HTTP_CODE=$(echo "$JSON_PAYLOAD" | curl -s -w "%{http_code}" -o bing-response.txt \
+              -X POST "https://ssl.bing.com/webmaster/api.svc/json/SubmitUrlBatch?apikey=$BING_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d @-)
+
+            case $HTTP_CODE in
+              200)
+                echo "Bing chunk submitted successfully"
+                SUCCESS_COUNT=$((SUCCESS_COUNT + CHUNK_COUNT))
+                cat "$chunk" >> bing-submitted.txt
+                ;;
+              429)
+                echo "Bing rate limited - skipping remaining chunks"
+                break
+                ;;
+              *)
+                echo "Warning: Bing returned HTTP $HTTP_CODE"
+                if [ -s bing-response.txt ]; then
+                  cat bing-response.txt
+                fi
+                ;;
+            esac
+
+            sleep 1
+          done
+
+          echo "Bing: Submitted $SUCCESS_COUNT of $TOTAL URLs"
+
+          if [ "$SUCCESS_COUNT" -gt 0 ]; then
+            echo "success=true" >> $GITHUB_OUTPUT
+          else
+            echo "success=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Submit sitemap to Google Search Console
         if: steps.find-new.outputs.has_new == 'true'
         env:
@@ -257,11 +320,14 @@ jobs:
           fi
 
       - name: Store submitted URLs in D1
-        if: steps.indexnow.outputs.success == 'true'
+        if: steps.indexnow.outputs.success == 'true' || steps.bing.outputs.success == 'true'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          if [ ! -f indexnow-submitted.txt ] || [ ! -s indexnow-submitted.txt ]; then
+          # Merge URLs from all successful submissions
+          cat indexnow-submitted.txt bing-submitted.txt 2>/dev/null | sort -u > all-submitted.txt
+
+          if [ ! -s all-submitted.txt ]; then
             echo "No URLs to store"
             exit 0
           fi
@@ -275,7 +341,7 @@ jobs:
                 --command "INSERT OR IGNORE INTO indexnow_submitted (url) VALUES ('$url')"
               STORED_COUNT=$((STORED_COUNT + 1))
             fi
-          done < indexnow-submitted.txt
+          done < all-submitted.txt
 
           echo "Stored $STORED_COUNT URLs in D1"
 
@@ -313,8 +379,12 @@ jobs:
           echo "Previously submitted: $(wc -l < submitted-urls.txt | tr -d ' ')"
           echo "New URLs found: $(wc -l < new-urls.txt | tr -d ' ')"
 
-          if [ -f indexnow-submitted.txt ]; then
+          if [ -f indexnow-submitted.txt ] && [ -s indexnow-submitted.txt ]; then
             echo "Successfully submitted to IndexNow: $(wc -l < indexnow-submitted.txt | tr -d ' ')"
+          fi
+
+          if [ -f bing-submitted.txt ] && [ -s bing-submitted.txt ]; then
+            echo "Successfully submitted to Bing: $(wc -l < bing-submitted.txt | tr -d ' ')"
           fi
 
           if [ -f stale-urls.txt ] && [ -s stale-urls.txt ]; then

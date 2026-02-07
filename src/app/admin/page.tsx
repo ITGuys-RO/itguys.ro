@@ -1,48 +1,20 @@
-import Link from 'next/link';
 import { GlobalSearch } from '@/components/admin';
 
-const sections = [
+const externalLinks = [
   {
-    title: 'Team Members',
-    description: 'Manage team members and their profiles',
-    href: '/admin/team',
-    count: 'team',
+    title: 'Google Search Console',
+    description: 'Search performance, indexing & crawl stats',
+    href: 'https://search.google.com/search-console?resource_id=sc-domain%3Aitguys.ro',
   },
   {
-    title: 'Projects',
-    description: 'Portfolio projects and case studies',
-    href: '/admin/projects',
-    count: 'projects',
+    title: 'Bing Webmaster Tools',
+    description: 'Bing search insights & URL submissions',
+    href: 'https://www.bing.com/webmasters/home?siteUrl=https://itguys.ro/',
   },
   {
-    title: 'Companies',
-    description: 'Partner companies and clients',
-    href: '/admin/companies',
-    count: 'companies',
-  },
-  {
-    title: 'Services',
-    description: 'Service offerings and descriptions',
-    href: '/admin/services',
-    count: 'services',
-  },
-  {
-    title: 'FAQ',
-    description: 'Frequently asked questions',
-    href: '/admin/faq',
-    count: 'faq',
-  },
-  {
-    title: 'Blog Posts',
-    description: 'News and blog articles',
-    href: '/admin/posts',
-    count: 'posts',
-  },
-{
-    title: 'IndexNow',
-    description: 'Search engine URL submissions',
-    href: '/admin/indexnow',
-    count: null,
+    title: 'Microsoft Clarity',
+    description: 'User behavior analytics & session recordings',
+    href: 'https://clarity.microsoft.com/projects/view/vauayo86py/dashboard?date=Last%203%20days',
   },
 ];
 
@@ -56,54 +28,31 @@ export default function AdminDashboard() {
         </p>
       </div>
 
-      {/* Global Search */}
       <div className="mb-8">
         <GlobalSearch />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sections.map((section) => (
-          <Link
-            key={section.href}
-            href={section.href}
+        {externalLinks.map((link) => (
+          <a
+            key={link.href}
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
             className="group p-6 bg-brand-900/60 rounded-lg border border-brand-700/50 hover:border-brand-400/50 transition-all duration-200"
           >
             <h2 className="text-lg font-semibold text-white group-hover:text-brand-300 transition-colors">
-              {section.title}
+              {link.title}
             </h2>
-            <p className="text-brand-400 text-sm mt-2">{section.description}</p>
+            <p className="text-brand-400 text-sm mt-2">{link.description}</p>
             <div className="mt-4 text-brand-400 text-sm flex items-center gap-2 group-hover:text-brand-300 transition-colors">
-              Manage
-              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              Open
+              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
               </svg>
             </div>
-          </Link>
+          </a>
         ))}
-      </div>
-
-      <div className="mt-12 p-6 theme-card rounded-lg">
-        <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
-        <div className="flex flex-wrap gap-3">
-          <Link
-            href="/admin/posts/new"
-            className="px-4 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-500 rounded-lg transition-colors"
-          >
-            New Blog Post
-          </Link>
-          <Link
-            href="/admin/team/new"
-            className="px-4 py-2 text-sm font-medium text-brand-300 border border-brand-600/50 hover:border-brand-400/50 hover:text-white rounded-lg transition-colors"
-          >
-            Add Team Member
-          </Link>
-          <Link
-            href="/admin/projects/new"
-            className="px-4 py-2 text-sm font-medium text-brand-300 border border-brand-600/50 hover:border-brand-400/50 hover:text-white rounded-lg transition-colors"
-          >
-            Add Project
-          </Link>
-        </div>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 export { Sidebar } from './Sidebar';
+export { AdminShell } from './AdminShell';
 export { DataTable, StatusBadge } from './DataTable';
 export { InputField, TextareaField, SelectField, CheckboxField, DateTimeField, TagInput } from './FormField';
 export { DateTimePicker } from './DateTimePicker';
