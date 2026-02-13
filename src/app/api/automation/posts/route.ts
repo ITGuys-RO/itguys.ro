@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createPost, getPostBySlug, updatePost } from '@/lib/db/posts';
-import { createImageCandidates, type PostImageCandidateInput } from '@/lib/db/image-candidates';
+import { createPost, getPostBySlug, updatePost, getPostById } from '@/lib/db/posts';
+import { createImageCandidates, getImageCandidates, selectImageCandidate, type PostImageCandidateInput } from '@/lib/db/image-candidates';
 import { PostInput } from '@/lib/db/schema';
 import { validateAutomationKey } from '@/lib/automation-auth';
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
@@ -43,6 +43,18 @@ export async function POST(request: NextRequest) {
     // Store image candidates if provided
     if (imageCandidates && imageCandidates.length > 0) {
       await createImageCandidates(postId, imageCandidates);
+
+      // Auto-select the first candidate (highest score) if image_path is empty
+      const post = await getPostById(postId);
+      if (post && !post.image_path) {
+        const candidates = await getImageCandidates(postId);
+        if (candidates.length > 0) {
+          const best = candidates[0]; // sorted by sort_order ASC = highest score first
+          await selectImageCandidate(postId, best.id);
+          await updatePost(postId, { image_path: best.image_url });
+          console.log(`Auto-selected best image candidate (id=${best.id}) for post ${postId}`);
+        }
+      }
     }
 
     return NextResponse.json({ id: postId, success: true, action });

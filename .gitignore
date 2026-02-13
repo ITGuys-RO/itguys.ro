@@ -45,6 +45,7 @@ yarn-error.log*
 
 # cloudflare
 wrangler.toml
+wrangler.jsonc
 .dev.vars
 .wrangler/
 .open-next/

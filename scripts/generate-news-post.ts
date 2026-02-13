@@ -999,21 +999,32 @@ async function main() {
   }
 
   // Step 3: Store all candidate images locally/R2
-  console.log(`Storing ${allCandidates.length} candidate image(s)...`);
-  let storedFeaturedImage: string | null = null;
-  for (let i = 0; i < allCandidates.length; i++) {
-    const candidate = allCandidates[i];
+  // Reorder candidates so scored ones come first (by score), for correct sort_order in DB
+  const scoredUrls = new Set(scoredCandidates.map(c => c.imageUrl));
+  const orderedCandidates = [
+    ...scoredCandidates,
+    ...allCandidates.filter(c => !scoredUrls.has(c.imageUrl)),
+  ];
+
+  console.log(`Storing ${orderedCandidates.length} candidate image(s)...`);
+  const storedUrlMap = new Map<ImageCandidate, string>();
+  for (let i = 0; i < orderedCandidates.length; i++) {
+    const candidate = orderedCandidates[i];
     const originalUrl = candidate.imageUrl;
     const storedUrl = await storeImage(originalUrl, `${englishPost.slug}-${i}`);
     if (storedUrl) {
       candidate.imageUrl = storedUrl;
-      if (originalUrl === featuredImage) {
-        storedFeaturedImage = storedUrl;
-      }
+      storedUrlMap.set(candidate, storedUrl);
     }
   }
-  if (storedFeaturedImage) {
-    englishPost.image_path = storedFeaturedImage;
+
+  // Pick the best stored image: first scored candidate that was successfully stored
+  const bestStored = scoredCandidates.find(c => storedUrlMap.has(c));
+  if (bestStored) {
+    englishPost.image_path = storedUrlMap.get(bestStored)!;
+    console.log(`  Assigned best image (score-ranked): ${englishPost.image_path}`);
+  } else {
+    console.log('  No candidate images could be stored');
   }
   console.log(`Post slug: ${englishPost.slug}`);
 
@@ -1037,7 +1048,7 @@ async function main() {
   let blogPost: BlogPost = {
     ...englishPost,
     translations: allTranslations,
-    imageCandidates: allCandidates.length > 0 ? allCandidates : undefined,
+    imageCandidates: orderedCandidates.length > 0 ? orderedCandidates : undefined,
   };
 
   blogPost = await validateAndFixBlogPost(blogPost);

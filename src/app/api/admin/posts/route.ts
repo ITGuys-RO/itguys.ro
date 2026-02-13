@@ -3,8 +3,9 @@ import { requireAdmin, handleApiError } from '@/lib/admin-auth';
 import {
   getAllPostsWithTranslations,
   createPost,
+  updatePost,
 } from '@/lib/db';
-import { createImageCandidates, type PostImageCandidateInput } from '@/lib/db/image-candidates';
+import { createImageCandidates, getImageCandidates, selectImageCandidate, type PostImageCandidateInput } from '@/lib/db/image-candidates';
 import type { PostInput } from '@/lib/db';
 
 export async function GET(request: NextRequest) {
@@ -31,6 +32,16 @@ export async function POST(request: NextRequest) {
 
     if (imageCandidates && imageCandidates.length > 0) {
       await createImageCandidates(id, imageCandidates);
+
+      // Auto-select the first candidate (highest score) if image_path is empty
+      if (!input.image_path) {
+        const candidates = await getImageCandidates(id);
+        if (candidates.length > 0) {
+          const best = candidates[0];
+          await selectImageCandidate(id, best.id);
+          await updatePost(id, { image_path: best.image_url });
+        }
+      }
     }
 
     return NextResponse.json({ id }, { status: 201 });
