@@ -34,7 +34,7 @@ async function triggerBlogWorkflow(env: Env): Promise<void> {
     throw new Error(`Failed to trigger workflow: ${response.status}`);
   }
 
-  console.log('Successfully triggered daily-tech-news workflow');
+  console.log('Successfully triggered weekly-tech-news workflow');
 }
 
 interface OldPost {

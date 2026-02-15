@@ -1,10 +1,10 @@
-name: Daily Tech News Generator
+name: Weekly Tech News Generator
 
 on:
   workflow_dispatch:  # Triggered by Cloudflare cron worker or manual
 
 concurrency:
-  group: daily-tech-news
+  group: weekly-tech-news
   cancel-in-progress: true
 
 permissions:

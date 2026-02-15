@@ -120,12 +120,12 @@ const text: Record<Locale, string> = { en: 'Back', ro: 'Înapoi', fr: 'Retour', 
 
 Five GitHub Actions workflows:
 1. **deploy.yml** — Push to master: build → migrate D1 → deploy workers → set worker secrets
-2. **daily-tech-news.yml** — Cron (weekdays): generate blog post via Perplexity + Claude APIs → publish via automation API → share to Twitter/Facebook/LinkedIn
+2. **daily-tech-news.yml** — Cron (Friday 17:00 UTC): generate weekly blog post via Claude API → publish via automation API → share to Twitter/Facebook/LinkedIn
 3. **sitemap-indexing.yml** — After deploy/blog: submit new URLs to IndexNow + Google Search Console
 4. **share-to-social.yml** — Manual dispatch: share a post to Twitter, Facebook, LinkedIn, or all platforms
 5. **retranslate-post.yml** — Manual dispatch: retranslate a post to all locales
 
-**Blog trigger worker:** `workers/blog-trigger/` — Cloudflare Worker cron (weekdays 8 AM UTC) that dispatches `daily-tech-news.yml`. Config in `wrangler.blog-trigger.toml`.
+**Blog trigger worker:** `workers/blog-trigger/` — Cloudflare Worker cron (Friday 17:00 UTC) that dispatches `daily-tech-news.yml`. Config in `wrangler.blog-trigger.toml`.
 
 **Secrets handling:**
 - Worker secrets (TELEGRAM_BOT_TOKEN, TURNSTILE_SECRET_KEY, etc.) are set via `wrangler secret put` after deploy — **never** placed in `wrangler.toml` `[vars]`

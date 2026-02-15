@@ -330,11 +330,11 @@ function getWritePostPrompt(): string {
   const timestamp = new Date().toISOString();
   const humanizerRules = loadHumanizerRules();
 
-  return `You are a senior tech consultant at ITGuys. Your task: use web search to find today's most significant tech news, then write an expert commentary blog post about it.
+  return `You are a senior tech consultant at ITGuys. Your task: use web search to find this week's most notable tech news, then write an expert commentary blog post about it.
 
 ## Step 1: Research
 
-Search the web for today's most important tech news, rotating across these categories:
+Search the web for the most important and notable tech news from this past week (the last 7 days), focusing on the stories with the biggest impact. Pick the single most significant story of the week to write about. Rotate across these categories:
 
 **Software Development (50% priority):**
 - PHP framework updates: Laravel, Symfony, new features, performance improvements
@@ -354,7 +354,7 @@ Search the web for today's most important tech news, rotating across these categ
 - Security patches for popular frameworks and development tools
 - Authentication and authorization best practices
 
-Prioritize development-focused stories first. Only lead with security if there's a major CVE affecting common development tools or a significant breach with lessons for developers.
+Prioritize development-focused stories first. Only lead with security if there's a major CVE affecting common development tools or a significant breach with lessons for developers. Since this is a weekly roundup, focus on the most impactful story rather than covering everything.
 
 ## Step 2: Write the Blog Post
 
@@ -456,7 +456,7 @@ function buildMinimalPost(title: string, excerpt: string, content: string): Blog
     author_id: null,
     published_at: new Date().toISOString(),
     is_published: 1,
-    tags: ['tech-news', 'daily-roundup'],
+    tags: ['tech-news', 'weekly-roundup'],
     translations: {
       en: {
         title,
@@ -567,7 +567,7 @@ async function writeEnglishPost(): Promise<WriteResult> {
         messages: [
           {
             role: 'user',
-            content: `Search the web for today's most significant tech news, then write a blog post about it. Return ONLY a JSON object with exactly three fields: "title", "excerpt", "content". Use \\n for newlines in content. No other fields, no markdown fencing.`,
+            content: `Search the web for this week's most significant tech news, then write a blog post about it. Return ONLY a JSON object with exactly three fields: "title", "excerpt", "content". Use \\n for newlines in content. No other fields, no markdown fencing.`,
           },
         ],
       });
