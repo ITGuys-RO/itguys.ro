@@ -38,23 +38,23 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
-    "@ai-sdk/perplexity": "^3.0.17",
-    "@anthropic-ai/sdk": "^0.73.0",
-    "@aws-sdk/client-s3": "^3.984.0",
-    "@opennextjs/cloudflare": "^1.16.3",
+    "@ai-sdk/perplexity": "^3.0.19",
+    "@anthropic-ai/sdk": "^0.74.0",
+    "@aws-sdk/client-s3": "^3.990.0",
+    "@opennextjs/cloudflare": "^1.16.5",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^25.2.1",
     "@types/react": "^19.2.13",
     "@types/react-datepicker": "^7.0.0",
     "@types/react-dom": "^19",
-    "ai": "^6.0.73",
-    "dotenv": "^17.2.4",
+    "ai": "^6.0.86",
+    "dotenv": "^17.3.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "twitter-api-v2": "^1.29.0",
     "typescript": "^5",
-    "wrangler": "^4.63.0"
+    "wrangler": "^4.65.0"
   }
 }
