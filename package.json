@@ -39,15 +39,15 @@
   },
   "devDependencies": {
     "@ai-sdk/perplexity": "^3.0.19",
-    "@anthropic-ai/sdk": "^0.74.0",
-    "@aws-sdk/client-s3": "^3.989.0",
+    "@anthropic-ai/sdk": "^0.77.0",
+    "@aws-sdk/client-s3": "^3.993.0",
     "@opennextjs/cloudflare": "^1.16.4",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^25.2.3",
     "@types/react": "^19.2.14",
     "@types/react-datepicker": "^7.0.0",
     "@types/react-dom": "^19",
-    "ai": "^6.0.85",
+    "ai": "^6.0.91",
     "dotenv": "^17.3.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
@@ -55,6 +55,6 @@
     "tsx": "^4.21.0",
     "twitter-api-v2": "^1.29.0",
     "typescript": "^5",
-    "wrangler": "^4.65.0"
+    "wrangler": "^4.66.0"
   }
 }
